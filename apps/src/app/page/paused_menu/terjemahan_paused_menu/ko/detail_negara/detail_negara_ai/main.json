@@ -61,9 +61,9 @@
     "attackInProgress": "{country} 공격이 이미 진행 중입니다"
   },
   "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "close": "Close"
+    "cancel": "취소",
+    "confirm": "확인",
+    "close": "닫기"
   },
   "embassy": {
     "otherContinent": "기타",
@@ -77,78 +77,79 @@
     "days": "일입니다",
     "currentBudget": "현재 국가 예산:",
     "afterBuildBudget": "건설 후 국가 예산:",
-    "destroyTitle": "Confirm Destroy Embassy",
-    "destroyConfirm": "Destroy Embassy",
-    "destroyPromptPrefix": "Are you sure you want to destroy the embassy in",
-    "cannotUndo": "This action cannot be undone.",
-    "relationReqTitle": "Embassy Cannot Be Built Yet",
-    "understood": "Understood",
-    "relationReqPrefix": "Relations with",
-    "relationReqMid": "must reach at least",
-    "relationReqSuffix": "to build an embassy. Current relation is"
+    "destroyTitle": "대사관 폐쇄 확인",
+    "destroyConfirm": "대사관 폐쇄",
+    "destroyPrompt": "{country}에 있는 대사관을 정말 폐쇄하시겠습니까? 이 작업은 취소할 수 없습니다.",
+    "destroyPromptPrefix": "다음 국가의 대사관을 폐쇄하시겠습니까:",
+    "cannotUndo": "이 작업은 취소할 수 없습니다.",
+    "relationReqTitle": "아직 대사관을 건설할 수 없습니다",
+    "understood": "확인",
+    "relationReqPrefix": "대사관을 건설하려면",
+    "relationReqMid": "와의 관계가 최소",
+    "relationReqSuffix": "이어야 합니다. 현재 관계 점수:"
   },
   "pact": {
-    "destroyTitle": "Confirm End Non-Aggression Pact",
-    "destroyPromptPrefix": "Are you sure you want to end the non-aggression pact with",
-    "destroyPromptSuffix": "This action may affect diplomatic relations.",
-    "destroyConfirm": "End Pact",
-    "buildTitle": "Confirm Non-Aggression Pact",
-    "buildPromptPrefix": "Do you want to propose a Non-Aggression Pact to",
-    "buildDescription": "This pact will take effect if accepted and affirms that both countries will not attack each other for the agreed period.",
-    "buildConfirm": "Form Pact"
+    "destroyTitle": "불가침 조약 종료 확인",
+    "destroyPromptPrefix": "정말",
+    "destroyPromptSuffix": "와의 불가침 조약을 종료하시겠습니까? 외교 관계에 영향을 줄 수 있습니다.",
+    "destroyConfirm": "조약 종료",
+    "buildTitle": "불가침 조약 확인",
+    "buildPromptPrefix": "다음 국가에 불가침 조약을 제안하시겠습니까:",
+    "buildDescription": "승인되면 양국은 합의한 기간 동안 서로 공격하지 않기로 약속합니다.",
+    "buildConfirm": "조약 체결"
   },
   "alliance": {
-    "buildTitle": "Confirm Defense Alliance",
-    "buildPromptPrefix": "Do you want to propose a Defense Alliance with",
-    "buildPromptSuffix": "If approved, both countries will assist each other when attacked.",
-    "buildConfirm": "Propose Alliance",
-    "destroyTitle": "Confirm End Defense Alliance",
-    "destroyPromptPrefix": "Are you sure you want to end the defense alliance with",
-    "destroyPromptSuffix": "This may impact future military support.",
-    "destroyConfirm": "End Alliance"
+    "buildTitle": "방위 동맹 확인",
+    "buildPromptPrefix": "다음 국가와 방위 동맹을 제안하시겠습니까:",
+    "buildPromptSuffix": "승인되면 공격을 받을 때 양국이 서로 지원합니다.",
+    "buildConfirm": "동맹 제안",
+    "destroyTitle": "방위 동맹 종료 확인",
+    "destroyPromptPrefix": "정말",
+    "destroyPromptSuffix": "와의 방위 동맹을 종료하시겠습니까? 향후 군사 지원에 영향을 줄 수 있습니다.",
+    "destroyConfirm": "동맹 종료"
   },
   "trade": {
-    "buildTitle": "Confirm Trade Agreement",
-    "buildPromptPrefix": "Do you want to propose a trade agreement to",
-    "buildPromptSuffix": "This will open trade routes between both countries if accepted.",
-    "buildConfirm": "Form Agreement",
-    "destroyTitle": "Confirm End Trade Relations",
-    "destroyPromptPrefix": "Are you sure you want to end trade relations with",
-    "destroyPromptSuffix": "You can re-establish it through the Partners menu.",
-    "destroyConfirm": "End Relations"
+    "buildTitle": "무역 협정 확인",
+    "buildPromptPrefix": "다음 국가에 무역 협정을 제안하시겠습니까:",
+    "buildPromptSuffix": "승인되면 양국 간 무역로가 개설됩니다.",
+    "buildConfirm": "협정 체결",
+    "destroyTitle": "무역 관계 종료 확인",
+    "destroyPromptPrefix": "정말",
+    "destroyPromptSuffix": "와의 무역 관계를 종료하시겠습니까? 파트너 메뉴에서 다시 맺을 수 있습니다.",
+    "destroyConfirm": "관계 종료"
   },
   "research": {
-    "destroyTitle": "Confirm Stop Research Contract",
-    "destroyPromptPrefix": "Are you sure you want to stop the research contract with",
-    "destroyPromptSuffix": "Stopping the contract will end the research collaboration.",
-    "destroyConfirm": "Stop Contract",
-    "buildTitle": "Confirm Research Contract",
-    "buildPromptPrefix": "Start a research contract with",
-    "buildPromptMid": "This collaboration reduces the duration of all national research by",
-    "buildPromptSuffix": "per partner country.",
-    "buildConfirm": "Start Contract"
+    "destroyTitle": "연구 계약 종료 확인",
+    "destroyPromptPrefix": "정말",
+    "destroyPromptSuffix": "와의 연구 계약을 종료하시겠습니까? 계약 종료 시 연구 협력이 중단됩니다.",
+    "destroyConfirm": "계약 종료",
+    "buildTitle": "연구 계약 확인",
+    "buildPromptPrefix": "다음 국가와 연구 계약을 시작하시겠습니까:",
+    "buildPromptMid": "이 협력으로 모든 국가 연구 기간이",
+    "buildPromptSuffix": "단축됩니다.",
+    "buildConfirm": "계약 시작"
   },
   "sendTroops": {
-    "title": "Confirm Send Troops",
-    "promptPrefix": "Send troops to",
-    "promptSuffix": "This action may affect diplomatic relations and trigger a military response.",
-    "confirm": "Send Troops"
+    "title": "병력 파견 확인",
+    "promptPrefix": "다음 국가로 병력을 파견합니다:",
+    "promptSuffix": "이 행동은 외교 관계에 영향을 주고 군사적 대응을 유발할 수 있습니다.",
+    "confirm": "병력 파견"
   },
   "callAlly": {
-    "title": "Confirm Call Ally",
-    "promptPrefix": "Do you want to call allies to help fight against",
-    "promptSuffix": "Allies may send military support or other assistance.",
-    "confirm": "Call Ally"
+    "title": "동맹국 지원 요청 확인",
+    "promptPrefix": "다음 국가와의 전투를 위해 동맹국에 지원을 요청하시겠습니까:",
+    "promptSuffix": "동맹국은 군사 지원이나 다른 도움을 보낼 수 있습니다.",
+    "confirm": "동맹국 지원 요청"
   },
   "sanction": {
-    "title": "Confirm Impose Sanction",
-    "promptPrefix": "Impose sanctions on",
-    "promptMid": "Diplomatic relations will drop randomly by",
-    "points": "points",
-    "currentNetBalance": "Current net balance",
-    "impactPerSanction": "Impact per sanction",
-    "afterSanctionNetBalance": "Net balance after sanction",
-    "confirm": "Impose Sanction"
+    "title": "제재 부과 확인",
+    "promptPrefix": "다음 국가에 제재를 부과합니다:",
+    "promptMid": "외교 관계가 무작위로",
+    "points": "점 하락합니다",
+    "currentNetBalance": "현재 순수지",
+    "impactPerSanction": "제재 1회당 영향",
+    "afterSanctionNetBalance": "제재 후 순수지",
+    "confirm": "제재 부과"
   },
   "province": {
     "actionOptions": {

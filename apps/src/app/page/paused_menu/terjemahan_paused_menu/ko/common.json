@@ -23,6 +23,16 @@
     "understand": "확인",
     "cancel": "취소"
   },
+  "travelCostPanel": {
+    "title": "이동 비용",
+    "calculating": "계산 중...",
+    "barrels": "배럴의 석유",
+    "stock": "재고",
+    "remaining": "잔량",
+    "fallback": "데이터베이스 요금을 사용할 수 없어 예상 비용을 적용합니다.",
+    "insufficient": "원유 재고가 부족합니다.",
+    "warning": "남은 석유가 발전소의 일일 필요량({amount}배럴)보다 적습니다."
+  },
   "rootConstructionModal": {
     "title": "건설 확인",
     "cost": "건설 비용 (총계):",

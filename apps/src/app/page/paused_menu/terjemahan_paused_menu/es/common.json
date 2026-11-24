@@ -23,6 +23,16 @@
     "understand": "Entendido",
     "cancel": "Cancelar"
   },
+  "travelCostPanel": {
+    "title": "Coste del viaje",
+    "calculating": "Calculando...",
+    "barrels": "barriles de petróleo",
+    "stock": "Existencias",
+    "remaining": "Restante",
+    "fallback": "No hay una tarifa disponible en la base de datos; se usa un coste estimado.",
+    "insufficient": "Las reservas de petróleo crudo son insuficientes.",
+    "warning": "El petróleo restante está por debajo de las necesidades diarias de la central eléctrica ({amount} barriles)."
+  },
   "rootConstructionModal": {
     "title": "Confirmación de Construcción",
     "cost": "Costo de Construcción (Total):",

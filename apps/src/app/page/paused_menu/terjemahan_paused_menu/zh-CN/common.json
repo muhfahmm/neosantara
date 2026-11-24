@@ -23,6 +23,16 @@
     "understand": "明白",
     "cancel": "取消"
   },
+  "travelCostPanel": {
+    "title": "出行费用",
+    "calculating": "正在计算...",
+    "barrels": "桶石油",
+    "stock": "库存",
+    "remaining": "剩余",
+    "fallback": "数据库费率不可用，当前使用估算费用。",
+    "insufficient": "原油库存不足。",
+    "warning": "剩余石油低于发电厂的每日需求量（{amount}桶）。"
+  },
   "rootConstructionModal": {
     "title": "建造确认",
     "cost": "建造费用（总计）：",

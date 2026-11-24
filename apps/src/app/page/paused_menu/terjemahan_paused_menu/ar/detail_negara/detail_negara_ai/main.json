@@ -61,9 +61,9 @@
     "attackInProgress": "هناك هجوم جارٍ بالفعل على {country}"
   },
   "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "close": "Close"
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "close": "إغلاق"
   },
   "embassy": {
     "otherContinent": "أخرى",
@@ -77,78 +77,79 @@
     "days": "يومًا",
     "currentBudget": "ميزانية الدولة الحالية:",
     "afterBuildBudget": "بعد البناء، ستصبح الميزانية",
-    "destroyTitle": "Confirm Destroy Embassy",
-    "destroyConfirm": "Destroy Embassy",
-    "destroyPromptPrefix": "Are you sure you want to destroy the embassy in",
-    "cannotUndo": "This action cannot be undone.",
-    "relationReqTitle": "Embassy Cannot Be Built Yet",
-    "understood": "Understood",
-    "relationReqPrefix": "Relations with",
-    "relationReqMid": "must reach at least",
-    "relationReqSuffix": "to build an embassy. Current relation is"
+    "destroyTitle": "تأكيد إغلاق السفارة",
+    "destroyConfirm": "إغلاق السفارة",
+    "destroyPrompt": "هل أنت متأكد من رغبتك في إغلاق السفارة في {country}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "destroyPromptPrefix": "هل أنت متأكد من رغبتك في إغلاق السفارة في",
+    "cannotUndo": "لا يمكن التراجع عن هذا الإجراء.",
+    "relationReqTitle": "لا يمكن بناء السفارة بعد",
+    "understood": "فهمت",
+    "relationReqPrefix": "يجب أن تصل العلاقة مع",
+    "relationReqMid": "إلى",
+    "relationReqSuffix": "على الأقل لبناء سفارة. مستوى العلاقة الحالي هو"
   },
   "pact": {
-    "destroyTitle": "Confirm End Non-Aggression Pact",
-    "destroyPromptPrefix": "Are you sure you want to end the non-aggression pact with",
-    "destroyPromptSuffix": "This action may affect diplomatic relations.",
-    "destroyConfirm": "End Pact",
-    "buildTitle": "Confirm Non-Aggression Pact",
-    "buildPromptPrefix": "Do you want to propose a Non-Aggression Pact to",
-    "buildDescription": "This pact will take effect if accepted and affirms that both countries will not attack each other for the agreed period.",
-    "buildConfirm": "Form Pact"
+    "destroyTitle": "تأكيد إنهاء اتفاقية عدم الاعتداء",
+    "destroyPromptPrefix": "هل أنت متأكد من رغبتك في إنهاء اتفاقية عدم الاعتداء مع",
+    "destroyPromptSuffix": "قد يؤثر هذا الإجراء في العلاقات الدبلوماسية.",
+    "destroyConfirm": "إنهاء الاتفاقية",
+    "buildTitle": "تأكيد اتفاقية عدم الاعتداء",
+    "buildPromptPrefix": "هل تريد اقتراح اتفاقية عدم اعتداء على",
+    "buildDescription": "ستدخل هذه الاتفاقية حيز التنفيذ عند الموافقة عليها، وتؤكد امتناع البلدين عن مهاجمة بعضهما خلال المدة المتفق عليها.",
+    "buildConfirm": "إبرام الاتفاقية"
   },
   "alliance": {
-    "buildTitle": "Confirm Defense Alliance",
-    "buildPromptPrefix": "Do you want to propose a Defense Alliance with",
-    "buildPromptSuffix": "If approved, both countries will assist each other when attacked.",
-    "buildConfirm": "Propose Alliance",
-    "destroyTitle": "Confirm End Defense Alliance",
-    "destroyPromptPrefix": "Are you sure you want to end the defense alliance with",
-    "destroyPromptSuffix": "This may impact future military support.",
-    "destroyConfirm": "End Alliance"
+    "buildTitle": "تأكيد تحالف دفاعي",
+    "buildPromptPrefix": "هل تريد اقتراح تحالف دفاعي مع",
+    "buildPromptSuffix": "إذا تمت الموافقة، سيساعد البلدان أحدهما الآخر عند التعرض لهجوم.",
+    "buildConfirm": "اقتراح التحالف",
+    "destroyTitle": "تأكيد إنهاء التحالف الدفاعي",
+    "destroyPromptPrefix": "هل أنت متأكد من رغبتك في إنهاء التحالف الدفاعي مع",
+    "destroyPromptSuffix": "قد يؤثر ذلك في الدعم العسكري مستقبلًا.",
+    "destroyConfirm": "إنهاء التحالف"
   },
   "trade": {
-    "buildTitle": "Confirm Trade Agreement",
-    "buildPromptPrefix": "Do you want to propose a trade agreement to",
-    "buildPromptSuffix": "This will open trade routes between both countries if accepted.",
-    "buildConfirm": "Form Agreement",
-    "destroyTitle": "Confirm End Trade Relations",
-    "destroyPromptPrefix": "Are you sure you want to end trade relations with",
-    "destroyPromptSuffix": "You can re-establish it through the Partners menu.",
-    "destroyConfirm": "End Relations"
+    "buildTitle": "تأكيد اتفاقية تجارية",
+    "buildPromptPrefix": "هل تريد اقتراح اتفاقية تجارية على",
+    "buildPromptSuffix": "سيؤدي ذلك إلى فتح طرق تجارية بين البلدين عند الموافقة.",
+    "buildConfirm": "إبرام الاتفاقية",
+    "destroyTitle": "تأكيد إنهاء العلاقات التجارية",
+    "destroyPromptPrefix": "هل أنت متأكد من رغبتك في إنهاء العلاقات التجارية مع",
+    "destroyPromptSuffix": "يمكنك إعادة إقامتها من قائمة الشركاء.",
+    "destroyConfirm": "إنهاء العلاقات"
   },
   "research": {
-    "destroyTitle": "Confirm Stop Research Contract",
-    "destroyPromptPrefix": "Are you sure you want to stop the research contract with",
-    "destroyPromptSuffix": "Stopping the contract will end the research collaboration.",
-    "destroyConfirm": "Stop Contract",
-    "buildTitle": "Confirm Research Contract",
-    "buildPromptPrefix": "Start a research contract with",
-    "buildPromptMid": "This collaboration reduces the duration of all national research by",
-    "buildPromptSuffix": "per partner country.",
-    "buildConfirm": "Start Contract"
+    "destroyTitle": "تأكيد إنهاء عقد البحث",
+    "destroyPromptPrefix": "هل أنت متأكد من رغبتك في إنهاء عقد البحث مع",
+    "destroyPromptSuffix": "سيؤدي إنهاء العقد إلى وقف التعاون البحثي.",
+    "destroyConfirm": "إنهاء العقد",
+    "buildTitle": "تأكيد عقد بحث",
+    "buildPromptPrefix": "بدء عقد بحث مع",
+    "buildPromptMid": "يقلل هذا التعاون مدة جميع الأبحاث الوطنية بنسبة",
+    "buildPromptSuffix": "لكل دولة شريكة.",
+    "buildConfirm": "بدء العقد"
   },
   "sendTroops": {
-    "title": "Confirm Send Troops",
-    "promptPrefix": "Send troops to",
-    "promptSuffix": "This action may affect diplomatic relations and trigger a military response.",
-    "confirm": "Send Troops"
+    "title": "تأكيد إرسال القوات",
+    "promptPrefix": "إرسال القوات إلى",
+    "promptSuffix": "قد يؤثر هذا الإجراء في العلاقات الدبلوماسية ويؤدي إلى رد عسكري.",
+    "confirm": "إرسال القوات"
   },
   "callAlly": {
-    "title": "Confirm Call Ally",
-    "promptPrefix": "Do you want to call allies to help fight against",
-    "promptSuffix": "Allies may send military support or other assistance.",
-    "confirm": "Call Ally"
+    "title": "تأكيد طلب مساعدة الحليف",
+    "promptPrefix": "هل تريد طلب مساعدة الحلفاء للقتال ضد",
+    "promptSuffix": "قد يرسل الحلفاء دعمًا عسكريًا أو أشكالًا أخرى من المساعدة.",
+    "confirm": "طلب مساعدة الحليف"
   },
   "sanction": {
-    "title": "Confirm Impose Sanction",
-    "promptPrefix": "Impose sanctions on",
-    "promptMid": "Diplomatic relations will drop randomly by",
-    "points": "points",
-    "currentNetBalance": "Current net balance",
-    "impactPerSanction": "Impact per sanction",
-    "afterSanctionNetBalance": "Net balance after sanction",
-    "confirm": "Impose Sanction"
+    "title": "تأكيد فرض العقوبات",
+    "promptPrefix": "فرض عقوبات على",
+    "promptMid": "ستنخفض العلاقات الدبلوماسية عشوائيًا بمقدار",
+    "points": "نقطة",
+    "currentNetBalance": "صافي الرصيد الحالي",
+    "impactPerSanction": "تأثير كل عقوبة",
+    "afterSanctionNetBalance": "صافي الرصيد بعد العقوبة",
+    "confirm": "فرض العقوبات"
   },
   "province": {
     "actionOptions": {

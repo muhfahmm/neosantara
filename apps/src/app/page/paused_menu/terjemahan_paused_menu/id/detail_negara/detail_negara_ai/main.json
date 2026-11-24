@@ -79,6 +79,7 @@
     "afterBuildBudget": "Setelah pembangunan, kas akan menjadi",
     "destroyTitle": "Konfirmasi Hancurkan Kedutaan",
     "destroyConfirm": "Hancurkan Kedutaan",
+    "destroyPrompt": "Apakah Anda yakin ingin menghancurkan kedutaan di {country}? Tindakan ini tidak dapat dibatalkan.",
     "destroyPromptPrefix": "Apakah Anda yakin ingin menghancurkan kedutaan di",
     "cannotUndo": "Tindakan ini tidak dapat dibatalkan.",
     "relationReqTitle": "Kedutaan Belum Dapat Dibangun",

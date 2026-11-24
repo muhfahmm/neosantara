@@ -23,6 +23,16 @@
     "understand": "Mengerti",
     "cancel": "Batal"
   },
+  "travelCostPanel": {
+    "title": "Biaya perjalanan",
+    "calculating": "Menghitung...",
+    "barrels": "barel minyak",
+    "stock": "Stok",
+    "remaining": "Sisa",
+    "fallback": "Tarif database tidak tersedia; biaya menggunakan estimasi.",
+    "insufficient": "Stok minyak bumi tidak mencukupi.",
+    "warning": "Sisa minyak berada di bawah kebutuhan harian PLTU ({amount} barel)."
+  },
   "rootConstructionModal": {
     "title": "Konfirmasi Pembangunan",
     "cost": "Biaya Pembangunan (Total):",

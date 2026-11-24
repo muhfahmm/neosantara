@@ -21,8 +21,7 @@ export default function DestroyEmbassyModal({ isOpen, countryName, onClose, onCo
       footerBorderClassName="border-rose-500/20"
     >
       <p className="text-sm sm:text-base text-root-text mb-6 leading-relaxed">
-        {t("detail_negara_ai.embassy.destroyPromptPrefix")}{" "}
-        <strong className="text-white">{countryName}</strong>? {t("detail_negara_ai.embassy.cannotUndo")}
+        {t("detail_negara_ai.embassy.destroyPrompt", { country: countryName || "" })}
       </p>
     </RootConfirmModal>
   );

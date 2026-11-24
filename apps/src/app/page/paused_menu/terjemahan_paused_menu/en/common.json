@@ -23,6 +23,16 @@
     "understand": "Understand",
     "cancel": "Cancel"
   },
+  "travelCostPanel": {
+    "title": "Travel cost",
+    "calculating": "Calculating...",
+    "barrels": "barrels of oil",
+    "stock": "Stock",
+    "remaining": "Remaining",
+    "fallback": "Database rate unavailable; estimated cost is being used.",
+    "insufficient": "Insufficient crude oil reserves.",
+    "warning": "Remaining oil is below the power plant's daily requirement ({amount} barrels)."
+  },
   "rootConstructionModal": {
     "title": "Construction Confirmation",
     "cost": "Construction Cost (Total):",

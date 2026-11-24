@@ -23,6 +23,16 @@
     "understand": "Verstanden",
     "cancel": "Abbrechen"
   },
+  "travelCostPanel": {
+    "title": "Reisekosten",
+    "calculating": "Wird berechnet...",
+    "barrels": "Barrel Öl",
+    "stock": "Vorrat",
+    "remaining": "Verbleibend",
+    "fallback": "Datenbanktarif nicht verfügbar; es werden geschätzte Kosten verwendet.",
+    "insufficient": "Die Rohölvorräte reichen nicht aus.",
+    "warning": "Der verbleibende Ölvorrat liegt unter dem Tagesbedarf des Kraftwerks ({amount} Barrel)."
+  },
   "rootConstructionModal": {
     "title": "Baubestätigung",
     "cost": "Baukosten (Gesamt):",

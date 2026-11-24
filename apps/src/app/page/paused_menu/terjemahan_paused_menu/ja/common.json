@@ -23,6 +23,16 @@
     "understand": "了解",
     "cancel": "キャンセル"
   },
+  "travelCostPanel": {
+    "title": "移動費用",
+    "calculating": "計算中...",
+    "barrels": "バレルの石油",
+    "stock": "在庫",
+    "remaining": "残量",
+    "fallback": "データベースの料金を取得できないため、推定費用を使用しています。",
+    "insufficient": "原油の在庫が不足しています。",
+    "warning": "石油の残量が発電所の日次必要量（{amount}バレル）を下回っています。"
+  },
   "rootConstructionModal": {
     "title": "建設確認",
     "cost": "建設費用（合計）：",

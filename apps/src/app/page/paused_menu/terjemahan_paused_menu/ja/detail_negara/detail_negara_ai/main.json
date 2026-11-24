@@ -61,9 +61,9 @@
     "attackInProgress": "{country}への攻撃はすでに進行中です"
   },
   "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "close": "Close"
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "close": "閉じる"
   },
   "embassy": {
     "otherContinent": "その他",
@@ -77,78 +77,79 @@
     "days": "日です",
     "currentBudget": "現在の国家予算：",
     "afterBuildBudget": "建設後の予算：",
-    "destroyTitle": "Confirm Destroy Embassy",
-    "destroyConfirm": "Destroy Embassy",
-    "destroyPromptPrefix": "Are you sure you want to destroy the embassy in",
-    "cannotUndo": "This action cannot be undone.",
-    "relationReqTitle": "Embassy Cannot Be Built Yet",
-    "understood": "Understood",
-    "relationReqPrefix": "Relations with",
-    "relationReqMid": "must reach at least",
-    "relationReqSuffix": "to build an embassy. Current relation is"
+    "destroyTitle": "大使館閉鎖の確認",
+    "destroyConfirm": "大使館を閉鎖",
+    "destroyPrompt": "{country}の大使館を閉鎖しますか？この操作は取り消せません。",
+    "destroyPromptPrefix": "次の国の大使館を閉鎖しますか：",
+    "cannotUndo": "この操作は取り消せません。",
+    "relationReqTitle": "大使館を建設できません",
+    "understood": "了解",
+    "relationReqPrefix": "大使館を建設するには、",
+    "relationReqMid": "との関係値が少なくとも",
+    "relationReqSuffix": "必要です。現在の関係値："
   },
   "pact": {
-    "destroyTitle": "Confirm End Non-Aggression Pact",
-    "destroyPromptPrefix": "Are you sure you want to end the non-aggression pact with",
-    "destroyPromptSuffix": "This action may affect diplomatic relations.",
-    "destroyConfirm": "End Pact",
-    "buildTitle": "Confirm Non-Aggression Pact",
-    "buildPromptPrefix": "Do you want to propose a Non-Aggression Pact to",
-    "buildDescription": "This pact will take effect if accepted and affirms that both countries will not attack each other for the agreed period.",
-    "buildConfirm": "Form Pact"
+    "destroyTitle": "不可侵条約終了の確認",
+    "destroyPromptPrefix": "本当に",
+    "destroyPromptSuffix": "との不可侵条約を終了しますか？外交関係に影響する可能性があります。",
+    "destroyConfirm": "条約を終了",
+    "buildTitle": "不可侵条約の確認",
+    "buildPromptPrefix": "次の国に不可侵条約を提案しますか：",
+    "buildDescription": "承認されると、この条約により両国は合意した期間、互いに攻撃しないことを約束します。",
+    "buildConfirm": "条約を締結"
   },
   "alliance": {
-    "buildTitle": "Confirm Defense Alliance",
-    "buildPromptPrefix": "Do you want to propose a Defense Alliance with",
-    "buildPromptSuffix": "If approved, both countries will assist each other when attacked.",
-    "buildConfirm": "Propose Alliance",
-    "destroyTitle": "Confirm End Defense Alliance",
-    "destroyPromptPrefix": "Are you sure you want to end the defense alliance with",
-    "destroyPromptSuffix": "This may impact future military support.",
-    "destroyConfirm": "End Alliance"
+    "buildTitle": "防衛同盟の確認",
+    "buildPromptPrefix": "次の国と防衛同盟を提案しますか：",
+    "buildPromptSuffix": "承認された場合、攻撃を受けた際に両国が互いに支援します。",
+    "buildConfirm": "同盟を提案",
+    "destroyTitle": "防衛同盟終了の確認",
+    "destroyPromptPrefix": "本当に",
+    "destroyPromptSuffix": "との防衛同盟を終了しますか？今後の軍事支援に影響する可能性があります。",
+    "destroyConfirm": "同盟を終了"
   },
   "trade": {
-    "buildTitle": "Confirm Trade Agreement",
-    "buildPromptPrefix": "Do you want to propose a trade agreement to",
-    "buildPromptSuffix": "This will open trade routes between both countries if accepted.",
-    "buildConfirm": "Form Agreement",
-    "destroyTitle": "Confirm End Trade Relations",
-    "destroyPromptPrefix": "Are you sure you want to end trade relations with",
-    "destroyPromptSuffix": "You can re-establish it through the Partners menu.",
-    "destroyConfirm": "End Relations"
+    "buildTitle": "貿易協定の確認",
+    "buildPromptPrefix": "次の国に貿易協定を提案しますか：",
+    "buildPromptSuffix": "承認されると、両国間に貿易ルートが開設されます。",
+    "buildConfirm": "協定を締結",
+    "destroyTitle": "貿易関係終了の確認",
+    "destroyPromptPrefix": "本当に",
+    "destroyPromptSuffix": "との貿易関係を終了しますか？パートナーメニューから再開できます。",
+    "destroyConfirm": "関係を終了"
   },
   "research": {
-    "destroyTitle": "Confirm Stop Research Contract",
-    "destroyPromptPrefix": "Are you sure you want to stop the research contract with",
-    "destroyPromptSuffix": "Stopping the contract will end the research collaboration.",
-    "destroyConfirm": "Stop Contract",
-    "buildTitle": "Confirm Research Contract",
-    "buildPromptPrefix": "Start a research contract with",
-    "buildPromptMid": "This collaboration reduces the duration of all national research by",
-    "buildPromptSuffix": "per partner country.",
-    "buildConfirm": "Start Contract"
+    "destroyTitle": "研究契約終了の確認",
+    "destroyPromptPrefix": "本当に",
+    "destroyPromptSuffix": "との研究契約を終了しますか？研究協力も終了します。",
+    "destroyConfirm": "契約を終了",
+    "buildTitle": "研究契約の確認",
+    "buildPromptPrefix": "次の国と研究契約を開始しますか：",
+    "buildPromptMid": "この協力により、国内研究の所要期間が",
+    "buildPromptSuffix": "短縮されます。",
+    "buildConfirm": "契約を開始"
   },
   "sendTroops": {
-    "title": "Confirm Send Troops",
-    "promptPrefix": "Send troops to",
-    "promptSuffix": "This action may affect diplomatic relations and trigger a military response.",
-    "confirm": "Send Troops"
+    "title": "部隊派遣の確認",
+    "promptPrefix": "次の国に部隊を派遣します：",
+    "promptSuffix": "この行動は外交関係に影響し、軍事的な反応を招く可能性があります。",
+    "confirm": "部隊を派遣"
   },
   "callAlly": {
-    "title": "Confirm Call Ally",
-    "promptPrefix": "Do you want to call allies to help fight against",
-    "promptSuffix": "Allies may send military support or other assistance.",
-    "confirm": "Call Ally"
+    "title": "同盟国への支援要請の確認",
+    "promptPrefix": "次の国との戦闘で同盟国に支援を要請しますか：",
+    "promptSuffix": "同盟国は軍事支援やその他の援助を送る場合があります。",
+    "confirm": "同盟国に要請"
   },
   "sanction": {
-    "title": "Confirm Impose Sanction",
-    "promptPrefix": "Impose sanctions on",
-    "promptMid": "Diplomatic relations will drop randomly by",
-    "points": "points",
-    "currentNetBalance": "Current net balance",
-    "impactPerSanction": "Impact per sanction",
-    "afterSanctionNetBalance": "Net balance after sanction",
-    "confirm": "Impose Sanction"
+    "title": "制裁実施の確認",
+    "promptPrefix": "次の国に制裁を実施します：",
+    "promptMid": "外交関係がランダムに",
+    "points": "ポイント低下します",
+    "currentNetBalance": "現在の純収支",
+    "impactPerSanction": "制裁ごとの影響",
+    "afterSanctionNetBalance": "制裁後の純収支",
+    "confirm": "制裁を実施"
   },
   "province": {
     "actionOptions": {

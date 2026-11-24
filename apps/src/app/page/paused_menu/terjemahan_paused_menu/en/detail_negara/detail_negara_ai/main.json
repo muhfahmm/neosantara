@@ -79,6 +79,7 @@
     "afterBuildBudget": "After construction, the budget will be",
     "destroyTitle": "Confirm Destroy Embassy",
     "destroyConfirm": "Destroy Embassy",
+    "destroyPrompt": "Are you sure you want to destroy the embassy in {country}? This action cannot be undone.",
     "destroyPromptPrefix": "Are you sure you want to destroy the embassy in",
     "cannotUndo": "This action cannot be undone.",
     "relationReqTitle": "Embassy Cannot Be Built Yet",

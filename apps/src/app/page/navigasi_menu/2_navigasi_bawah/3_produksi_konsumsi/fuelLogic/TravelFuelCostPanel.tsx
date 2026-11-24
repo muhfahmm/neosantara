@@ -18,8 +18,12 @@ export default function TravelFuelCostPanel({
   ) => string;
 }) {
   const { t, language } = useLanguage();
-  const resolvedLocale = locale ?? (language === "id" ? "id-ID" : "en-US");
-  const resolvedLabel = label ?? t("common.travelCost", { defaultValue: language === "id" ? "Biaya perjalanan" : "Travel cost" });
+  const resolvedLocale = locale ?? (language === "id" ? "id-ID" : language);
+  const resolvedLabel = label ?? t("common.travelCostPanel.title");
+  const translateFuelText = (
+    key: "calculating" | "barrels" | "stock" | "remaining" | "fallback" | "insufficient" | "warning",
+    params?: Record<string, string | number>,
+  ) => translate?.(key, params) ?? t(`common.travelCostPanel.${key}`, params);
   const numberFormat = (value: number) =>
     value.toLocaleString(resolvedLocale, { maximumFractionDigits: 0 });
 
@@ -33,27 +37,27 @@ export default function TravelFuelCostPanel({
         {resolvedLabel}:{" "}
         <span className={status.ok ? "text-root-accent" : "text-root-danger"}>
           {status.loading || status.cost === null
-            ? translate?.("calculating") ?? "Menghitung..."
-            : `${numberFormat(status.cost)} ${translate?.("barrels") ?? "barel minyak"}`}
+            ? translateFuelText("calculating")
+            : `${numberFormat(status.cost)} ${translateFuelText("barrels")}`}
         </span>
-        {" | "}{translate?.("stock") ?? "Stok"}: {numberFormat(status.stock)}
-        {" | "}{translate?.("remaining") ?? "Sisa"}: {numberFormat(status.remaining)}
+        {" | "}{translateFuelText("stock")}: {numberFormat(status.stock)}
+        {" | "}{translateFuelText("remaining")}: {numberFormat(status.remaining)}
       </p>
       {status.fallback && !status.loading && (
         <p className="mt-1 text-xs text-amber-300">
-          {translate?.("fallback") ?? "Tarif database tidak tersedia; biaya menggunakan estimasi sementara."}
+          {translateFuelText("fallback")}
         </p>
       )}
       {!status.ok && !status.loading && (
         <p className="mt-1 font-bold text-root-danger">
-          {translate?.("insufficient") ?? "Stok minyak bumi tidak mencukupi"}
+          {translateFuelText("insufficient")}
         </p>
       )}
       {status.belowDailyPowerPlantNeed && status.ok && (
         <p className="mt-1 text-xs font-bold text-amber-300">
-          {translate?.("warning", {
+          {translateFuelText("warning", {
             amount: numberFormat(status.dailyPowerPlantNeed),
-          }) ?? `Peringatan: sisa minyak di bawah kebutuhan harian PLTU (${numberFormat(status.dailyPowerPlantNeed)} barel).`}
+          })}
         </p>
       )}
     </div>

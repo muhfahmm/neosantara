@@ -61,9 +61,9 @@
     "attackInProgress": "针对 {country} 的攻击已在进行中"
   },
   "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "close": "Close"
+    "cancel": "取消",
+    "confirm": "确认",
+    "close": "关闭"
   },
   "embassy": {
     "otherContinent": "其他",
@@ -77,78 +77,79 @@
     "days": "天",
     "currentBudget": "当前国库预算：",
     "afterBuildBudget": "建设完成后，国库预算将为",
-    "destroyTitle": "Confirm Destroy Embassy",
-    "destroyConfirm": "Destroy Embassy",
-    "destroyPromptPrefix": "Are you sure you want to destroy the embassy in",
-    "cannotUndo": "This action cannot be undone.",
-    "relationReqTitle": "Embassy Cannot Be Built Yet",
-    "understood": "Understood",
-    "relationReqPrefix": "Relations with",
-    "relationReqMid": "must reach at least",
-    "relationReqSuffix": "to build an embassy. Current relation is"
+    "destroyTitle": "确认关闭大使馆",
+    "destroyConfirm": "关闭大使馆",
+    "destroyPrompt": "确定要关闭{country}的大使馆吗？此操作无法撤销。",
+    "destroyPromptPrefix": "确定要关闭以下国家的大使馆吗：",
+    "cannotUndo": "此操作无法撤销。",
+    "relationReqTitle": "暂时无法建造大使馆",
+    "understood": "知道了",
+    "relationReqPrefix": "要建造大使馆，您与",
+    "relationReqMid": "的关系至少要达到",
+    "relationReqSuffix": "。当前关系值："
   },
   "pact": {
-    "destroyTitle": "Confirm End Non-Aggression Pact",
-    "destroyPromptPrefix": "Are you sure you want to end the non-aggression pact with",
-    "destroyPromptSuffix": "This action may affect diplomatic relations.",
-    "destroyConfirm": "End Pact",
-    "buildTitle": "Confirm Non-Aggression Pact",
-    "buildPromptPrefix": "Do you want to propose a Non-Aggression Pact to",
-    "buildDescription": "This pact will take effect if accepted and affirms that both countries will not attack each other for the agreed period.",
-    "buildConfirm": "Form Pact"
+    "destroyTitle": "确认终止互不侵犯条约",
+    "destroyPromptPrefix": "确定要终止与",
+    "destroyPromptSuffix": "的互不侵犯条约吗？此操作可能影响外交关系。",
+    "destroyConfirm": "终止条约",
+    "buildTitle": "确认互不侵犯条约",
+    "buildPromptPrefix": "是否向以下国家提议互不侵犯条约：",
+    "buildDescription": "如果获得批准，双方将在约定期限内承诺不互相攻击。",
+    "buildConfirm": "签订条约"
   },
   "alliance": {
-    "buildTitle": "Confirm Defense Alliance",
-    "buildPromptPrefix": "Do you want to propose a Defense Alliance with",
-    "buildPromptSuffix": "If approved, both countries will assist each other when attacked.",
-    "buildConfirm": "Propose Alliance",
-    "destroyTitle": "Confirm End Defense Alliance",
-    "destroyPromptPrefix": "Are you sure you want to end the defense alliance with",
-    "destroyPromptSuffix": "This may impact future military support.",
-    "destroyConfirm": "End Alliance"
+    "buildTitle": "确认防御同盟",
+    "buildPromptPrefix": "是否与以下国家提议建立防御同盟：",
+    "buildPromptSuffix": "如果获得批准，双方在遭受攻击时将互相支援。",
+    "buildConfirm": "提议结盟",
+    "destroyTitle": "确认终止防御同盟",
+    "destroyPromptPrefix": "确定要终止与",
+    "destroyPromptSuffix": "的防御同盟吗？这可能影响未来的军事支援。",
+    "destroyConfirm": "终止同盟"
   },
   "trade": {
-    "buildTitle": "Confirm Trade Agreement",
-    "buildPromptPrefix": "Do you want to propose a trade agreement to",
-    "buildPromptSuffix": "This will open trade routes between both countries if accepted.",
-    "buildConfirm": "Form Agreement",
-    "destroyTitle": "Confirm End Trade Relations",
-    "destroyPromptPrefix": "Are you sure you want to end trade relations with",
-    "destroyPromptSuffix": "You can re-establish it through the Partners menu.",
-    "destroyConfirm": "End Relations"
+    "buildTitle": "确认贸易协定",
+    "buildPromptPrefix": "是否向以下国家提议贸易协定：",
+    "buildPromptSuffix": "如果获得批准，两国之间将开通贸易路线。",
+    "buildConfirm": "签订协定",
+    "destroyTitle": "确认终止贸易关系",
+    "destroyPromptPrefix": "确定要终止与",
+    "destroyPromptSuffix": "的贸易关系吗？您可以通过伙伴菜单重新建立关系。",
+    "destroyConfirm": "终止关系"
   },
   "research": {
-    "destroyTitle": "Confirm Stop Research Contract",
-    "destroyPromptPrefix": "Are you sure you want to stop the research contract with",
-    "destroyPromptSuffix": "Stopping the contract will end the research collaboration.",
-    "destroyConfirm": "Stop Contract",
-    "buildTitle": "Confirm Research Contract",
-    "buildPromptPrefix": "Start a research contract with",
-    "buildPromptMid": "This collaboration reduces the duration of all national research by",
-    "buildPromptSuffix": "per partner country.",
-    "buildConfirm": "Start Contract"
+    "destroyTitle": "确认终止研究合同",
+    "destroyPromptPrefix": "确定要终止与",
+    "destroyPromptSuffix": "的研究合同吗？终止后将停止双方的研究合作。",
+    "destroyConfirm": "终止合同",
+    "buildTitle": "确认研究合同",
+    "buildPromptPrefix": "是否与以下国家开始研究合作：",
+    "buildPromptMid": "此合作可使所有国家研究所需时间缩短",
+    "buildPromptSuffix": "。",
+    "buildConfirm": "开始合作"
   },
   "sendTroops": {
-    "title": "Confirm Send Troops",
-    "promptPrefix": "Send troops to",
-    "promptSuffix": "This action may affect diplomatic relations and trigger a military response.",
-    "confirm": "Send Troops"
+    "title": "确认派遣军队",
+    "promptPrefix": "向以下国家派遣军队：",
+    "promptSuffix": "此行动可能影响外交关系并引发军事回应。",
+    "confirm": "派遣军队"
   },
   "callAlly": {
-    "title": "Confirm Call Ally",
-    "promptPrefix": "Do you want to call allies to help fight against",
-    "promptSuffix": "Allies may send military support or other assistance.",
-    "confirm": "Call Ally"
+    "title": "确认请求盟友支援",
+    "promptPrefix": "是否请求盟友协助对抗以下国家：",
+    "promptSuffix": "盟友可能会提供军事支援或其他援助。",
+    "confirm": "请求盟友支援"
   },
   "sanction": {
-    "title": "Confirm Impose Sanction",
-    "promptPrefix": "Impose sanctions on",
-    "promptMid": "Diplomatic relations will drop randomly by",
-    "points": "points",
-    "currentNetBalance": "Current net balance",
-    "impactPerSanction": "Impact per sanction",
-    "afterSanctionNetBalance": "Net balance after sanction",
-    "confirm": "Impose Sanction"
+    "title": "确认实施制裁",
+    "promptPrefix": "对以下国家实施制裁：",
+    "promptMid": "外交关系将随机下降",
+    "points": "点",
+    "currentNetBalance": "当前净收支",
+    "impactPerSanction": "每次制裁的影响",
+    "afterSanctionNetBalance": "制裁后的净收支",
+    "confirm": "实施制裁"
   },
   "province": {
     "actionOptions": {
