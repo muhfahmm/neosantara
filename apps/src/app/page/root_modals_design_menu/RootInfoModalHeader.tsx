@@ -42,21 +42,21 @@ export default function RootInfoModalHeader({
     <header
       className={
         isStandard
-          ? `satisfaction-modal-header root-modal-util-9462ce2345 ${centerContent ? "root-info-modal-header" : ""}`
+          ? "satisfaction-modal-header root-modal-util-9462ce2345 h-[52px] min-h-[52px] max-h-[52px] !py-0"
           : "root-info-modal-header"
       }
-      data-size={isStandard ? (centerContent ? size : undefined) : size}
-      data-centered={centerContent ? "true" : undefined}
+      data-size={isStandard ? undefined : size}
+      data-centered={!isStandard && centerContent ? "true" : undefined}
     >
       <div className={isStandard ? "satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar" : "root-info-modal-header-main"}>
         {isStandard ? (
-          <div className="root-modal-util-08dfbca033">
+          <div className="root-modal-util-08dfbca033 min-w-0">
             <div className={iconContainerClassName ?? "root-modal-util-739d92b232"}>
               {renderedIcon}
             </div>
             <h2
               id={titleId}
-              className="root-modal-util-6b4648c53a root-modal-util-c2385a463d"
+              className="root-modal-util-6b4648c53a root-modal-util-c2385a463d truncate"
             >
               {title}
             </h2>
@@ -71,9 +71,9 @@ export default function RootInfoModalHeader({
         )}
       </div>
       {centerContent && (
-        <div className="root-info-modal-center">{centerContent}</div>
+        <div className="root-info-modal-center mx-2 flex-1 min-w-0">{centerContent}</div>
       )}
-      <div className={isStandard ? "root-modal-util-08dfbca033" : "root-info-modal-actions"}>
+      <div className={isStandard ? "root-modal-util-08dfbca033 shrink-0" : "root-info-modal-actions"}>
         {actions}
         {onClose && (
           <RootModalCloseButton

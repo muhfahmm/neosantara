@@ -192,18 +192,17 @@ export default function BeriHadiahModal({
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
-        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans shadow-2xl">
+      <NotebookModalWrapper
+        onClose={onClose}
+        zIndexClass="z-[100000001]"
+        frameClassName="country-detail-modal-frame"
+      >
+        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-root-surface font-sans">
           <RootInfoModalHeader
             title={t("detail_negara_ai.geopolitics.giveGiftTitle")}
             onClose={onClose}
             icon={<Gift />}
             size="standard"
-            centerContent={
-              <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-                {t("detail_negara_ai.geopolitics.recipientCountry")}: <span className="text-root-text font-bold">{targetCountryDisplayName}</span>
-              </p>
-            }
           />
 
           {/* BODY */}

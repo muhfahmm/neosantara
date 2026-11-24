@@ -64,8 +64,9 @@ export default function PilihItemModal({
     <NotebookModalWrapper
       zIndexClass="z-[100000001]"
       onClose={onClose}
+      frameClassName="country-detail-modal-frame"
     >
-      <div className="flex h-full min-w-0 flex-col overflow-hidden">
+      <div className="flex h-full min-w-0 flex-col overflow-hidden bg-root-surface font-sans">
         <RootInfoModalHeader
           title={translatedTitle}
           onClose={onClose}
@@ -74,7 +75,7 @@ export default function PilihItemModal({
         />
 
         {/* BODY - Grid Card */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 pt-5 pb-2 bg-root-surface relative z-10 neon-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 pt-5 pb-2 bg-root-surface relative z-10 no-scrollbar">
           
           {/* RENDER UNTUK DATA BERKATEGORI (PRODUK) */}
           {isGrouped ? (
