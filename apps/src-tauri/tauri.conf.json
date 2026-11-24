@@ -23,7 +23,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://flagcdn.com; connect-src 'self' http://localhost:* http://10.0.2.2:* https://*.firebaseio.com https://*.googleapis.com;"
     }
   },
   "bundle": {

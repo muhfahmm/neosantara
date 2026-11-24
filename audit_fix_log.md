@@ -44,7 +44,19 @@ Laporan berkala hasil perbaikan bertahap berdasarkan temuan [audit_report.md](fi
 
 ---
 
-## TAHAP 2: STRUKTURAL
+## TAHAP 3: KEAMANAN
+
+**Cabang Git**: `fix/tahap-3-keamanan`  
+**Status Build**: LULUS (`next build --webpack` sukses tanpa kesalahan).  
+**Status Test**: LULUS (Semua 8 suite pengujian unit hijau 100%).
+
+### 1. Item yang Diselesaikan
+
+| ID Temuan / Tugas | Berkas Diubah | Ringkasan Perubahan | Bukti Sebelum / Sesudah |
+| :--- | :--- | :--- | :--- |
+| **BID-6-001 / TSK-102** | `apps/src-tauri/tauri.conf.json` | Mengonfigurasi Content-Security-Policy (CSP) bertahap dan terverifikasi untuk Tauri WebView Android & Desktop: `"default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://flagcdn.com; connect-src 'self' http://localhost:* http://10.0.2.2:* https://*.firebaseio.com https://*.googleapis.com;"`. | **Sebelum**: `"csp": null` (tidak ada pembatasan asal sumber daya).<br>**Sesudah**: CSP aktif membatasi eksekusi skrip pihak ketiga, mengizinkan engine WebAssembly (`wasm-unsafe-eval`), style Tailwind, CDN bendera resmi, serta endpoint dev dan backend. |
+| **BID-6-002** | `apps/.env.example`<br>`.gitignore` | Verifikasi menyeluruh riwayat git commit: tidak pernah ada token/secret API Firebase yang bocor ke git log (`git log --all -p` bersih). Berkas `.env.local` diabaikan oleh `.gitignore` root dan apps. Template `apps/.env.example` sudah bersih tanpa kredensial riil. | **Sebelum**: Dikhawatirkan secret Firebase bocor.<br>**Sesudah**: Terverifikasi bersih; hanya template dummy di `.env.example`. |
+
 
 **Cabang Git**: `fix/tahap-2-struktural`  
 **Status Build**: LULUS (`next build --webpack` sukses tanpa kesalahan tipe TypeScript).  
