@@ -20,6 +20,7 @@ const DISTANCE_BASED_TRAVEL_KINDS = new Set([
   'aid-delivery',
   'serang',
   'serang-negara',
+  'kudeta',
 ]);
 
 export const getDiplomaticRatificationDays = (

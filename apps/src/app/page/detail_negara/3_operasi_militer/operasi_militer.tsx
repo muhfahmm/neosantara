@@ -56,8 +56,8 @@ interface OperasiMiliterProps {
   occupyingCountry?: string;
   provinceTension?: number;
   currentDate?: Date;
-  actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase' | 'mintaSerang', string>>;
-  onMilitaryActionLaunched?: (action: 'serang' | 'spionase' | 'sabotase') => void;
+  actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase' | 'kudeta' | 'mintaSerang', string>>;
+  onMilitaryActionLaunched?: (action: 'serang' | 'spionase' | 'sabotase' | 'kudeta') => boolean | void;
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
   currentNetBalance?: number;
   adjustNetBalance?: (delta: number) => void;
@@ -400,7 +400,22 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         </div>
         <ActionButton icon={Radiation} label={t('detail_negara_ai.actions.nuclearWar')} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
         
-        <ActionButton icon={UserX} label={t('detail_negara_ai.actions.coup')} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKudetaOpen(true); }} />
+        <div className="relative w-full min-w-0">
+          {actionDates?.kudeta && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.kudeta)}</div>}
+          <ActionButton
+            icon={UserX}
+            label={t('detail_negara_ai.actions.coup')}
+            className={actionDates?.kudeta ? datedActionClass : undefined}
+            iconClass={actionDates?.kudeta ? 'text-amber-300' : undefined}
+            labelClass={actionDates?.kudeta ? 'text-amber-300' : undefined}
+            isDimmed={Boolean(actionDates?.kudeta)}
+            onClick={() => {
+              if (actionDates?.kudeta) return;
+              if (onCloseDetailModal) onCloseDetailModal();
+              setIsKudetaOpen(true);
+            }}
+          />
+        </div>
         <div className="relative w-full min-w-0">
           {actionDates?.mintaSerang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.mintaSerang)}</div>}
           <ActionButton
@@ -469,10 +484,35 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         onClose={() => setIsNuklirOpen(false)}
         onConfirm={launchNuclearStrike}
       />
-      <KudetaModal isOpen={isKudetaOpen} countryName={countryName} onClose={() => setIsKudetaOpen(false)} onConfirm={() => { console.log(`Kudeta -> ${countryName}`); }} />
+      <KudetaModal
+        isOpen={isKudetaOpen}
+        countryName={countryName}
+        onClose={() => setIsKudetaOpen(false)}
+        onConfirm={() => {
+          const targetCountrySlug = String(targetCountryDetail?.country_slug || '');
+          if (!playerCountryName || !targetCountrySlug || !onMilitaryActionLaunched) {
+            console.error('Kudeta tidak dapat dijadwalkan karena data rute atau kalender operasi tidak tersedia.');
+            return false;
+          }
+          if (onMilitaryActionLaunched('kudeta') === false) return false;
+          if (typeof window === 'undefined') return false;
+
+          window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
+            detail: {
+              pathId: `coup-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+              kind: 'kudeta',
+              senderCountry: playerCountryName,
+              targetCountry: countryName,
+              targetCountrySlug,
+            },
+          }));
+          return true;
+        }}
+      />
       <MintaSerangNegaraModal 
         isOpen={isMintaSerangOpen} 
         countryName={countryName} 
+        isPuppet={targetCountryDetail?.isPuppet === true}
         onClose={() => setIsMintaSerangOpen(false)} 
         onConfirm={(selectedTargetCountry, targetCity, amount) => {
           setIsMintaSerangOpen(false);
@@ -483,6 +523,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
                 detail: {
                   attackerCountry: countryName,       // Negara yang diminta menyerang (Rusia)
                   targetCountry: selectedTargetCountry, // Negara target sasaran yang dipilih di dropdown (Afganistan)
+                  attackerCountrySlug: targetCountryDetail?.country_slug,
                   targetCityId: targetCity.cityId,
                   targetCityName: targetCity.name,
                   amount,

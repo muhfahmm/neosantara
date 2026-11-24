@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
-import DiplomacyPathAnimation, { type DiplomacyPathMetadata, type DiplomacyPathProps, type DiplomacyPathVehicle } from './diplomasi/diplomacy-path-animation';
+import DiplomacyPathAnimation, { type DiplomacyPathKind, type DiplomacyPathMetadata, type DiplomacyPathProps, type DiplomacyPathVehicle } from './diplomasi/diplomacy-path-animation';
 
-type SerangNegaraPathProps = DiplomacyPathProps;
+type SerangNegaraPathProps = DiplomacyPathProps & {
+  animationKind?: DiplomacyPathKind;
+};
 
 function SerangNegaraIcon() {
   return (
@@ -89,6 +91,7 @@ export const PATH_METADATA: DiplomacyPathMetadata = {
  * - Progress tracking di Pelacakan Aktivitas
  */
 export default function SerangNegaraPath({
+  animationKind = PATH_METADATA.kind,
   senderCountry,
   targetCountry,
   laneIndex = 0,
@@ -99,7 +102,7 @@ export default function SerangNegaraPath({
 }: SerangNegaraPathProps) {
   return (
     <DiplomacyPathAnimation
-      kind={PATH_METADATA.kind}
+      kind={animationKind}
       accent={PATH_METADATA.accent}
       Vehicle={PATH_METADATA.Vehicle}
       senderCountry={senderCountry}

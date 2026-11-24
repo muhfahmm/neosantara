@@ -283,7 +283,7 @@ export function CountryDetailModal({
     });
   }, [currentDate, countryName]);
 
-  const recordMilitaryAction = (action: 'serang' | 'spionase' | 'sabotase') => {
+  const recordMilitaryAction = (action: 'serang' | 'spionase' | 'sabotase' | 'kudeta') => {
     const actionDate = currentDate ? new Date(currentDate) : new Date();
     const attackerCountry = countryDetail?.country || 'Indonesia';
     const travelEstimate = estimateTravelTime(attackerCountry, countryName || '', {
@@ -295,7 +295,7 @@ export function CountryDetailModal({
         attackerCountry,
         targetCountry: countryName,
       });
-      return;
+      return false;
     }
     actionDate.setDate(actionDate.getDate() + travelEstimate.days);
 
@@ -308,6 +308,7 @@ export function CountryDetailModal({
       ...previous,
       [`${normalizeCountryKey(countryName)}:${action}`]: dateString,
     }));
+    return true;
   };
 
   useEffect(() => {
@@ -1106,6 +1107,7 @@ export function CountryDetailModal({
                   serang: militaryActionDates[`${normalizeCountryKey(countryName)}:serang`],
                   spionase: militaryActionDates[`${normalizeCountryKey(countryName)}:spionase`],
                   sabotase: militaryActionDates[`${normalizeCountryKey(countryName)}:sabotase`],
+                  kudeta: militaryActionDates[`${normalizeCountryKey(countryName)}:kudeta`],
                   mintaSerang: militaryActionDates[`${normalizeCountryKey(countryName)}:minta_serang`],
                 }}
                 onMilitaryActionLaunched={recordMilitaryAction}

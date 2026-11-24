@@ -9,7 +9,7 @@ interface KudetaModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	onClose: () => void;
-	onConfirm: () => void;
+	onConfirm: () => boolean | void;
 }
 
 export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }: KudetaModalProps) {
@@ -49,7 +49,9 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 
 					<button
 						type="button"
-						onClick={() => { onConfirm(); onClose(); }}
+						onClick={() => {
+							if (onConfirm() !== false) onClose();
+						}}
 						className="w-full sm:w-auto px-6 bg-rose-600 hover:bg-rose-700 border border-rose-500 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						{t("detail_negara_ai.military.coupConfirm")}

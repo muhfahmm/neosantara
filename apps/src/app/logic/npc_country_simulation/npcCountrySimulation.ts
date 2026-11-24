@@ -229,6 +229,8 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key === "population_status" ||
       key === "armada" ||
       key === "annexed_forces_ledger" ||
+      key === "ideology" ||
+      key === "isPuppet" ||
       key === "kepuasan" ||
       key === "npc_country_metrics_initialized" ||
       key === "satisfaction_sector_baseline" ||
@@ -642,7 +644,6 @@ async function persistNpcSimulation(
       ...baseline,
       ...(state.countries[slug] || {}),
       religion: baseline.religion,
-      ideology: baseline.ideology,
     }, metadata));
     if (performance.now() - preparationStartedAt >= 2) {
       if (!(await yieldUntilMapPanEnds(generation))) return;
@@ -751,7 +752,6 @@ function applyCountrySimulationState<T extends Record<string, any>>(
     ...country,
     ...countryState,
     religion: country.religion,
-    ideology: country.ideology,
   };
 }
 

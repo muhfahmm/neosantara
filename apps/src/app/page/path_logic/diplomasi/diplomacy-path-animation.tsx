@@ -25,7 +25,8 @@ export type DiplomacyPathKind =
   | 'spionase'
   | 'sabotase'
   | 'icbm'
-  | 'serang-negara';
+  | 'serang-negara'
+  | 'kudeta';
 
 export interface DiplomacyPathProps {
   senderCountry: string;
@@ -196,8 +197,16 @@ export default function DiplomacyPathAnimation({
 
   if (!sender || !target || !travelEstimate) return null;
 
+  const isAttackRoute = kind === 'serang-negara';
+  const isCoupRoute = kind === 'kudeta';
+  const shouldPortalToDocument = isAttackRoute || isCoupRoute;
+  const zIndex = isAttackRoute ? 100000020 : 20;
+  const zIndexClass = isAttackRoute ? 'z-[100000020]' : isCoupRoute ? 'z-20' : 'z-10';
   const overlay = (
-    <div className={`fixed inset-0 ${kind === 'serang-negara' ? 'z-[100000020]' : 'z-10'} pointer-events-none overflow-hidden select-none`}>
+    <div
+      className={`fixed inset-0 ${zIndexClass} pointer-events-none overflow-hidden select-none`}
+      style={shouldPortalToDocument ? { zIndex } : undefined}
+    >
       <svg ref={svgRef} className="absolute inset-0 h-full w-full" viewBox="0 0 1 1">
 
         {/* Rute — garis pendukung tebal */}
@@ -279,7 +288,7 @@ export default function DiplomacyPathAnimation({
     </div>
   );
 
-  if (kind === 'serang-negara' && typeof document !== 'undefined') {
+  if (shouldPortalToDocument && typeof document !== 'undefined') {
     return createPortal(overlay, document.body);
   }
 

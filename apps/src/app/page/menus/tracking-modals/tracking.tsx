@@ -25,6 +25,10 @@ import SabotasePath, { PATH_METADATA as sabotaseMetadata } from '../../path_logi
 import IcbmPath, { PATH_METADATA as icbmMetadata } from '../../path_logic/path-icbm';
 import SerangNegaraPath, { PATH_METADATA as serangNegaraMetadata } from '../../path_logic/path-serang-negara';
 
+const KudetaPath: ComponentType<DiplomacyPathProps> = props => (
+  <SerangNegaraPath {...props} animationKind="kudeta" />
+);
+
 const PATH_REGISTRY: Record<DiplomacyPathKind, {
   Component: ComponentType<DiplomacyPathProps>;
   metadata: DiplomacyPathMetadata;
@@ -38,6 +42,10 @@ const PATH_REGISTRY: Record<DiplomacyPathKind, {
   sabotase: { Component: SabotasePath, metadata: sabotaseMetadata },
   icbm: { Component: IcbmPath, metadata: icbmMetadata },
   'serang-negara': { Component: SerangNegaraPath, metadata: serangNegaraMetadata },
+  kudeta: {
+    Component: KudetaPath,
+    metadata: { ...serangNegaraMetadata, kind: 'kudeta', document: 'Operasi Kudeta' },
+  },
 };
 
 interface ActiveDiplomacyPath {
@@ -51,6 +59,7 @@ interface ActiveDiplomacyPath {
   isPlayerAttacker?: boolean;
   operationTarget?: string;
   operationSucceeded?: boolean;
+  targetCountrySlug?: string;
 }
 
 interface DiplomacyTrackingProps {
@@ -99,6 +108,7 @@ export default function DiplomacyTracking({
       isPlayerAttacker?: boolean,
       operationTarget?: unknown,
       operationSucceeded?: unknown,
+      targetCountrySlug?: unknown,
     ) => {
       const kind = String(kindValue || '') as DiplomacyPathKind;
       const senderCountry = String(senderValue || '').trim();
@@ -120,6 +130,7 @@ export default function DiplomacyTracking({
             isPlayerAttacker: isPlayerAttacker === true,
             operationTarget: typeof operationTarget === 'string' ? operationTarget : undefined,
             operationSucceeded: typeof operationSucceeded === 'boolean' ? operationSucceeded : undefined,
+            targetCountrySlug: typeof targetCountrySlug === 'string' ? targetCountrySlug : undefined,
           }]);
     };
 
@@ -134,6 +145,7 @@ export default function DiplomacyTracking({
         isPlayerAttacker?: boolean;
         operationTarget?: unknown;
         operationSucceeded?: unknown;
+        targetCountrySlug?: unknown;
       }>).detail;
       addPath(
         detail?.kind,
@@ -145,6 +157,7 @@ export default function DiplomacyTracking({
         detail?.isPlayerAttacker,
         detail?.operationTarget,
         detail?.operationSucceeded,
+        detail?.targetCountrySlug,
       );
     };
 
@@ -231,6 +244,11 @@ export default function DiplomacyTracking({
               }
               if (path.kind === 'serang-negara') {
                 window.dispatchEvent(new CustomEvent('neosantara_serang_negara_arrived', {
+                  detail: { ...path, pathId: path.id },
+                }));
+              }
+              if (path.kind === 'kudeta') {
+                window.dispatchEvent(new CustomEvent('neosantara_kudeta_arrived', {
                   detail: { ...path, pathId: path.id },
                 }));
               }

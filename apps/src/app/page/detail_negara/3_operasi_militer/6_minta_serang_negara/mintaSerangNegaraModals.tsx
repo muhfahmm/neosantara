@@ -24,6 +24,7 @@ type CityMapEntry = {
 interface MintaSerangNegaraModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
+	isPuppet?: boolean;
 	onClose: () => void;
 	onConfirm: (targetCountryName: string, targetCity: AttackTargetCity, paymentAmount: number) => void;
 }
@@ -31,6 +32,7 @@ interface MintaSerangNegaraModalProps {
 export default function MintaSerangNegaraModal({
 	isOpen,
 	countryName,
+	isPuppet = false,
 	onClose,
 	onConfirm,
 }: MintaSerangNegaraModalProps) {
@@ -142,7 +144,7 @@ export default function MintaSerangNegaraModal({
 	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0] || null;
 
 	// Kalkulasi peluang kesuksesan sederhana berdasarkan jumlah pembayaran
-	const successRate = Math.min(100, Math.floor((paymentAmount / 100000) * 100));
+	const successRate = isPuppet ? 100 : Math.min(100, Math.floor((paymentAmount / 100000) * 100));
 
 	const handleAddMoney = (amount: number) => {
 		setPaymentAmount((prev) => Math.max(0, prev + amount));
@@ -259,20 +261,23 @@ export default function MintaSerangNegaraModal({
 								<input
 									type="number"
 									min="0"
-									value={paymentAmount || ""}
+									value={isPuppet ? 0 : (paymentAmount || "")}
+									disabled={isPuppet}
 									onChange={(e) => setPaymentAmount(Math.max(0, parseInt(e.target.value) || 0))}
 									className="flex-1 bg-transparent text-sm font-sans font-black text-root-text outline-none placeholder-root-subtle"
 									placeholder="0"
 								/>
-								<button
-									type="button"
-									onClick={() => handleAddMoney(1000)}
-									className="h-8 px-2.5 bg-root-accent hover:bg-[#00e699] active:scale-95 text-root-canvas font-sans font-black text-[11px] rounded-lg flex items-center gap-1 transition-all cursor-pointer shadow-md shrink-0"
-									title={t("detail_negara_ai.military.addOneThousand")}
-								>
-									<ArrowUp className="w-3 h-3" />
-									+1k
-								</button>
+								{!isPuppet && (
+									<button
+										type="button"
+										onClick={() => handleAddMoney(1000)}
+										className="h-8 px-2.5 bg-root-accent hover:bg-[#00e699] active:scale-95 text-root-canvas font-sans font-black text-[11px] rounded-lg flex items-center gap-1 transition-all cursor-pointer shadow-md shrink-0"
+										title={t("detail_negara_ai.military.addOneThousand")}
+									>
+										<ArrowUp className="w-3 h-3" />
+										+1k
+									</button>
+								)}
 							</div>
 						</div>
 					</div>
@@ -314,9 +319,11 @@ export default function MintaSerangNegaraModal({
 								style={{ width: `${successRate}%` }}
 							/>
 						</div>
-						<p className="text-[10px] text-root-subtle font-semibold mt-2.5">
-							{t("detail_negara_ai.military.paymentChanceNote")}
-						</p>
+						{!isPuppet && (
+							<p className="text-[10px] text-root-subtle font-semibold mt-2.5">
+								{t("detail_negara_ai.military.paymentChanceNote")}
+							</p>
+						)}
 					</div>
 
 					{/* Spacer */}
@@ -339,7 +346,7 @@ export default function MintaSerangNegaraModal({
 							onClick={() => {
 								const targetCity = targetCities.find(city => city.cityId === selectedCityId);
 								if (selectedCountry && targetCity) {
-									onConfirm(selectedCountry, targetCity, paymentAmount);
+									onConfirm(selectedCountry, targetCity, isPuppet ? 0 : paymentAmount);
 									onClose();
 								}
 							}}

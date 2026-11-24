@@ -114,6 +114,7 @@ import {
     NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
+import { executeCoup } from '@/app/page/detail_negara/3_operasi_militer/5_lakukan_kudeta/logic/coupLogic';
 import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
 import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
 import { getTutorialProgress, resetTutorial, setTutorialProgress, startTutorial } from '../tutorials_menu/tutorialProgress';
@@ -2734,7 +2735,14 @@ export default function MapPage() {
             }
 
             const paymentAmount = Math.max(0, Number(amount) || 0);
-            const acceptanceChance = Math.min(100, Math.floor((paymentAmount / 100000) * 100));
+            const attackerCountrySlug = String(detail.attackerCountrySlug || '').trim().toLowerCase();
+            const isPuppetAttacker = Boolean(
+                attackerCountrySlug &&
+                getNpcCountrySimulationSnapshot()?.countries[attackerCountrySlug]?.isPuppet === true
+            );
+            const acceptanceChance = isPuppetAttacker
+                ? 100
+                : Math.min(100, Math.floor((paymentAmount / 100000) * 100));
             if (Math.random() * 100 >= acceptanceChance) {
                 resolveRequest('failed');
                 setNotifications(prev => [{
@@ -3466,6 +3474,74 @@ export default function MapPage() {
             window.removeEventListener('trigger_player_attack', handlePlayerAttack);
         };
     }, [currentDate, countryDetail, selectedCountry?.country, selectedCountry?.iso, t]);
+
+    useEffect(() => {
+        const handleCoupArrival = (event: Event) => {
+            const detail = (event as CustomEvent<{
+                pathId?: string;
+                senderCountry?: string;
+                targetCountry?: string;
+                targetCountrySlug?: string;
+            }>).detail;
+            const playerCountryName = String(
+                selectedCountry?.country ||
+                countryDetail?.country ||
+                countryDetail?.nama_negara ||
+                countryDetail?.name_id ||
+                ''
+            );
+            if (
+                !detail?.pathId ||
+                !detail.senderCountry ||
+                !detail.targetCountry ||
+                !detail.targetCountrySlug ||
+                !areSameWarCountry(detail.senderCountry, playerCountryName)
+            ) {
+                return;
+            }
+
+            const result = executeCoup({
+                playerCountryName,
+                targetCountryName: detail.targetCountry,
+                targetCountrySlug: detail.targetCountrySlug,
+                playerIdeology: String(countryDetail?.ideology || countryDetail?.ideologi || '').trim(),
+                updatePlayerCountryDetail: setCountryDetail,
+            });
+            const dateString = [
+                currentDate.getFullYear(),
+                String(currentDate.getMonth() + 1).padStart(2, '0'),
+                String(currentDate.getDate()).padStart(2, '0'),
+            ].join('-');
+            if (!result.success) {
+                console.error(`[Coup] Operation ${detail.pathId} failed on arrival:`, result.reason);
+                setNotifications(previous => [{
+                    id: `coup-failed-${detail.pathId}`,
+                    title: 'Operasi Kudeta Gagal',
+                    sender: 'Komando Operasi Rahasia',
+                    message: result.reason,
+                    timestamp: dateString,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...previous]);
+                return;
+            }
+
+            setNotifications(previous => [{
+                id: `coup-completed-${detail.pathId}`,
+                title: 'Operasi Kudeta Berhasil',
+                sender: 'Komando Operasi Rahasia',
+                message: `Operasi kudeta di ${detail.targetCountry} berhasil. Negara target menjadi boneka dan hubungan diplomatik meningkat ${result.relationIncrease} poin.`,
+                timestamp: dateString,
+                type: 'peringkat',
+                value: 0,
+                isRead: false,
+            }, ...previous]);
+        };
+
+        window.addEventListener('neosantara_kudeta_arrived', handleCoupArrival);
+        return () => window.removeEventListener('neosantara_kudeta_arrived', handleCoupArrival);
+    }, [countryDetail, currentDate, selectedCountry?.country, setCountryDetail]);
 
     // ICBM Target Selection Mode & Efek Keclap Putih
     const [isSelectingIcbmTarget, setIsSelectingIcbmTarget] = useState(false);
