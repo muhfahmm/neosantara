@@ -67,7 +67,7 @@ export default function IcbmPath({
   const sender = useMemo(() => buildCapitalPoint(senderCountry), [senderCountry]);
   const target = useMemo(() => buildCapitalPoint(targetCountry), [targetCountry]);
   const travelEstimate = useMemo(
-    () => estimateTravelTime(senderCountry, targetCountry),
+    () => estimateTravelTime(senderCountry, targetCountry, { durationByDistance: true }),
     [senderCountry, targetCountry]
   );
 

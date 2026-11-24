@@ -35,7 +35,7 @@ import {
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
 } from './time_logic';
-import { getDistanceBasedTravelDays } from './distanceBasedTravelTime';
+import { getFallbackTravelDaysFromDistance } from './continentTravelTime';
 import {
   initializeRouteMathRust,
   isRouteMathRustReady,
@@ -575,7 +575,7 @@ export function buildWarPath(input: BuildWarPathInput): WarPath | null {
       attackerCountry: attacker.country,
       targetCountry: target.country,
     });
-    return getDistanceBasedTravelDays(distanceKm);
+    return getFallbackTravelDaysFromDistance(distanceKm);
   })();
 
   return {

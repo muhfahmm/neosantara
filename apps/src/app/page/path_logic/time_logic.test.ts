@@ -6,14 +6,14 @@ import {
   getEmbassyConstructionDaysFromDistance,
 } from "./time_logic.ts";
 import {
-  getDistanceBasedTravelDays,
-  MAX_DISTANCE_BASED_TRAVEL_DAYS,
-  MAX_ROUTE_DISTANCE_KM,
-  MIN_DISTANCE_BASED_TRAVEL_DAYS,
-} from "./distanceBasedTravelTime.ts";
+  CONTINENT_TRAVEL_DAYS,
+  getFallbackTravelDaysFromDistance,
+  getTravelDaysBetweenContinents,
+  type SupportedContinent,
+} from "./continentTravelTime.ts";
 import { getEffectiveEmbassyBuildTime } from "../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/1_Manfaat Kedutaan.ts";
 
-test("distance-based journeys take at least three game days and scale by distance", () => {
+test("distance-based journeys use the configured origin and destination continents", () => {
   const nearbyRoute = estimateTravelTime("Indonesia", "Malaysia", {
     durationByDistance: true,
   });
@@ -21,10 +21,8 @@ test("distance-based journeys take at least three game days and scale by distanc
     durationByDistance: true,
   });
 
-  assert.equal(nearbyRoute?.days, 3);
-  assert.ok(distantRoute);
-  assert.equal(distantRoute.days, Math.ceil(distantRoute.distanceKm / 1000));
-  assert.ok(distantRoute.days > nearbyRoute!.days);
+  assert.equal(nearbyRoute?.days, 60);
+  assert.equal(distantRoute?.days, 150);
 });
 
 test("routes without distance-based timing keep the existing three-day duration", () => {
@@ -33,7 +31,7 @@ test("routes without distance-based timing keep the existing three-day duration"
   assert.equal(route?.days, 3);
 });
 
-test("diplomatic operations use 120 to 180 days based on distance", () => {
+test("diplomatic and military routes use the continent-pair schedule", () => {
   const kinds = [
     "spionase",
     "sabotase",
@@ -48,9 +46,10 @@ test("diplomatic operations use 120 to 180 days based on distance", () => {
     const route = estimateTravelTime("Indonesia", "Amerika Serikat", { diplomacyKind });
 
     assert.ok(route);
-    assert.equal(route.days, getDistanceBasedTravelDays(route.distanceKm));
-    assert.ok(route.days >= MIN_DISTANCE_BASED_TRAVEL_DAYS);
-    assert.ok(route.days <= MAX_DISTANCE_BASED_TRAVEL_DAYS);
+    assert.equal(
+      route.days,
+      getTravelDaysBetweenContinents(route.originContinent, route.destinationContinent),
+    );
   }
 
   const nearbyRoute = estimateTravelTime("Indonesia", "Malaysia", {
@@ -60,16 +59,72 @@ test("diplomatic operations use 120 to 180 days based on distance", () => {
     diplomacyKind: "non-aggression-pact",
   });
   assert.ok(nearbyRoute && distantRoute);
-  assert.ok(distantRoute.days > nearbyRoute.days);
+  assert.equal(nearbyRoute.days, 60);
+  assert.equal(distantRoute.days, 150);
 });
 
-test("distance-based travel duration stays within its configured limits", () => {
-  assert.equal(getDistanceBasedTravelDays(0), MIN_DISTANCE_BASED_TRAVEL_DAYS);
-  assert.equal(
-    getDistanceBasedTravelDays(MAX_ROUTE_DISTANCE_KM),
-    MAX_DISTANCE_BASED_TRAVEL_DAYS,
-  );
-  assert.throws(() => getDistanceBasedTravelDays(-1), RangeError);
+test("continent-pair schedule includes every directed route", () => {
+  const continents = Object.keys(CONTINENT_TRAVEL_DAYS) as SupportedContinent[];
+  const expectedSchedule: typeof CONTINENT_TRAVEL_DAYS = {
+    Asia: {
+      Asia: 60,
+      Afrika: 120,
+      Eropa: 90,
+      Oceania: 100,
+      "Amerika Selatan": 170,
+      "Amerika Utara": 150,
+    },
+    Afrika: {
+      Asia: 120,
+      Afrika: 60,
+      Eropa: 80,
+      Oceania: 140,
+      "Amerika Selatan": 130,
+      "Amerika Utara": 130,
+    },
+    Eropa: {
+      Asia: 90,
+      Afrika: 80,
+      Eropa: 60,
+      Oceania: 150,
+      "Amerika Selatan": 120,
+      "Amerika Utara": 90,
+    },
+    Oceania: {
+      Asia: 100,
+      Afrika: 140,
+      Eropa: 150,
+      Oceania: 60,
+      "Amerika Selatan": 160,
+      "Amerika Utara": 140,
+    },
+    "Amerika Selatan": {
+      Asia: 170,
+      Afrika: 130,
+      Eropa: 120,
+      Oceania: 160,
+      "Amerika Selatan": 60,
+      "Amerika Utara": 80,
+    },
+    "Amerika Utara": {
+      Asia: 150,
+      Afrika: 130,
+      Eropa: 90,
+      Oceania: 140,
+      "Amerika Selatan": 80,
+      "Amerika Utara": 60,
+    },
+  };
+
+  assert.deepEqual(CONTINENT_TRAVEL_DAYS, expectedSchedule);
+  assert.equal(continents.length, 6);
+  for (const origin of continents) {
+    for (const destination of continents) {
+      const days = getTravelDaysBetweenContinents(origin, destination);
+      assert.ok(days >= 60 && days <= 170);
+      assert.equal(days, CONTINENT_TRAVEL_DAYS[origin][destination]);
+    }
+  }
 });
 
 test("user military attacks use distance-based travel days", () => {
@@ -79,10 +134,17 @@ test("user military attacks use distance-based travel days", () => {
     });
 
     assert.ok(route);
-    assert.equal(route.days, getDistanceBasedTravelDays(route.distanceKm));
-    assert.ok(route.days >= MIN_DISTANCE_BASED_TRAVEL_DAYS);
-    assert.ok(route.days <= MAX_DISTANCE_BASED_TRAVEL_DAYS);
+    assert.equal(
+      route.days,
+      getTravelDaysBetweenContinents(route.originContinent, route.destinationContinent),
+    );
   }
+});
+
+test("fallback travel duration remains bounded for routes without continent data", () => {
+  assert.equal(getFallbackTravelDaysFromDistance(0), 60);
+  assert.equal(getFallbackTravelDaysFromDistance(Math.PI * 6371), 170);
+  assert.throws(() => getFallbackTravelDaysFromDistance(-1), RangeError);
 });
 
 test("embassy construction duration scales with distance and stays within 60 to 120 days", () => {

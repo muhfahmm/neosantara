@@ -1,6 +1,9 @@
 import { CAPITALS_DATA, COUNTRIES_DATA } from '../map_system/map-data';
 import { greatCircleDistanceKmRust } from './routeMathRust';
-import { getDistanceBasedTravelDays } from './distanceBasedTravelTime';
+import {
+  getTravelDaysBetweenContinents,
+  type SupportedContinent,
+} from './continentTravelTime';
 
 export const GAME_DAYS_PER_1000_KM = 1;
 
@@ -21,11 +24,15 @@ const DISTANCE_BASED_TRAVEL_KINDS = new Set([
 
 export const getDiplomaticRatificationDays = (
   kind?: string | null,
-  distanceKm = 0,
+  originContinent?: SupportedContinent,
+  destinationContinent?: SupportedContinent,
 ): number => {
   if (!kind) return MAX_TRAVEL_DAYS;
   if (DISTANCE_BASED_TRAVEL_KINDS.has(kind)) {
-    return getDistanceBasedTravelDays(distanceKm);
+    if (!originContinent || !destinationContinent) {
+      throw new Error(`Cannot estimate ${kind} travel time without both continents`);
+    }
+    return getTravelDaysBetweenContinents(originContinent, destinationContinent);
   }
 
   return MAX_TRAVEL_DAYS;
@@ -35,17 +42,6 @@ const EARTH_RADIUS_KM = 6371;
 const MAX_GREAT_CIRCLE_DISTANCE_KM = Math.PI * EARTH_RADIUS_KM;
 export const MIN_EMBASSY_CONSTRUCTION_DAYS = 60;
 export const MAX_EMBASSY_CONSTRUCTION_DAYS = 120;
-const MAX_DISTANCE_BASED_TRAVEL_DAYS = Math.ceil(
-  (MAX_GREAT_CIRCLE_DISTANCE_KM / 1000) * GAME_DAYS_PER_1000_KM,
-);
-
-export type SupportedContinent =
-  | 'Asia'
-  | 'Afrika'
-  | 'Eropa'
-  | 'Oceania'
-  | 'Amerika Utara'
-  | 'Amerika Selatan';
 
 export interface TravelEstimate {
   distanceKm: number;
@@ -266,13 +262,13 @@ export const estimateTravelTime = (
   const distanceKm = getGreatCircleDistanceKm(origin, destination);
 
   const days = options.diplomacyKind
-    ? getDiplomaticRatificationDays(options.diplomacyKind, distanceKm)
-    : options.durationByDistance
-    ? clamp(
-        Math.ceil((distanceKm / 1000) * GAME_DAYS_PER_1000_KM),
-        MIN_TRAVEL_DAYS,
-        MAX_DISTANCE_BASED_TRAVEL_DAYS,
+    ? getDiplomaticRatificationDays(
+        options.diplomacyKind,
+        origin.continent,
+        destination.continent,
       )
+    : options.durationByDistance
+    ? getTravelDaysBetweenContinents(origin.continent, destination.continent)
     : MAX_TRAVEL_DAYS;
 
   return {
