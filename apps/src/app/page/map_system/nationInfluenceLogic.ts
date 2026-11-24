@@ -109,18 +109,29 @@ function normalizeCountryKey(value: unknown): string {
   return normalizeText(value).replace(/[^a-z0-9]/g, '');
 }
 
-function normalizeValue(value: unknown, synonyms: Record<string, string>): string | null {
+const normalizedFaithCache = new Map<string, string | null>();
+const normalizedIdeologyCache = new Map<string, string | null>();
+
+function normalizeValue(value: unknown, synonyms: Record<string, string>, cache: Map<string, string | null>): string | null {
+  const str = typeof value === 'string' ? value : String(value ?? '');
+  if (cache.has(str)) return cache.get(str)!;
+
   const normalized = normalizeText(value);
-  if (!normalized || normalized === '-') return null;
-  return synonyms[normalized] || normalized;
+  if (!normalized || normalized === '-') {
+    cache.set(str, null);
+    return null;
+  }
+  const result = synonyms[normalized] || normalized;
+  cache.set(str, result);
+  return result;
 }
 
 export function normalizeFaith(value: unknown): string | null {
-  return normalizeValue(value, faithSynonyms);
+  return normalizeValue(value, faithSynonyms, normalizedFaithCache);
 }
 
 export function normalizeIdeology(value: unknown): string | null {
-  return normalizeValue(value, ideologySynonyms);
+  return normalizeValue(value, ideologySynonyms, normalizedIdeologyCache);
 }
 
 function getCountryKeys(country: {

@@ -2,13 +2,15 @@
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Swords, Shield, Ship, Plane, ChevronDown, ChevronUp } from "lucide-react";
+import { X, Swords, Shield, Ship, Plane, ChevronDown, ChevronUp, AlertTriangle, ShieldAlert } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import { convertBarakToSoldiers } from "../../4_armada/logic/1_barak_logic";
 import { getActivePlayerAttack, type PlayerAttackStatus } from "./playerAttackStatus";
 import TravelFuelCostPanel from "../../../3_produksi_konsumsi/fuelLogic/TravelFuelCostPanel";
 import type { TravelFuelStatus } from "../../../3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
+import { loadActiveResolutions } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { loadActiveSecurityCouncilItems } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 
 interface SerangModalsProps {
   isOpen: boolean;
@@ -181,6 +183,21 @@ export default function SerangModals({
     udara: targetSummary.totals.groups.udara?.power ?? 0,
   };
 
+  // Status Resolusi & Mandat PBB (Informatif, tanpa memblokir serangan)
+  const normTarget = String(targetName).trim().toLowerCase();
+  const activePbbResolutions = loadActiveResolutions();
+  const activeSecurityItems = loadActiveSecurityCouncilItems();
+  const targetEmbargoResolution = activePbbResolutions.find(r =>
+    (r.type === 'economic_embargo' || r.type === 'arms_embargo') &&
+    String(r.target?.name || '').trim().toLowerCase() === normTarget
+  );
+  const invasionMandateItem = activeSecurityItems.find(item =>
+    item.type === 'military' &&
+    String(item.target?.name || '').trim().toLowerCase() === normTarget &&
+    item.status === 'passed'
+  );
+  const hasInvasionMandate = Boolean(invasionMandateItem);
+
   const handlePctChange = (key: string, val: number) => {
     const next = { ...deploymentPct, [key]: val };
     setDeploymentPct(next);
@@ -279,6 +296,37 @@ export default function SerangModals({
         {/* BODY MODAL */}
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 neon-scrollbar flex flex-col">
           <div className="w-full space-y-6">
+
+            {/* STATUS MANDAT PBB & EMBARGO (INFORMATIF) */}
+            <div className="flex flex-col gap-2">
+              {hasInvasionMandate ? (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
+                  <Shield className="w-5 h-5 shrink-0 text-emerald-400" />
+                  <div>
+                    <span className="font-black uppercase tracking-wider block">Mandat Operasi Militer PBB Aktif</span>
+                    <span>Serangan terhadap {targetName} didukung oleh Resolusi Dewan Keamanan PBB. Anda tidak akan dikenakan sanksi agresi sepihak.</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+                  <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400" />
+                  <div>
+                    <span className="font-black uppercase tracking-wider block">Peringatan: Tanpa Mandat Resmi PBB</span>
+                    <span>Serangan ini merupakan inisiatif sepihak tanpa resolusi DK PBB. Berisiko memicu sanksi diplomatik dan embargo multilateral terhadap negara Anda.</span>
+                  </div>
+                </div>
+              )}
+
+              {targetEmbargoResolution && (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs">
+                  <ShieldAlert className="w-5 h-5 shrink-0 text-sky-400" />
+                  <div>
+                    <span className="font-black uppercase tracking-wider block">Target Sedang Dalam Embargo PBB</span>
+                    <span>{targetName} saat ini dikenakan sanksi resolusi PBB ({targetEmbargoResolution.label || targetEmbargoResolution.desc}). Pasokan militer target melemah.</span>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
             <div className="flex flex-col bg-root-canvas border border-root-accent/20 p-6 rounded-2xl shadow-sm gap-4">

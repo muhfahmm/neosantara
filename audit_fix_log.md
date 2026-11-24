@@ -41,3 +41,24 @@ Laporan berkala hasil perbaikan bertahap berdasarkan temuan [audit_report.md](fi
 ### 2. Item yang Dilewati / Ditunda
 
 - **BID-7-002 ("type": "module" di package.json)**: Dilewati karena repositori menggunakan build Next.js Webpack dan skrip Node hybrid CommonJS/ESM. Mengubah package root menjadi type module berisiko merusak build runtime. Diganti dengan perbaikan runner tes.
+
+---
+
+## TAHAP 2: STRUKTURAL
+
+**Cabang Git**: `fix/tahap-2-struktural`  
+**Status Build**: LULUS (`next build --webpack` sukses tanpa kesalahan tipe TypeScript).  
+**Status Test**: LULUS (Seluruh 8 suite pengujian unit hijau 100%).
+
+### 1. Item yang Diselesaikan
+
+| ID Temuan / Tugas | Berkas Diubah | Ringkasan Perubahan | Bukti Sebelum / Sesudah |
+| :--- | :--- | :--- | :--- |
+| **BID-5-002 / TSK-201** | `apps/src/app/page/map_system/map-system.tsx` | Mengumpulkan seluruh listener di `initMap` (`neosantara_map_settings_changed`, `map_feature_colors_*`, `map-pan-ended`, `time-controller-idle`) dan mengembalikan cleanup `removeEventListener` lengkap di `useEffect` dengan penanganan flag `isDisposed`. | **Sebelum**: Listener terdaftar tanpa cleanup; remount berulang melipatgandakan listener di memori.<br>**Sesudah**: Semua listener terdaftar via `addManagedListener` dan dibersihkan saat unmount. |
+| **BID-6-003 / TSK-202** | `api/war-simulation/route.ts`<br>`api/client-error/route.ts`<br>`apps/package.json` | Memasang validasi skema runtime menggunakan `zod` serta pembatasan ukuran payload request body (< 50KB). Menolak input tidak valid dengan status HTTP 400/413. | **Sebelum**: Request body JSON dibaca langsung tanpa type-guard runtime.<br>**Sesudah**: Zod memvalidasi rentang angka dan enum; skema diselaraskan dengan TypeScript `BattleInput`. |
+| **BID-3-001 (Disesuaikan)** | `KonfirmasiSerangModals.tsx` | Menampilkan panel peringatan status PBB informatif (Mandat Serangan DK PBB Aktif, Peringatan Serangan Sepihak Tanpa Mandat, dan Status Target Sedang Embargo) tanpa mengubah atau memblokir logika serangan pemain. | **Sebelum**: Pemain menyerang tanpa konteks informasi geopolitik PBB.<br>**Sesudah**: Panel visual informatif muncul di modal konfirmasi penyerangan. |
+| **BID-2-003 / TSK-204** | `scripts/generate-building-metadata-seed.mjs`<br>`json/database_building_metadata/...` | Membuat skrip idempoten generator seed SQL untuk menggabungkan 16 berkas kategori metadata bangunan (121 entitas gedung) ke dalam `database_building_metadata.pg.sql`. | **Sebelum**: Berkas SQL `database_building_metadata.pg.sql` kosong 0 baris.<br>**Sesudah**: Terisi lengkap 121 baris data seed valid dari 16 kategori fitur negara. |
+| **BID-2-004** | `apps/src/app/page/map_system/nationInfluenceLogic.ts` | Menambahkan in-memory cache (`normalizedFaithCache` dan `normalizedIdeologyCache`) sehingga pemetaan string agama dan ideologi hanya diproses sekali per nilai unik. | **Sebelum**: Parsing regex dan normalisasi NFD berulang di setiap iterasi 212 negara.<br>**Sesudah**: Lookup instan O(1) dari Map cache; seluruh 7 tes nationInfluence lulus. |
+| **BID-4-003** | Seluruh modal navigasi | Verifikasi kelas tinggi tetap: komponen kartu menggunakan `min-h-[88px]` fleksibel bukan tinggi absolut beku, dan area modal memiliki `overflow-y-auto` di layar ponsel. | Status aman dan responsif terverifikasi. |
+| **TSK-206** | `apps/tests/gameSessionState.test.mjs` | Membuat suite pengujian unit otomatis untuk modul state sesi permainan (`getCurrentGameDateString`, `setCurrentGameDateString`, pembulatan NEO currency, dan fallback tanggal). | 4 pengujian unit baru berjalan bersih dan lulus 100%. |
+

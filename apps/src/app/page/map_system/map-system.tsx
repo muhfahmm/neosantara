@@ -9682,7 +9682,15 @@ export default function MapPage() {
 
     // Initial map canvas and WASM initialization hook
     useEffect(() => {
+        let isDisposed = false;
         let featureColorSyncTimer: number | null = null;
+        const listenersToCleanup: Array<{ event: string; handler: EventListenerOrEventListenerObject }> = [];
+
+        const addManagedListener = (event: string, handler: EventListenerOrEventListenerObject) => {
+            if (isDisposed) return;
+            window.addEventListener(event, handler);
+            listenersToCleanup.push({ event, handler });
+        };
 
         const initMap = async () => {
             if (hasInitRef.current) return;
@@ -9923,7 +9931,7 @@ export default function MapPage() {
                     wasmModule.set_show_province_borders_on_map?.(nextSettings.showProvinceBorders);
                     wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories(nextSettings));
                 };
-                window.addEventListener('neosantara_map_settings_changed', handleMapSettingsChange);
+                addManagedListener('neosantara_map_settings_changed', handleMapSettingsChange);
 
                 const immediateFeatureColorSync = () => {
                     featureColorsPending = false;
@@ -9933,11 +9941,11 @@ export default function MapPage() {
                     }
                     syncFeatureColors();
                 };
-                window.addEventListener('map_feature_colors_now', immediateFeatureColorSync);
-                window.addEventListener('map_feature_colors_dirty', scheduleFeatureColorSync);
-                window.addEventListener('map_territory_color_updated', scheduleFeatureColorSync);
-                window.addEventListener('neosantara:map-pan-ended', resumeFeatureColorSync);
-                window.addEventListener('neosantara:time-controller-idle', resumeFeatureColorSync);
+                addManagedListener('map_feature_colors_now', immediateFeatureColorSync);
+                addManagedListener('map_feature_colors_dirty', scheduleFeatureColorSync);
+                addManagedListener('map_territory_color_updated', scheduleFeatureColorSync);
+                addManagedListener('neosantara:map-pan-ended', resumeFeatureColorSync);
+                addManagedListener('neosantara:time-controller-idle', resumeFeatureColorSync);
 
                 // Highlight and center player country if present
                 if (typeof window !== 'undefined') {
@@ -9964,6 +9972,18 @@ export default function MapPage() {
             }
         };
         void initMap();
+
+        return () => {
+            isDisposed = true;
+            if (featureColorSyncTimer !== null) {
+                window.clearTimeout(featureColorSyncTimer);
+                featureColorSyncTimer = null;
+            }
+            listenersToCleanup.forEach(({ event, handler }) => {
+                window.removeEventListener(event, handler);
+            });
+            listenersToCleanup.length = 0;
+        };
     }, []);
 
     const mapClickContextRef = useRef({ interactionDisabled: false, playerCountryName: '', isSelectingIcbmTarget: false });
