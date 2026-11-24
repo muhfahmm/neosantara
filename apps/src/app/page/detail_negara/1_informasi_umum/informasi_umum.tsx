@@ -29,7 +29,7 @@ import PanggilSekutuModal from './7_panggil_sekutu/panggilSekutuModals';
 import BerikanSanksiModal from './8_berikan_sanksi/berikanSanksiModals';
 import ProvinsiInformasiUmum from './provinsi_logic/ProvinsiInformasiUmum';
 import type { NonAggressionPactPeriod } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
-import { addRelationSanctionModifier, getRelationValue } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { addRelationSanctionModifier, getRelationValue, setRelationModifier } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import {
   DIPLOMATIC_OFFER_CONFIG,
   getPlayerCountryIdentity,
@@ -674,6 +674,21 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsDestroyModalOpen(false)}
         onConfirm={() => {
           if (blockDiplomaticAction()) return;
+          const relationCountry = playerCountryName || 'Indonesia';
+          const relationBeforeDestruction = getRelationValue(
+            relationCountry,
+            countryName,
+            currentDate || undefined
+          );
+          const relationPenalty = 10 + Math.floor(Math.random() * 11);
+          setRelationModifier(relationCountry, countryName, -relationPenalty);
+          const relationAfterDestruction = getRelationValue(
+            relationCountry,
+            countryName,
+            currentDate || undefined
+          );
+          const actualRelationLoss = relationBeforeDestruction - relationAfterDestruction;
+          window.dispatchEvent(new CustomEvent('country_relations_updated'));
           setEmbassyActive(false);
           setTradeActive(false);
           setPaktaActive(false);
@@ -734,7 +749,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                 economicSanctions: Object.fromEntries(
                   Object.entries(sanctions).filter(([partner]) => normalizeDiplomaticPartner(partner) !== normCountryName)
                 ),
-              }, 'Kedutaan Dihancurkan', `Kedutaan Besar di ${countryName} telah dihancurkan dan hubungan diplomatik terkait dihentikan.`);
+              }, 'Kedutaan Dihancurkan', `Kedutaan Besar di ${countryName} telah dihancurkan. Hubungan diplomatik turun ${actualRelationLoss} poin (penalti ${relationPenalty} poin).`);
             });
           }
           window.dispatchEvent(new CustomEvent('neosantara_cancel_diplomacy_path', {

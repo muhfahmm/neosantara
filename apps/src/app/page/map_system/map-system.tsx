@@ -322,6 +322,7 @@ import {
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbResolutionFrequency';
 import {
     rollZeroRelationInvasionWindows,
+    ZERO_RELATION_WINDOW_CHANCE_PERCENT,
     type ZeroRelationInvasionSchedules,
 } from './zeroRelationInvasionLogic';
 import {
@@ -6396,12 +6397,20 @@ export default function MapPage() {
             const zeroRelationAttackers = attackerScores
                 .filter(item => item.score === 0)
                 .map(item => ({ identity: item.identity, country: item.attacker }));
-            const zeroRelationWindowChancePercent = applyDoktrinPertahananDiriBonus(80, countryDetail);
+            const zeroRelationWindowChancePercent = applyDoktrinPertahananDiriBonus(
+                ZERO_RELATION_WINDOW_CHANCE_PERCENT,
+                countryDetail
+            );
+            const userInvasionFrequency = (countryDetail?.zero_relation_invasion_frequency ||
+                (countryDetail as any)?.invasion_frequency ||
+                'yearly') as 'daily' | 'weekly' | 'yearly';
             const zeroRelationInvasionRoll = rollZeroRelationInvasionWindows(
                 currentDateStr,
                 isInGracePeriod ? [] : zeroRelationAttackers,
                 invasionPendingState.zero_relation_invasion_schedules,
                 zeroRelationWindowChancePercent,
+                Math.random,
+                userInvasionFrequency
             );
             invasionPendingState.__zeroRelationInvasionSchedulesPending = zeroRelationInvasionRoll.schedules;
 
@@ -6475,6 +6484,22 @@ export default function MapPage() {
                                 }
                             }));
                         }
+                    } else if (isZeroRelationAttack) {
+                        // Jika hubungan sudah 0, negara agresor langsung meluncurkan agresi/invasi militer ke pemain
+                        newNotifsToAdd.push(generateDiserangNotification(
+                            attackerCountry,
+                            currentDateStr,
+                            userHasAnnexedTerritories,
+                            'invasi'
+                        ));
+                        window.dispatchEvent(new CustomEvent('start_war_animation', {
+                            detail: {
+                                attacker: attackerCountry,
+                                target: userCountryName,
+                                targetCountryDetail: countryDetail,
+                                resolutionViolationAuthorized: true,
+                            }
+                        }));
                     } else {
                         if (Math.random() < 0.15) {
                             newNotifsToAdd.push(generateDiserangNotification(

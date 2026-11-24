@@ -1,5 +1,5 @@
 export const ZERO_RELATION_WINDOW_DAYS = 30;
-export const ZERO_RELATION_WINDOW_CHANCE_PERCENT = 80;
+export const ZERO_RELATION_WINDOW_CHANCE_PERCENT = 65;
 
 export type ZeroRelationInvasionFrequency = 'daily' | 'weekly' | 'yearly';
 
@@ -8,6 +8,7 @@ export interface ZeroRelationInvasionSchedule {
   fired: boolean;
   frequency?: ZeroRelationInvasionFrequency;
   lastCheckedDay?: number;
+  lastFiredDay?: number;
 }
 
 export interface ZeroRelationInvasionTarget {
@@ -47,29 +48,35 @@ export function getZeroRelationInvasionDailyChancePercent(
 }
 
 /**
- * Mendapatkan konfigurasi durasi window dan peluang dasar untuk masing-masing frekuensi:
- * - daily: evaluasi harian dengan jendela 1 hari (100% peluang per siklus harian)
- * - weekly: evaluasi mingguan dengan jendela 7 hari (90% peluang per siklus mingguan)
- * - yearly: evaluasi tahunan/jangka panjang dengan jendela 30 hari (80% peluang akumulatif per bulan)
+ * Konfigurasi realistis untuk masing-masing frekuensi:
+ * - windowDays: Panjang satu siklus jendela probabilitas
+ * - cooldownDays: Jeda realistis antar agresi militer (agar negara tidak spam menyerang beruntun tiap hari)
+ * - defaultChancePercent: Target peluang akumulatif dalam satu window
+ *
+ * Logika Realistis:
+ * 1. daily: Jendela 7 hari, cooldown 3 hari setelah invasi, peluang akumulatif 65% dalam 7 hari.
+ * 2. weekly: Jendela 14 hari, cooldown 7 hari, peluang akumulatif 65% dalam 14 hari.
+ * 3. yearly: Jendela 30 hari, cooldown 30 hari, peluang akumulatif 65% dalam 30 hari.
  */
 export function getFrequencyWindowConfig(frequency: ZeroRelationInvasionFrequency = 'yearly'): {
   windowDays: number;
+  cooldownDays: number;
   defaultChancePercent: number;
 } {
   switch (frequency) {
     case 'daily':
-      return { windowDays: 1, defaultChancePercent: 100 };
+      return { windowDays: 7, cooldownDays: 3, defaultChancePercent: ZERO_RELATION_WINDOW_CHANCE_PERCENT };
     case 'weekly':
-      return { windowDays: 7, defaultChancePercent: 90 };
+      return { windowDays: 14, cooldownDays: 7, defaultChancePercent: ZERO_RELATION_WINDOW_CHANCE_PERCENT };
     case 'yearly':
     default:
-      return { windowDays: ZERO_RELATION_WINDOW_DAYS, defaultChancePercent: ZERO_RELATION_WINDOW_CHANCE_PERCENT };
+      return { windowDays: ZERO_RELATION_WINDOW_DAYS, cooldownDays: ZERO_RELATION_WINDOW_DAYS, defaultChancePercent: ZERO_RELATION_WINDOW_CHANCE_PERCENT };
   }
 }
 
 /**
  * Melakukan pengecekan dan pengundian invasi untuk negara-negara yang memiliki hubungan 0.
- * Mendukung pembagian 3 waktu evaluasi: 'daily' (harian), 'weekly' (mingguan), dan 'yearly' (tahunan).
+ * Menjamin frekuensi realistis dengan cooldown sehingga tidak terjadi spam serangan berturut-turut.
  */
 export function rollZeroRelationInvasionWindows(
   currentDate: string,
@@ -108,6 +115,7 @@ export function rollZeroRelationInvasionWindows(
       ? {
           windowStartedAt: currentDate,
           fired: false,
+          ...(previousSchedule?.lastFiredDay !== undefined ? { lastFiredDay: previousSchedule.lastFiredDay } : {}),
           ...(frequency !== 'yearly' ? { frequency } : {}),
         }
       : {
@@ -115,23 +123,30 @@ export function rollZeroRelationInvasionWindows(
           ...(frequency !== 'yearly' ? { frequency } : {}),
         };
 
+    // Jika sudah pernah menembak dalam window ini, pertahankan
     if (currentSchedule.fired) {
       nextSchedules[target.identity] = currentSchedule;
       continue;
     }
 
-    // Hitung peluang per hari sesuai frekuensi
-    let rollChance: number;
-    if (frequency === 'daily') {
-      rollChance = effectiveChancePercent;
-    } else if (frequency === 'weekly') {
-      rollChance = getZeroRelationInvasionDailyChancePercent(effectiveChancePercent, 7);
-    } else {
-      rollChance = getZeroRelationInvasionDailyChancePercent(effectiveChancePercent, config.windowDays);
+    // Cek cooldown realistis antar serangan militer
+    if (
+      currentSchedule.lastFiredDay !== undefined &&
+      currentDay - currentSchedule.lastFiredDay < config.cooldownDays
+    ) {
+      nextSchedules[target.identity] = currentSchedule;
+      continue;
     }
 
-    if (rng() * 100 < rollChance) {
-      nextSchedules[target.identity] = { ...currentSchedule, fired: true };
+    // Hitung peluang per hari yang terdistribusi secara matematis sesuai target window (misal 65% akumulatif)
+    const dailyChance = getZeroRelationInvasionDailyChancePercent(effectiveChancePercent, config.windowDays);
+
+    if (rng() * 100 < dailyChance) {
+      nextSchedules[target.identity] = {
+        ...currentSchedule,
+        fired: true,
+        lastFiredDay: currentDay,
+      };
       triggeredTargets.push({
         identity: target.identity,
         country: target.country,
