@@ -264,7 +264,30 @@
     "airForce": "Air Force",
     "totalUnitsToSend": "Total units to send",
     "processing": "Processing...",
-    "resetAll": "Reset All"
+    "resetAll": "Reset All",
+    "stock": "Stock",
+    "commodityGiftSummary": "Commodity aid to {country} increases relations by 1 level for every {threshold} in commodity value.",
+    "estimatedDiplomaticValue": "Estimated diplomatic value ({quantity} x {unitValue})",
+    "giftBelowThreshold": "Current commodity value ({value}) is below the minimum of {threshold} required to increase relations by one level.",
+    "globalEffectAllCountries": "Global effect on all countries:",
+    "relationIncreasePerCountry": "+{levels} relation levels for each country",
+    "improveRelationSummary": "Providing {amount} NEO to {country} increases relations by +1 level.",
+    "transferSuccessToast": "Transferred {units} military units to {country}. Relations increased by +{bonus}.",
+    "yourStock": "Your stock",
+    "currentAllyForces": "Ally's current forces",
+    "remainingAllySlots": "Remaining {infrastructure} capacity for ally",
+    "slotsRemaining": "{count} slots remaining",
+    "usedCapacity": "Used",
+    "decreaseUnits": "Decrease by {count}",
+    "increaseUnits": "Increase by {count}",
+    "infrastructureFull": "The capacity for {infrastructure} in {country} is full. The ally must build more infrastructure to accommodate new units.",
+    "relationTiers": {
+      "sangat_buruk": "Very Poor",
+      "buruk": "Poor",
+      "netral": "Neutral",
+      "baik": "Good",
+      "sangat_baik": "Very Good"
+    }
   },
   "military": {
     "attackInProgressTitle": "Attack Still in Progress",
@@ -298,7 +321,17 @@
     "paymentChanceNote": "Chance increases with payment size. Effective minimum: 20,000 NEO for meaningful results.",
     "suggest": "Suggest",
     "requestAttackPromptPrefix": "Request",
-    "requestAttackPromptSuffix": "to launch an attack against your selected target. Set the amount you are willing to pay for this request."
+    "requestAttackPromptSuffix": "to launch an attack against your selected target. Set the amount you are willing to pay for this request.",
+    "requestAttackTitle": "Request a Military Attack",
+    "militaryDiplomacyTarget": "Military diplomacy - Target: {country}",
+    "requestAttackPrompt": "Ask {country} to attack your selected target. Set the amount you are willing to pay for this request.",
+    "addOneThousand": "Add 1,000",
+    "insufficientPersonnel": "Available personnel: {available}; this operation requires {required}.",
+    "icbmFailureTitle": "ICBM Launch Failed",
+    "icbmLaunchTitle": "ICBM Strike Launched",
+    "icbmCommandCenter": "Strategic Nuclear Missile Command",
+    "icbmFailureMessage": "The strike could not be launched. Verify that the attacker and target are valid, different countries.",
+    "icbmLaunchMessage": "A nuclear-armed intercontinental ballistic missile (ICBM) has been launched toward {country}. All 210 countries will apply a 5-point diplomatic relations penalty for using this weapon of mass destruction."
   },
   "building": {
     "tabs": {

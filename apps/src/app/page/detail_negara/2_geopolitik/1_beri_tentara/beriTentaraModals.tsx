@@ -81,11 +81,6 @@ const UNIT_CATALOG: Record<ArmadaMatra, UnitDefinition[]> = {
   ],
 };
 
-const formatNumber = (num: number | string | undefined | null) => {
-  const n = Number(num || 0);
-  return Number.isFinite(n) ? n.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0';
-};
-
 // Helper resolver quantity unit
 function getUnitQuantity(source: any, unit: UnitDefinition): number {
   if (!source) return 0;
@@ -120,15 +115,26 @@ export default function BeriTentaraModal({
   onClose,
   onConfirm,
 }: BeriTentaraModalProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const numberFormat = useMemo(
+    () => new Intl.NumberFormat(language, { maximumFractionDigits: 2 }),
+    [language],
+  );
+  const formatNumber = (num: number | string | undefined | null) => {
+    const value = Number(num || 0);
+    return Number.isFinite(value) ? numberFormat.format(value) : '0';
+  };
+  const getUnitLabel = (unit: UnitDefinition) => t(`navigation_defense_attack.units.${unit.key}`);
+  const getInfrastructureLabel = (unit: UnitDefinition) =>
+    t(`navigation_military_menu.infrastructure.${unit.infraKey}.title`);
   const [activeTab, setActiveTab] = useState<ArmadaMatra>('darat');
   // State jumlah pengiriman per unit (key: unit.key)
   const [giftAmounts, setGiftAmounts] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
-  const targetName = countryName || 'Negara Sekutu';
-  const playerName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || 'Negara Anda';
+  const targetName = countryName || t("detail_negara_ai.geopolitics.ally");
+  const playerName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || t("detail_negara_ai.geopolitics.you");
 
   // Sisa kapasitas infra target negara sekutu (Barak, Hangar, Gudang Senjata, Pangkalan Laut, Pangkalan Udara)
   const targetInfraCapacities = useMemo(() => {
@@ -343,7 +349,11 @@ export default function BeriTentaraModal({
         window.dispatchEvent(new Event('country_relations_updated'));
       }
 
-      setSuccessToast(`Berhasil mentransfer ${formatNumber(totalUnitsToGift)} unit pasukan ke ${targetName}! Hubungan meningkat +${relationBonus}.`);
+      setSuccessToast(t("detail_negara_ai.geopolitics.transferSuccessToast", {
+        units: formatNumber(totalUnitsToGift),
+        country: targetName,
+        bonus: relationBonus,
+      }));
 
       if (onConfirm) {
         onConfirm();
@@ -481,7 +491,7 @@ export default function BeriTentaraModal({
               onClick={handleReset}
               className="ml-auto shrink-0 text-xs font-bold text-rose-400 hover:text-rose-300 underline uppercase tracking-wider cursor-pointer"
             >
-              {t("detail_negara_ai.geopolitics.resetAll" as any) || "Reset Semua"}
+              {t("detail_negara_ai.geopolitics.resetAll")}
             </button>
           )}
         </div>
@@ -512,10 +522,10 @@ export default function BeriTentaraModal({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-black text-root-text uppercase tracking-wide">
-                        {unit.label}
+                        {getUnitLabel(unit)}
                       </span>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-root-surface border border-root-accent/20 text-root-subtle uppercase">
-                        {unit.infraLabel}
+                        {getInfrastructureLabel(unit)}
                       </span>
                     </div>
 
@@ -524,10 +534,10 @@ export default function BeriTentaraModal({
                       {/* Pasukan Anda */}
                       <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/15">
                         <span className="text-[9px] font-black uppercase text-root-subtle block">
-                          Stok Anda
+                          {t("detail_negara_ai.geopolitics.yourStock")}
                         </span>
                         <span className="text-xs font-bold text-root-accent font-mono">
-                          {formatNumber(userStock)} unit
+                          {formatNumber(userStock)} {t("detail_negara_ai.geopolitics.unitLower")}
                         </span>
                         {currentGiftAmount > 0 && (
                           <span className="text-[10px] font-bold text-rose-400 block">
@@ -539,10 +549,10 @@ export default function BeriTentaraModal({
                       {/* Pasukan Sekutu */}
                       <div className="bg-root-surface p-2.5 rounded-lg border border-root-accent/15">
                         <span className="text-[9px] font-black uppercase text-root-subtle block">
-                          Pasukan Sekutu Saat Ini
+                          {t("detail_negara_ai.geopolitics.currentAllyForces")}
                         </span>
                         <span className="text-xs font-bold text-root-text font-mono">
-                          {formatNumber(targetStock)} unit
+                          {formatNumber(targetStock)} {t("detail_negara_ai.geopolitics.unitLower")}
                         </span>
                         {currentGiftAmount > 0 && (
                           <span className="text-[10px] font-bold text-emerald-400 block">
@@ -554,13 +564,17 @@ export default function BeriTentaraModal({
                       {/* Slot Tersisa di Sekutu */}
                       <div className="col-span-2 sm:col-span-1 bg-root-surface p-2.5 rounded-lg border border-root-accent/15">
                         <span className="text-[9px] font-black uppercase text-root-subtle block">
-                          Sisa Slot {unit.infraLabel} Sekutu
+                          {t("detail_negara_ai.geopolitics.remainingAllySlots", {
+                            infrastructure: getInfrastructureLabel(unit),
+                          })}
                         </span>
                         <span className={`text-xs font-bold font-mono ${effectiveRemainingSlot > 0 ? 'text-[#FFD700]' : 'text-rose-400'}`}>
-                          {formatNumber(effectiveRemainingSlot)} slot tersisa
+                          {t("detail_negara_ai.geopolitics.slotsRemaining", {
+                            count: formatNumber(effectiveRemainingSlot),
+                          })}
                         </span>
                         <span className="text-[9px] text-root-subtle block">
-                          (Terpakai: {formatNumber(infraCap.used)} / {formatNumber(infraCap.total)})
+                          ({t("detail_negara_ai.geopolitics.usedCapacity")}: {formatNumber(infraCap.used)} / {formatNumber(infraCap.total)})
                         </span>
                       </div>
                     </div>
@@ -573,7 +587,9 @@ export default function BeriTentaraModal({
                         onClick={() => handleAmountChange(unit, currentGiftAmount - (unit.key === 'barak' ? 1000 : 1))}
                         disabled={currentGiftAmount <= 0}
                         className="p-1.5 rounded-lg bg-root-canvas text-root-accent hover:bg-root-accent/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
-                        title="Kurangi 1 unit"
+                        title={t("detail_negara_ai.geopolitics.decreaseUnits", {
+                          count: unit.key === 'barak' ? 1000 : 1,
+                        })}
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
@@ -595,7 +611,9 @@ export default function BeriTentaraModal({
                         onClick={() => handleAmountChange(unit, currentGiftAmount + (unit.key === 'barak' ? 1000 : 1))}
                         disabled={isNoStock || effectiveRemainingSlot <= 0 || currentGiftAmount >= userStock}
                         className="p-1.5 rounded-lg bg-root-canvas text-root-accent hover:bg-root-accent/20 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
-                        title="Tambah 1 unit"
+                        title={t("detail_negara_ai.geopolitics.increaseUnits", {
+                          count: unit.key === 'barak' ? 1000 : 1,
+                        })}
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -607,7 +625,7 @@ export default function BeriTentaraModal({
                       disabled={isNoStock || effectiveRemainingSlot <= 0}
                       className="px-3 py-2 bg-root-accent/10 hover:bg-root-accent/20 border border-root-accent/30 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-center text-root-accent font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shrink-0"
                     >
-                      Maksimal
+                      {t("detail_negara_ai.geopolitics.max")}
                     </button>
                   </div>
                 </div>
@@ -617,7 +635,10 @@ export default function BeriTentaraModal({
                   <div className="mt-2.5 flex items-center gap-2 p-2 rounded-lg bg-rose-950/40 border border-rose-500/30 text-rose-300 text-[11px]">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
                     <span>
-                      Kapasitas <strong>{unit.infraLabel}</strong> di {targetName} sudah penuh. Sekutu perlu membangun infrastruktur ini terlebih dahulu untuk menampung unit baru.
+                      {t("detail_negara_ai.geopolitics.infrastructureFull", {
+                        infrastructure: getInfrastructureLabel(unit),
+                        country: targetName,
+                      })}
                     </span>
                   </div>
                 )}

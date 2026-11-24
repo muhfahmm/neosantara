@@ -33,7 +33,7 @@ export default function MintaSerangNegaraModal({
 	onClose,
 	onConfirm,
 }: MintaSerangNegaraModalProps) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [selectedCityId, setSelectedCityId] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -59,8 +59,8 @@ export default function MintaSerangNegaraModal({
 
 				return true;
 			})
-			.sort((a, b) => a.country.localeCompare(b.country, "id"));
-	}, [countryName]);
+			.sort((a, b) => a.country.localeCompare(b.country, language));
+	}, [countryName, language]);
 
 	const targetCities = useMemo(() => {
 		if (!selectedCountry) return [];
@@ -161,13 +161,15 @@ export default function MintaSerangNegaraModal({
 			<div className="modal-responsive-shell bg-root-surface border border-root-accent/30 rounded-2xl overflow-hidden flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
 				<RootInfoModalHeader
-					title="Minta Serang Negara"
+					title={t("detail_negara_ai.military.requestAttackTitle")}
 					titleId="request-attack-title"
 					icon={<Swords />}
 					size="standard"
 					centerContent={
 						<p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-							Diplomasi Militer · Target: <span className="text-root-text font-bold">{countryName || "Sekutu"}</span>
+							{t("detail_negara_ai.military.militaryDiplomacyTarget", {
+								country: countryName || t("detail_negara_ai.geopolitics.ally"),
+							})}
 						</p>
 					}
 				/>
@@ -178,9 +180,9 @@ export default function MintaSerangNegaraModal({
 					{/* Info Banner */}
 					<div className="p-3 sm:p-4 rounded-xl bg-root-canvas border border-root-accent/20 shrink-0">
 						<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
-							{t("detail_negara_ai.military.requestAttackPromptPrefix" as any) || "Minta"}{" "}
-							<strong className="text-root-accent font-bold">{countryName || (t("detail_negara_ai.geopolitics.ally" as any) || "Sekutu")}</strong>{" "}
-							{t("detail_negara_ai.military.requestAttackPromptSuffix" as any) || "melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut."}
+							{t("detail_negara_ai.military.requestAttackPrompt", {
+								country: countryName || t("detail_negara_ai.geopolitics.ally"),
+							})}
 						</p>
 					</div>
 
@@ -190,7 +192,7 @@ export default function MintaSerangNegaraModal({
 						{/* Dropdown Negara */}
 						<div>
 							<label className="block text-[10px] sm:text-xs font-black text-root-accent uppercase tracking-wider mb-2">
-								Negara Target
+								{t("detail_negara_ai.geopolitics.targetCountry")}
 							</label>
 							<div className="relative" ref={dropdownRef}>
 								<button
@@ -253,7 +255,7 @@ export default function MintaSerangNegaraModal({
 									type="button"
 									onClick={() => handleAddMoney(1000)}
 									className="h-8 px-2.5 bg-root-accent hover:bg-[#00e699] active:scale-95 text-root-canvas font-sans font-black text-[11px] rounded-lg flex items-center gap-1 transition-all cursor-pointer shadow-md shrink-0"
-									title="Tambah 1.000"
+									title={t("detail_negara_ai.military.addOneThousand")}
 								>
 									<ArrowUp className="w-3 h-3" />
 									+1k

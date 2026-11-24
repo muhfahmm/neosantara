@@ -1,7 +1,7 @@
 "use client";
 
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
-import { getRelationBadge } from '@/app/logic/relationTiers';
+import { getRelationTier } from '@/app/logic/relationTiers';
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Gift,
@@ -24,12 +24,12 @@ import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/Note
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 const CATEGORY_MAP: Record<string, string[]> = {
-  "Mineral & Energi": ["uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi"],
-  "Manufaktur": ["pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"],
-  "Peternakan": ["ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing"],
-  "Agrikultur": ["padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet"],
-  "Perikanan": ["udang", "mutiara", "ikan"],
-  "Olahan Pangan": ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"]
+  criticalMinerals: ["uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi"],
+  manufacturing: ["pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"],
+  livestock: ["ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing"],
+  agriculture: ["padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet"],
+  fishery: ["udang", "mutiara", "ikan"],
+  foodProcessing: ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"]
 };
 
 const COMMODITY_VALUE: Record<string, number> = {
@@ -44,9 +44,6 @@ const COMMODITY_VALUE: Record<string, number> = {
   gula: 150, roti: 200, pengolahan_daging: 250, mie_instan: 180, minyak_goreng: 220,
   susu: 160,
 };
-
-const formatLabel = (key: string) =>
-  key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
 
 interface BeriHadiahModalProps {
   isOpen: boolean;
@@ -67,7 +64,11 @@ export default function BeriHadiahModal({
   onClose,
   onConfirm
 }: BeriHadiahModalProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const numberFormat = useMemo(
+    () => new Intl.NumberFormat(language, { maximumFractionDigits: 2 }),
+    [language],
+  );
   const effectiveSetPlayerCountryDetail = setPlayerCountryDetail || setCountryDetail;
   const [selectedProduct, setSelectedProduct] = useState<string>("padi");
   const [quantity, setQuantity] = useState<number>(100);
@@ -80,8 +81,8 @@ export default function BeriHadiahModal({
     }
   }, [isOpen]);
 
-  const targetCountryName = countryName || "Negara Target";
-  const isAllCountries = targetCountryName === "Semua Negara";
+  const targetCountryName = countryName || t("detail_negara_ai.geopolitics.targetCountry");
+  const isAllCountries = countryName === "Semua Negara";
   const playerCountryName =
     playerCountryDetail?.country ||
     playerCountryDetail?.nama ||
@@ -114,17 +115,17 @@ export default function BeriHadiahModal({
   // Format data item untuk modal pemilih
   const groupedProductItems = useMemo(() => {
     return Object.entries(CATEGORY_MAP).map(([category, keys]) => ({
-      category,
+      category: t(`navigation_economy_trade.transaction.categories.${category}`),
       items: keys.map((key) => {
         const itemStock = playerCountryDetail ? getMaterialStock(playerCountryDetail, key) : 0;
         return {
-          label: `${formatLabel(key)} (Stok: ${itemStock.toLocaleString("id-ID", { maximumFractionDigits: 2 })})`,
+        label: `${t(`navigation_economy_trade.transaction.products.${key}`)} (${t("detail_negara_ai.geopolitics.stock")}: ${numberFormat.format(itemStock)})`,
           value: key,
           disabled: false
         };
       })
     }));
-  }, [playerCountryDetail]);
+  }, [numberFormat, playerCountryDetail, t]);
 
   const handleAddQty = (amount: number) => {
     setQuantity((prev) => Math.max(1, prev + amount));
@@ -180,8 +181,8 @@ export default function BeriHadiahModal({
     onClose();
   };
 
-  const currentBadge = getRelationBadge(currentRelation);
-  const newBadge = getRelationBadge(newRelation);
+  const currentBadge = getRelationTier(currentRelation);
+  const newBadge = getRelationTier(newRelation);
 
   if (!isOpen) return null;
 
@@ -208,7 +209,10 @@ export default function BeriHadiahModal({
               <div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
                 <Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
                 <p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
-                  {t("detail_negara_ai.geopolitics.sendCommodityAidPrefix")} <strong className="text-white">{targetCountryName}</strong>. {t("detail_negara_ai.geopolitics.every10kValue")} <strong className="text-root-accent">10.000 {t("detail_negara_ai.geopolitics.commodityValue")}</strong> {t("detail_negara_ai.geopolitics.willIncrease")} <strong className="text-root-accent">+1 {t("detail_negara_ai.geopolitics.relationLevel")}</strong>.
+                  {t("detail_negara_ai.geopolitics.commodityGiftSummary", {
+                    country: targetCountryName,
+                    threshold: numberFormat.format(10000),
+                  })}
                 </p>
               </div>
 
@@ -218,7 +222,7 @@ export default function BeriHadiahModal({
                   {t("detail_negara_ai.geopolitics.availableCommodityStock")}:
                 </span>
                 <span className={`font-black text-sm ${stockAvailable > 0 ? "text-root-accent" : "text-rose-400"}`}>
-                  {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} {t("detail_negara_ai.geopolitics.unit")}
+                  {numberFormat.format(stockAvailable)} {t("detail_negara_ai.geopolitics.unit")}
                 </span>
               </div>
             </div>
@@ -238,7 +242,7 @@ export default function BeriHadiahModal({
                   <div className="flex items-center gap-2.5 truncate">
                     <Layers className="h-4 w-4 text-root-accent shrink-0" />
                     <span className="font-sans font-bold text-xs sm:text-sm tracking-wide truncate text-root-text">
-                      {formatLabel(selectedProduct)}
+                      {t(`navigation_economy_trade.transaction.products.${selectedProduct}`)}
                     </span>
                   </div>
                   <ChevronDown className="w-4 h-4 text-root-accent shrink-0" />
@@ -282,7 +286,7 @@ export default function BeriHadiahModal({
                       onClick={handleSetMax}
                       className="px-2 py-1 bg-root-accent/20 hover:bg-root-accent/30 border border-root-accent/50 rounded text-[10px] font-black text-root-accent transition-all cursor-pointer"
                     >
-                      Max
+                      {t("detail_negara_ai.geopolitics.max")}
                     </button>
                   </div>
                 </div>
@@ -292,10 +296,13 @@ export default function BeriHadiahModal({
             {/* Nilai Diplomatik Hadiah */}
             <div className="p-3 bg-root-canvas border border-root-accent/20 rounded-xl flex items-center justify-between shrink-0 text-xs">
               <span className="text-root-subtle font-semibold">
-                Estimasi Nilai Diplomatik ({quantity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} x {unitValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })}):
+                {t("detail_negara_ai.geopolitics.estimatedDiplomaticValue", {
+                  quantity: numberFormat.format(quantity),
+                  unitValue: numberFormat.format(unitValue),
+                })}
               </span>
               <span className="font-black text-root-accent text-sm">
-                {totalGiftValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Nilai
+                {numberFormat.format(totalGiftValue)} {t("detail_negara_ai.geopolitics.commodityValue")}
               </span>
             </div>
 
@@ -303,18 +310,18 @@ export default function BeriHadiahModal({
             {!isAllCountries ? (
               <div className="bg-root-canvas p-3 sm:p-4 rounded-xl border border-root-accent/30 shrink-0">
                 <div className="text-[10px] sm:text-xs font-black text-root-subtle uppercase tracking-wider flex items-center justify-between mb-3">
-                  <span>Kalkulasi Peningkatan Hubungan</span>
+                  <span>{t("detail_negara_ai.geopolitics.relationCalcTitle")}</span>
                   <TrendingUp className="h-4 w-4 text-root-accent" />
                 </div>
 
                 <div className="flex items-center justify-between gap-3 bg-root-surface p-3 rounded-lg border border-root-accent/20">
                   {/* Current Level */}
                   <div className="text-center flex-1">
-                    <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Saat Ini</span>
+                    <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.geopolitics.current")}</span>
                     <span className="text-lg sm:text-xl font-black text-root-text">{currentRelation}</span>
                     <div className="mt-1">
-                      <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${currentBadge.className}`}>
-                        {currentBadge.alias}
+                      <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${currentBadge.badgeClassName}`}>
+                        {t(`detail_negara_ai.geopolitics.relationTiers.${currentBadge.id}`)}
                       </span>
                     </div>
                   </div>
@@ -322,18 +329,18 @@ export default function BeriHadiahModal({
                   {/* Arrow & Delta */}
                   <div className="flex flex-col items-center justify-center px-2">
                     <span className="text-[11px] font-black text-root-accent bg-root-accent/10 px-2 py-0.5 rounded border border-root-accent/30 mb-1 whitespace-nowrap">
-                      +{actualGained} Tingkat
+                      +{actualGained} {t("detail_negara_ai.geopolitics.level")}
                     </span>
                     <ArrowRight className="h-4 w-4 text-root-accent" />
                   </div>
 
                   {/* New Level */}
                   <div className="text-center flex-1">
-                    <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">Setelah Pemberian</span>
+                    <span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.geopolitics.afterGiving")}</span>
                     <span className="text-lg sm:text-xl font-black text-root-accent">{newRelation}</span>
                     <div className="mt-1">
-                      <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${newBadge.className}`}>
-                        {newBadge.alias}
+                      <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${newBadge.badgeClassName}`}>
+                        {t(`detail_negara_ai.geopolitics.relationTiers.${newBadge.id}`)}
                       </span>
                     </div>
                   </div>
@@ -344,7 +351,10 @@ export default function BeriHadiahModal({
                   <p className="text-[10px] sm:text-[11px] text-amber-300 flex items-center gap-1.5 mt-2.5">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                     <span>
-                      Nilai komoditas saat ini ({totalGiftValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })}) belum mencapai ambang minimum 10.000 untuk menaikkan 1 tingkat hubungan.
+                      {t("detail_negara_ai.geopolitics.giftBelowThreshold", {
+                        value: numberFormat.format(totalGiftValue),
+                        threshold: numberFormat.format(10000),
+                      })}
                     </span>
                   </p>
                 )}
@@ -355,11 +365,11 @@ export default function BeriHadiahModal({
                 <div className="flex items-center gap-2.5">
                   <Sparkles className="h-4 w-4 text-root-accent shrink-0" />
                   <span className="text-xs text-root-text font-semibold">
-                    Efek Global ke Seluruh Negara:
+                    {t("detail_negara_ai.geopolitics.globalEffectAllCountries")}
                   </span>
                 </div>
                 <span className="text-sm font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30">
-                  +{actualGained} Tingkat untuk Setiap Negara
+                  {t("detail_negara_ai.geopolitics.relationIncreasePerCountry", { levels: actualGained })}
                 </span>
               </div>
             )}
@@ -368,7 +378,7 @@ export default function BeriHadiahModal({
             {isInsufficientStock && (
               <div className="p-2.5 sm:p-3 bg-root-modal-negative-bg border border-root-modal-negative/40 rounded-xl text-root-modal-negative text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
                 <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
-                <span>{t("detail_negara_ai.geopolitics.insufficientCommodityStock")} ({t("detail_negara_ai.geopolitics.available")}: {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} {t("detail_negara_ai.geopolitics.unit")}).</span>
+                <span>{t("detail_negara_ai.geopolitics.insufficientCommodityStock")} ({t("detail_negara_ai.geopolitics.available")}: {numberFormat.format(stockAvailable)} {t("detail_negara_ai.geopolitics.unit")}).</span>
               </div>
             )}
 

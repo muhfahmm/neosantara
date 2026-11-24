@@ -264,7 +264,30 @@
     "airForce": "Angkatan Udara",
     "totalUnitsToSend": "Total unit yang akan dikirim",
     "processing": "Memproses...",
-    "resetAll": "Reset Semua"
+    "resetAll": "Reset Semua",
+    "stock": "Stok",
+    "commodityGiftSummary": "Bantuan komoditas untuk {country} meningkatkan hubungan 1 tingkat setiap nilai komoditas mencapai {threshold}.",
+    "estimatedDiplomaticValue": "Estimasi nilai diplomatik ({quantity} x {unitValue})",
+    "giftBelowThreshold": "Nilai komoditas saat ini ({value}) belum mencapai batas minimum {threshold} untuk menaikkan hubungan 1 tingkat.",
+    "globalEffectAllCountries": "Efek global ke seluruh negara:",
+    "relationIncreasePerCountry": "+{levels} tingkat hubungan untuk setiap negara",
+    "improveRelationSummary": "Memberikan {amount} NEO kepada {country} meningkatkan hubungan +1 tingkat.",
+    "transferSuccessToast": "Berhasil mentransfer {units} unit pasukan ke {country}. Hubungan meningkat +{bonus}.",
+    "yourStock": "Stok Anda",
+    "currentAllyForces": "Pasukan Sekutu Saat Ini",
+    "remainingAllySlots": "Sisa kapasitas {infrastructure} sekutu",
+    "slotsRemaining": "{count} slot tersisa",
+    "usedCapacity": "Terpakai",
+    "decreaseUnits": "Kurangi {count} unit",
+    "increaseUnits": "Tambah {count} unit",
+    "infrastructureFull": "Kapasitas {infrastructure} di {country} sudah penuh. Sekutu perlu membangun infrastruktur tambahan untuk menampung unit baru.",
+    "relationTiers": {
+      "sangat_buruk": "Sangat Buruk",
+      "buruk": "Buruk",
+      "netral": "Netral",
+      "baik": "Baik",
+      "sangat_baik": "Sangat Baik"
+    }
   },
   "military": {
     "attackInProgressTitle": "Serangan Masih Berlangsung",
@@ -298,7 +321,17 @@
     "paymentChanceNote": "Peluang meningkat seiring besarnya pembayaran. Minimum efektif: 20.000 NEO untuk hasil yang berarti.",
     "suggest": "Sarankan",
     "requestAttackPromptPrefix": "Minta",
-    "requestAttackPromptSuffix": "melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut."
+    "requestAttackPromptSuffix": "melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut.",
+    "requestAttackTitle": "Minta Serangan Militer",
+    "militaryDiplomacyTarget": "Diplomasi Militer - Target: {country}",
+    "requestAttackPrompt": "Minta {country} melancarkan serangan terhadap sasaran pilihan Anda. Tetapkan jumlah yang bersedia Anda bayar untuk permintaan tersebut.",
+    "addOneThousand": "Tambah 1.000",
+    "insufficientPersonnel": "Personel tersedia {available}, tetapi operasi membutuhkan {required} personel.",
+    "icbmFailureTitle": "Gagal Meluncurkan ICBM",
+    "icbmLaunchTitle": "Serangan Rudal ICBM Diluncurkan",
+    "icbmCommandCenter": "Pusat Komando Strategis Nuklir",
+    "icbmFailureMessage": "Serangan tidak dapat diluncurkan. Pastikan data negara penyerang dan sasaran valid serta berbeda.",
+    "icbmLaunchMessage": "Satu unit Rudal Balistik Antarbenua (ICBM) berkepala nuklir berhasil diluncurkan menuju {country}. Seluruh 210 negara memberikan penalti hubungan diplomatik 5 poin atas penggunaan senjata pemusnah massal ini."
   },
   "building": {
     "tabs": {

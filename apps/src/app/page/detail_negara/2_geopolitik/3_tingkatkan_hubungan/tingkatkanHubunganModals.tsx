@@ -1,7 +1,7 @@
 "use client";
 
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
-import { getRelationBadge } from '@/app/logic/relationTiers';
+import { getRelationTier } from '@/app/logic/relationTiers';
 import React, { useState, useEffect } from "react";
 import { Heart, Coins, TrendingUp, AlertCircle, Sparkles, Plus, RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
@@ -26,7 +26,7 @@ export default function TingkatkanHubunganModal({
 	onClose,
 	onConfirm
 }: TingkatkanHubunganModalProps) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 	const [inputAmount, setInputAmount] = useState<number>(10000);
 	const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
@@ -39,8 +39,8 @@ export default function TingkatkanHubunganModal({
 
 	if (!isOpen) return null;
 
-	const targetCountryName = countryName || "Negara Target";
-	const isAllCountries = targetCountryName === "Semua Negara";
+	const targetCountryName = countryName || t("detail_negara_ai.geopolitics.targetCountry");
+	const isAllCountries = countryName === "Semua Negara";
 	const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || "Indonesia";
 	const playerBudget = Number(playerCountryDetail?.anggaran || 0);
 
@@ -102,11 +102,11 @@ export default function TingkatkanHubunganModal({
 	};
 
 	const formatNEO = (num: number) => {
-		return num.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+		return num.toLocaleString(language, { maximumFractionDigits: 2 });
 	};
 
-	const currentBadge = getRelationBadge(currentRelation);
-	const newBadge = getRelationBadge(newRelation);
+	const currentBadge = getRelationTier(currentRelation);
+	const newBadge = getRelationTier(newRelation);
 
 	return (
 		<NotebookModalWrapper onClose={onClose}>
@@ -133,7 +133,10 @@ export default function TingkatkanHubunganModal({
 						<div className="p-3 rounded-xl bg-root-canvas border border-root-accent/20 flex items-start gap-2.5">
 							<Sparkles className="h-4 w-4 text-root-accent shrink-0 mt-0.5" />
 							<p className="text-[11px] sm:text-xs text-root-text leading-relaxed">
-								{t("detail_negara_ai.geopolitics.giveAidPrefix")} <strong className="text-root-accent">NEO</strong> {t("detail_negara_ai.geopolitics.to")} <strong className="text-white">{targetCountryName}</strong>. {t("detail_negara_ai.geopolitics.every10kNeo")} <strong className="text-root-accent">10.000 NEO</strong> = <strong className="text-root-accent">+1 {t("detail_negara_ai.geopolitics.level")}</strong> {t("detail_negara_ai.geopolitics.relationLower")}.
+								{t("detail_negara_ai.geopolitics.improveRelationSummary", {
+									amount: new Intl.NumberFormat(language).format(10000),
+									country: targetCountryName,
+								})}
 							</p>
 						</div>
 
@@ -216,8 +219,8 @@ export default function TingkatkanHubunganModal({
 									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.geopolitics.current")}</span>
 									<span className="text-lg sm:text-xl font-black text-root-text">{currentRelation}</span>
 									<div className="mt-1">
-										<span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${currentBadge.className}`}>
-											{currentBadge.alias}
+										<span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${currentBadge.badgeClassName}`}>
+											{t(`detail_negara_ai.geopolitics.relationTiers.${currentBadge.id}`)}
 										</span>
 									</div>
 								</div>
@@ -235,8 +238,8 @@ export default function TingkatkanHubunganModal({
 									<span className="block text-[9px] sm:text-[10px] font-bold text-root-subtle uppercase">{t("detail_negara_ai.geopolitics.afterGiving")}</span>
 									<span className="text-lg sm:text-xl font-black text-root-accent">{newRelation}</span>
 									<div className="mt-1">
-										<span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${newBadge.className}`}>
-											{newBadge.alias}
+										<span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${newBadge.badgeClassName}`}>
+											{t(`detail_negara_ai.geopolitics.relationTiers.${newBadge.id}`)}
 										</span>
 									</div>
 								</div>

@@ -19,7 +19,7 @@ export default function StatusMintaSerangModal({
 	arrivalDate,
 	onClose,
 }: StatusMintaSerangModalProps) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 	if (!isOpen) return null;
 
 	const formatArrivalDate = (dateString?: string | null) => {
@@ -27,7 +27,7 @@ export default function StatusMintaSerangModal({
 		const [year, month, day] = dateString.split("-").map(Number);
 		const date = new Date(year, month - 1, day);
 		if (Number.isNaN(date.getTime())) return dateString;
-		const parts = new Intl.DateTimeFormat("id-ID", {
+		const parts = new Intl.DateTimeFormat(language, {
 			day: "numeric",
 			month: "long",
 			year: "numeric",

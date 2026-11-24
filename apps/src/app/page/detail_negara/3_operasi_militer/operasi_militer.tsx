@@ -78,7 +78,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
 );
 
 export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
   const [blockedPlayerAttack, setBlockedPlayerAttack] = useState<{
@@ -136,7 +136,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
     const [year, month, day] = dateString.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     if (Number.isNaN(date.getTime())) return dateString;
-    const parts = new Intl.DateTimeFormat('id-ID', {
+    const parts = new Intl.DateTimeFormat(language, {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
@@ -217,7 +217,10 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       personnelCount < 1
     ) return;
     if (targetPersonnelCount < personnelCount) {
-      alert(`Personel tersedia ${targetPersonnelCount}, tetapi operasi membutuhkan ${personnelCount} personel.`);
+      alert(t("detail_negara_ai.military.insufficientPersonnel", {
+        available: targetPersonnelCount,
+        required: personnelCount,
+      }));
       return;
     }
 
@@ -289,9 +292,9 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
     if (!result.success) {
       window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
         detail: {
-          title: '❌ GAGAL MELUNCURKAN ICBM',
-          sender: 'Pusat Komando Strategis Nuklir',
-          message: result.message,
+          title: `❌ ${t("detail_negara_ai.military.icbmFailureTitle")}`,
+          sender: t("detail_negara_ai.military.icbmCommandCenter"),
+          message: t("detail_negara_ai.military.icbmFailureMessage"),
           date: dateString,
           type: 'peringkat',
         },
@@ -321,9 +324,11 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
     }
     window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
       detail: {
-        title: '💥 SERANGAN RUDAL ICBM DILUNCURKAN',
-        sender: 'Pusat Komando Strategis Nuklir',
-        message: `Presiden! Satu unit Rudal Balistik Antarbenua (ICBM) berkepala nuklir telah berhasil diluncurkan menuju target sasaran di ${countryName}. Seluruh 210 negara dunia memberikan penalti hubungan diplomatik -5 poin atas peluncuran senjata pemusnah massal ini!`,
+        title: `💥 ${t("detail_negara_ai.military.icbmLaunchTitle")}`,
+        sender: t("detail_negara_ai.military.icbmCommandCenter"),
+        message: t("detail_negara_ai.military.icbmLaunchMessage", {
+          country: countryName,
+        }),
         date: dateString,
         type: 'peringkat',
       },
