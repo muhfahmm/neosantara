@@ -1330,13 +1330,33 @@ export default function MapPage() {
             };
 
             setCountryDetail((previous: any) => {
-                if (!previous || Array.isArray(previous.receivedAidDeliveryIds) && previous.receivedAidDeliveryIds.includes(detail.id)) return previous;
+                if (!previous) return previous;
+                const receivedIds = Array.isArray(previous.receivedAidDeliveryIds)
+                    ? previous.receivedAidDeliveryIds
+                    : [];
+                const alreadyReceived = receivedIds.includes(detail.id);
+                const ongoingDeliveries = Array.isArray(previous.ongoingAidDeliveries)
+                    ? previous.ongoingAidDeliveries
+                    : [];
+                const remainingDeliveries = ongoingDeliveries.filter(
+                    (delivery: unknown) => {
+                        if (typeof delivery !== 'object' || delivery === null) return true;
+                        return (delivery as Record<string, unknown>).id !== detail.id;
+                    }
+                );
+                if (alreadyReceived) {
+                    return remainingDeliveries.length === ongoingDeliveries.length
+                        ? previous
+                        : { ...previous, ongoingAidDeliveries: remainingDeliveries };
+                }
+
                 const inventory = { ...(previous.inventory || {}) };
                 inventory[resourceKey] = (Number(inventory[resourceKey]) || 0) + amount;
                 return {
                     ...previous,
                     inventory,
-                    receivedAidDeliveryIds: [...(Array.isArray(previous.receivedAidDeliveryIds) ? previous.receivedAidDeliveryIds : []), detail.id],
+                    receivedAidDeliveryIds: [...receivedIds, detail.id],
+                    ongoingAidDeliveries: remainingDeliveries,
                     pending_notifications: [{
                         id: `aid-arrived-${detail.id}`,
                         title: getDefaultInboxText(titleKey),

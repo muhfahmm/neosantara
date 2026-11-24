@@ -1087,6 +1087,7 @@ export function CountryDetailModal({
               <Geopolitik
                 countryName={cardCountryName}
                 playerCountryDetail={countryDetail}
+                currentDate={currentDate}
                 setPlayerCountryDetail={setCountryDetail}
                 targetCountryDetail={detailData}
                 setTargetCountryDetail={setFetchedDetail}

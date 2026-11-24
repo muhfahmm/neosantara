@@ -279,6 +279,25 @@ export const estimateTravelTime = (
   };
 };
 
+export const getTravelArrivalDateString = (
+  departureDate: Date,
+  travelDays: number,
+): string | null => {
+  if (!Number.isFinite(departureDate.getTime()) || !Number.isInteger(travelDays) || travelDays < 0) {
+    return null;
+  }
+
+  const arrivalDate = new Date(departureDate);
+  arrivalDate.setHours(0, 0, 0, 0);
+  arrivalDate.setDate(arrivalDate.getDate() + travelDays);
+
+  return [
+    arrivalDate.getFullYear(),
+    String(arrivalDate.getMonth() + 1).padStart(2, '0'),
+    String(arrivalDate.getDate()).padStart(2, '0'),
+  ].join('-');
+};
+
 export const getEmbassyConstructionDaysFromDistance = (distanceKm: number) => {
   if (!Number.isFinite(distanceKm) || distanceKm < 0) {
     throw new RangeError('Embassy construction distance must be a non-negative finite number');

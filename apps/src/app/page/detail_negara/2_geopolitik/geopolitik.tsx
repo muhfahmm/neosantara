@@ -15,22 +15,43 @@ import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
 import { getCountryColor } from '../../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { estimateTravelTime, getTravelArrivalDateString } from '../../path_logic/time_logic';
 
 interface GeopolitikProps {
   countryName: string;
   playerCountryDetail?: any;
+  currentDate?: Date;
   setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   targetCountryDetail?: any;
   setTargetCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   onActionModalStateChange?: (isOpen: boolean) => void;
 }
 
+interface AidDeliverySchedule {
+  id: string;
+  senderCountry: string;
+  targetCountry: string;
+  endDate: string;
+  durationDays: number;
+}
+
+const isAidDeliverySchedule = (value: unknown): value is AidDeliverySchedule => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const record = value as Record<string, unknown>;
+  return typeof record.id === 'string' &&
+    typeof record.senderCountry === 'string' &&
+    typeof record.targetCountry === 'string' &&
+    typeof record.endDate === 'string' &&
+    typeof record.durationDays === 'number';
+};
+
 // Komponen tombol aksi agar kode lebih rapi (Persis sama dengan InformasiUmum)
 const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, label: string, onClick?: () => void, disabled?: boolean }) => {
-  const base = 'bg-root-canvas border border-root-accent/20 rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 transition-all group h-32 lg:h-24 xl:h-32';
+  const base = 'w-full bg-root-canvas border border-root-accent/20 rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 transition-all group h-32 lg:h-24 xl:h-32';
   const interactive = disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:shadow-md hover:border-root-accent/50 hover:bg-root-accent/10 cursor-pointer';
   return (
     <button
+      type="button"
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
       className={`country-detail-action-card ${base} ${interactive}`}
@@ -43,8 +64,8 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
   );
 };
 
-export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail, onActionModalStateChange }: GeopolitikProps) {
-  const { t } = useLanguage();
+export default function Geopolitik({ countryName, playerCountryDetail, currentDate, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail, onActionModalStateChange }: GeopolitikProps) {
+  const { t, language } = useLanguage();
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
@@ -57,7 +78,6 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
 
   const closeAidRequestModal = () => {
     setIsMintaBantuanOpen(false);
-    onActionModalStateChange?.(false);
   };
 
   const openBerikanWilayahModal = () => {
@@ -76,6 +96,44 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]/g, '');
+  const aidDeliveryRecords: unknown[] = Array.isArray(playerCountryDetail?.ongoingAidDeliveries)
+    ? playerCountryDetail.ongoingAidDeliveries
+    : [];
+  const activeAidDelivery = aidDeliveryRecords
+    .filter(isAidDeliverySchedule)
+    .filter(delivery =>
+      normalizeCountryName(delivery?.senderCountry) === normalizeCountryName(countryName) &&
+      normalizeCountryName(delivery?.targetCountry) === normalizeCountryName(playerCountryName) &&
+      typeof delivery?.endDate === 'string'
+    )
+    .sort((a, b) => a.endDate.localeCompare(b.endDate))[0];
+  const formatAidArrivalDate = (dateString?: string) => {
+    if (!dateString) return null;
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    if (
+      !Number.isInteger(year) ||
+      !Number.isInteger(month) ||
+      !Number.isInteger(day) ||
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      console.error('[Geopolitik] Invalid aid delivery arrival date', { dateString, countryName });
+      return null;
+    }
+
+    const parts = new Intl.DateTimeFormat(language, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).formatToParts(date);
+    const dayLabel = parts.find(part => part.type === 'day')?.value || '';
+    const monthLabel = parts.find(part => part.type === 'month')?.value || '';
+    const yearLabel = parts.find(part => part.type === 'year')?.value || '';
+    return `${dayLabel} ${monthLabel}, ${yearLabel}`;
+  };
+  const aidArrivalBadge = formatAidArrivalDate(activeAidDelivery?.endDate);
   const hasDefenseAlliance = (Array.isArray(playerCountryDetail?.defenseAlliances)
     ? playerCountryDetail.defenseAlliances
     : []).some((partner: unknown) => normalizeCountryName(partner) === normalizeCountryName(countryName));
@@ -244,9 +302,53 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
       const resourceKey = availableResources[Math.floor(Math.random() * availableResources.length)];
       const maximumAmount = Math.max(5000, Math.round((availableResources.length / resourceKeys.length) * 10) * 5000);
       const amount = (Math.floor(Math.random() * (maximumAmount / 5000)) + 1) * 5000;
+      const estimate = estimateTravelTime(countryName, playerCountryName, {
+        diplomacyKind: 'aid-delivery',
+      });
+      if (!estimate) {
+        console.error('[Geopolitik] Unable to estimate aid delivery arrival', {
+          senderCountry: countryName,
+          targetCountry: playerCountryName,
+        });
+        return;
+      }
+
+      const departureDate = currentDate
+        ? new Date(currentDate)
+        : new Date(playerCountryDetail?.game_date || Date.now());
+      const endDate = getTravelArrivalDateString(departureDate, estimate.days);
+      if (!endDate) {
+        console.error('[Geopolitik] Invalid simulation date for aid delivery', {
+          currentDate,
+          gameDate: playerCountryDetail?.game_date,
+        });
+        return;
+      }
+
+      const pathId = `aid-delivery-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      setPlayerCountryDetail?.((previous: Record<string, unknown> | null) => {
+        if (!previous) return previous;
+        const ongoingDeliveries: unknown[] = Array.isArray(previous.ongoingAidDeliveries)
+          ? previous.ongoingAidDeliveries
+          : [];
+        return {
+          ...previous,
+          ongoingAidDeliveries: [
+            ...ongoingDeliveries,
+            {
+              id: pathId,
+              senderCountry: countryName,
+              targetCountry: playerCountryName,
+              endDate,
+              durationDays: estimate.days,
+            },
+          ],
+        };
+      });
+
       window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
         detail: {
-          pathId: `aid-delivery-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          pathId,
           kind: 'aid-delivery',
           senderCountry: countryName,
           targetCountry: playerCountryName,
@@ -266,10 +368,14 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
         <ActionButton icon={Sword} label={t('detail_negara_ai.actions.giveTroops')} onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
         <ActionButton icon={Gift} label={t('detail_negara_ai.actions.giveGift')} onClick={() => setIsBeriHadiahOpen(true)} />
         <ActionButton icon={Heart} label={t('detail_negara_ai.actions.improveRelation')} onClick={() => setIsTingkatkanOpen(true)} />
-        <ActionButton icon={Phone} label={t('detail_negara_ai.actions.requestHelp')} onClick={() => {
-          setIsMintaBantuanOpen(true);
-          onActionModalStateChange?.(true);
-        }} />
+        <div className="relative min-w-0">
+          {aidArrivalBadge && (
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+              {aidArrivalBadge}
+            </div>
+          )}
+          <ActionButton icon={Phone} label={t('detail_negara_ai.actions.requestHelp')} onClick={() => setIsMintaBantuanOpen(true)} />
+        </div>
         <ActionButton icon={Map} label={t('detail_negara_ai.actions.transferTerritory')} onClick={openBerikanWilayahModal} disabled={!hasAnnexedTerritory} />
       </div>
 
