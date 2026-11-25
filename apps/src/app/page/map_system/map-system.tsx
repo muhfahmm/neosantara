@@ -75,7 +75,7 @@ const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara'
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
 const StationedPeacekeepersOverlay = dynamic(() => import('../path_logic/peacekeeper/StationedPeacekeepersOverlay'), { ssr: false });
-import { addStationedPeacekeeper, getStationedPeacekeeperPower } from '../path_logic/peacekeeper/peacekeeperLogic';
+import { addStationedPeacekeeper, getStationedPeacekeeperPower, getStationedPeacekeeper } from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint, getCapitalCoord } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
@@ -4253,12 +4253,16 @@ export default function MapPage() {
                     selectedCountry?.iso || countryDetail?.iso
                 )
             ) || isPlayerCoalitionAttacker;
-            let isPlayerDefender = Boolean(playerCountryName) && areSameWarCountry(
+            let isPlayerDefender = (Boolean(playerCountryName) && areSameWarCountry(
                 detail.target,
                 playerCountryName || '',
                 detail.targetCountryDetail?.iso,
                 selectedCountry?.iso || countryDetail?.iso
-            ) || sameCountrySlug(detail.targetCountryDetail?.country_slug, countryDetail?.country_slug);
+            )) || sameCountrySlug(detail.targetCountryDetail?.country_slug, countryDetail?.country_slug)
+               || Boolean(getStationedPeacekeeper(detail.target));
+            if (getStationedPeacekeeper(detail.target)) {
+                showBattleAnalysis = true;
+            }
             let isNpcWar = detail.isPbbCoalition === true
                 ? !isPlayerDefender
                 : !isPlayerAttacker && !isPlayerDefender;
@@ -4346,12 +4350,15 @@ export default function MapPage() {
             );
             if (!areSameWarCountry(effectiveTargetCountry, detail.target)) {
                 detail.target = effectiveTargetCountry;
-                isPlayerDefender = Boolean(playerCountryName) && areSameWarCountry(
+                isPlayerDefender = (Boolean(playerCountryName) && areSameWarCountry(
                     effectiveTargetCountry,
                     playerCountryName,
                     targetCity?.ownerIso,
                     selectedCountry?.iso || countryDetail?.iso
-                );
+                )) || Boolean(getStationedPeacekeeper(effectiveTargetCountry));
+                if (getStationedPeacekeeper(effectiveTargetCountry)) {
+                    showBattleAnalysis = true;
+                }
                 isNpcWar = detail.isPbbCoalition === true
                     ? !isPlayerDefender
                     : !isPlayerAttacker && !isPlayerDefender;
@@ -4888,7 +4895,47 @@ export default function MapPage() {
             }
 
             // Tambahkan kekuatan pasukan penjaga perdamaian (peacekeepers) pemain yang sedang bertugas di negara target
-            const stationedPower = getStationedPeacekeeperPower(detail.target);
+            const stationedPk = getStationedPeacekeeper(detail.target);
+            const stationedPower = stationedPk ? stationedPk.power : getStationedPeacekeeperPower(detail.target);
+
+            // Jika ada pasukan penjaga perdamaian (PBB) pemain yang sedang bertugas di negara target,
+            // gabungkan armada pasukan pemain dengan armada negara sekutu (targetDetailData)
+            if (stationedPk && stationedPk.deployedUnits) {
+                const combinedArmada: Record<string, Record<string, number>> = {
+                    darat: { ...(targetDetailData.armada?.darat || {}) },
+                    laut: { ...(targetDetailData.armada?.laut || {}) },
+                    udara: { ...(targetDetailData.armada?.udara || {}) },
+                };
+
+                // Ambil data armada user dari snapshot atau countryDetail
+                const userSourceArmada = stationedPk.userArmadaSnapshot || countryDetail?.armada || {};
+
+                for (const [unitKey, rawVal] of Object.entries(stationedPk.deployedUnits)) {
+                    if (typeof rawVal === 'number' && rawVal > 0) {
+                        // Tentukan unit ini masuk matra apa (darat, laut, udara)
+                        let groupKey: 'darat' | 'laut' | 'udara' = 'darat';
+                        if (['kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet', 'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik'].includes(unitKey)) {
+                            groupKey = 'laut';
+                        } else if (['jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'].includes(unitKey)) {
+                            groupKey = 'udara';
+                        }
+
+                        // Jika rawVal berupa persentase (1-100), hitung jumlah unit dari armada pemain
+                        const userUnitTotal = Number(userSourceArmada?.[groupKey]?.[unitKey] || userSourceArmada?.[unitKey] || 0);
+                        const quantityToAdd = userUnitTotal > 0 ? Math.round((userUnitTotal * rawVal) / 100) : rawVal;
+
+                        combinedArmada[groupKey][unitKey] = (combinedArmada[groupKey][unitKey] || 0) + quantityToAdd;
+                    }
+                }
+
+                targetDetailData = {
+                    ...targetDetailData,
+                    armada: combinedArmada,
+                    hasPeacekeeperSupport: true,
+                    peacekeeperCountry: playerCountryName || 'PBB',
+                };
+            }
+
             const effectiveTargetPower = targetPowerSummary.totals.totalPower + stationedPower;
 
             setActiveWarAnimation({
@@ -12337,6 +12384,7 @@ export default function MapPage() {
                                     lng: targetCapital?.lng || 0,
                                     power: activeWarAnimation.playerPower || 100,
                                     deployedUnits: activeWarAnimation.deployedUnitsConfig || {},
+                                    userArmadaSnapshot: activeWarAnimation.attackerCountryDetail?.armada || countryDetail?.armada,
                                     deployedAt: currentDate.toISOString().slice(0, 10),
                                 });
 

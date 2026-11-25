@@ -11,6 +11,7 @@ export interface StationedPeacekeeper {
   lng: number;
   power: number;
   deployedUnits: Record<string, number>;
+  userArmadaSnapshot?: any;
   deployedAt: string;
 }
 
@@ -62,6 +63,7 @@ export function addStationedPeacekeeper(pk: Omit<StationedPeacekeeper, "id">): S
       ...existing,
       power: existing.power + pk.power,
       deployedUnits: combinedUnits,
+      userArmadaSnapshot: pk.userArmadaSnapshot || existing.userArmadaSnapshot,
       lat: targetLat,
       lng: targetLng,
       capital: pk.capital || existing.capital,
@@ -95,4 +97,10 @@ export function getStationedPeacekeeperPower(allyCountry: string): number {
   const normAlly = allyCountry.toLowerCase().trim();
   const match = current.find(item => item.allyCountry.toLowerCase().trim() === normAlly);
   return match?.power ?? 0;
+}
+
+export function getStationedPeacekeeper(allyCountry: string): StationedPeacekeeper | null {
+  const current = loadStationedPeacekeepers();
+  const normAlly = allyCountry.toLowerCase().trim();
+  return current.find(item => item.allyCountry.toLowerCase().trim() === normAlly) ?? null;
 }

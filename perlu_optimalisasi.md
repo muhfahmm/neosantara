@@ -1,0 +1,1 @@
+research penambah poin persentase kudeta

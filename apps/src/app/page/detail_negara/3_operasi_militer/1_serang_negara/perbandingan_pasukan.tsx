@@ -253,6 +253,12 @@ export default function PerbandinganPasukan({
     t(`navigation_defense_attack.${key}`, params);
   const localizedAttackerName = getLocalizedCountryName(attackerName, language);
   const localizedTargetName = getLocalizedCountryName(targetName, language);
+  const hasPeacekeeperSupport = Boolean((targetDetail as any)?.hasPeacekeeperSupport);
+  const peacekeeperCountryName = (targetDetail as any)?.peacekeeperCountry || "PBB";
+  const localizedPeacekeeperCountry = getLocalizedCountryName(peacekeeperCountryName, language);
+  const targetDisplayName = hasPeacekeeperSupport
+    ? `${localizedPeacekeeperCountry} + ${localizedTargetName}`
+    : localizedTargetName;
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -378,7 +384,7 @@ export default function PerbandinganPasukan({
             </div>
             <div className="hidden sm:flex items-center gap-2 ml-4 pl-4 border-l border-root-accent/30">
               <span className="text-xs font-black uppercase tracking-wider text-root-subtle">
-                {localizedAttackerName} &rarr; {localizedTargetName}
+                {localizedAttackerName} &rarr; {targetDisplayName}
               </span>
             </div>
           </div>
@@ -433,7 +439,7 @@ export default function PerbandinganPasukan({
                         : tr("analysis.targetEnemy")}
                   </p>
                   <p className="text-xl font-black text-rose-400 uppercase tracking-wide">
-                    {localizedTargetName}
+                    {targetDisplayName}
                   </p>
                   <p className="text-xs text-root-text">
                     {tr("analysis.carriedPower")}{' '}
@@ -543,7 +549,9 @@ export default function PerbandinganPasukan({
 
                           {/* Sisi Kanan: Target */}
                           <div className="flex-1 w-full space-y-2">
-                            <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 mb-2">{tr("analysis.target")}</div>
+                            <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 mb-2">
+                              {hasPeacekeeperSupport ? `${tr("analysis.target")} (${targetDisplayName})` : tr("analysis.target")}
+                            </div>
                             {targetBreakdown[group].map((item) => (
                               <div key={item.key} className="flex items-center justify-between rounded-lg border border-root-accent/20 bg-root-canvas px-3 py-2 text-xs font-semibold text-root-text">
                                 <span>{tr(`units.${item.key}`)}</span>
