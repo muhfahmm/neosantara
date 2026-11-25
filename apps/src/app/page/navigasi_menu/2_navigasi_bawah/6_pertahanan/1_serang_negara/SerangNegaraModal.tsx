@@ -309,9 +309,11 @@ export default function SerangNegaraModal({
     );
     if (targetMatch) {
       setSelectedTarget(targetMatch);
+      attackFuelTripCounterRef.current += 1;
+      attackFuelTripIdRef.current = `military-attack-${attackFuelInstanceId}-${attackFuelTripCounterRef.current}`;
       setIsSerangModalOpen(true);
     }
-  }, [isOpen, militaryAidContext, rankings]);
+  }, [isOpen, militaryAidContext, rankings, attackFuelInstanceId]);
 
   const handleConfirmAttack = (deploymentConfig: Record<string, number>) => {
     handleLaunchAttack(deploymentConfig);
@@ -319,19 +321,24 @@ export default function SerangNegaraModal({
 
   const handleLaunchAttack = (deploymentConfig?: Record<string, number>) => {
     if (!selectedTarget) return;
-    const fuelTripId = attackFuelTripIdRef.current;
-    const fuelCost = attackFuelQuote.cost;
-    if (
-      !fuelTripId ||
-      launchedAttackFuelIdsRef.current.has(fuelTripId) ||
-      fuelCost === null ||
-      !getTravelFuelStatus(
+    const isMilitaryAid = Boolean(militaryAidContext);
+    const fuelTripId = attackFuelTripIdRef.current || `military-attack-${attackFuelInstanceId}-${Date.now()}`;
+    const fuelCost = attackFuelQuote.cost ?? 0;
+    const isFuelOk = isMilitaryAid || (
+      fuelCost !== null &&
+      getTravelFuelStatus(
         countryDetail,
         fuelCost,
         attackFuelQuote.loading,
         attackFuelQuote.fallback,
-      ).ok ||
-      !checkTravelFuel(countryDetail, fuelCost).ok
+      ).ok &&
+      checkTravelFuel(countryDetail, fuelCost).ok
+    );
+
+    if (
+      !fuelTripId ||
+      launchedAttackFuelIdsRef.current.has(fuelTripId) ||
+      !isFuelOk
     ) return;
 
     const activeAttack = getActivePlayerAttack();
@@ -385,14 +392,16 @@ export default function SerangNegaraModal({
       console.error("Serangan dibatalkan karena stok pasukan yang dipilih sudah habis.");
       return;
     }
-    const fuelUpdatedDetail = consumeTravelFuel(updatedDetail, fuelCost, {
-      id: fuelTripId,
-      date: String(countryDetail?.currentDate || countryDetail?.gameDate || new Date().toISOString()).slice(0, 10),
-      targetCountry: selectedTarget.countryName,
-      travelType: "military-attack",
-      amount: fuelCost,
-    });
-    if (fuelUpdatedDetail === updatedDetail) return;
+    let fuelUpdatedDetail = updatedDetail;
+    if (fuelCost > 0) {
+      fuelUpdatedDetail = consumeTravelFuel(updatedDetail, fuelCost, {
+        id: fuelTripId,
+        date: String(countryDetail?.currentDate || countryDetail?.gameDate || new Date().toISOString()).slice(0, 10),
+        targetCountry: selectedTarget.countryName,
+        travelType: "military-attack",
+        amount: fuelCost,
+      });
+    }
     launchedAttackFuelIdsRef.current.add(fuelTripId);
     setCountryDetail(fuelUpdatedDetail);
 

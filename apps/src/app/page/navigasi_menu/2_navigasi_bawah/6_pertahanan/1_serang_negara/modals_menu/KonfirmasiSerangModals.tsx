@@ -509,9 +509,9 @@ export default function SerangModals({
           </button>
           <button 
             onClick={handleConfirm}
-            disabled={!hasDeployedUnits || !travelFuelStatus.ok}
+            disabled={!hasDeployedUnits || (!travelFuelStatus.ok && !isMilitaryAid)}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
-              hasDeployedUnits && travelFuelStatus.ok
+              hasDeployedUnits && (travelFuelStatus.ok || isMilitaryAid)
                 ? isMilitaryAid
                   ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-500 active:scale-95 cursor-pointer"
                   : "bg-rose-600 text-white shadow-lg shadow-rose-900/30 hover:bg-rose-500 active:scale-95 cursor-pointer"
