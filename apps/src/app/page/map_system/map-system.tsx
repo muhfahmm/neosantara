@@ -4229,6 +4229,27 @@ export default function MapPage() {
             }
 
             if (activeWarAnimationRef.current) {
+                // Jika sedang ada perang aktif dan perang baru ini adalah bantuan militer (atau perang terhadap target yang sama),
+                // gabungkan menjadi konvoi simultan (dua jalur bersamaan: merah dan biru)
+                if (detail.isMilitaryAid === true || activeWarAnimationRef.current.isMilitaryAid === true) {
+                    const currentActive = activeWarAnimationRef.current;
+                    const primaryAttackerCountry = detail.isMilitaryAid ? currentActive.attacker : (detail.aggressorCountry || detail.attacker);
+                    const primaryTargetCountry = detail.isMilitaryAid ? currentActive.target : (detail.allyCountry || detail.target);
+                    const primaryAttacker = buildCapitalPoint(primaryAttackerCountry) || { country: primaryAttackerCountry, capital: primaryAttackerCountry, lat: 0, lng: 0 };
+                    const primaryTarget = buildCapitalPoint(primaryTargetCountry) || { country: primaryTargetCountry, capital: primaryTargetCountry, lat: 0, lng: 0 };
+
+                    setActiveWarAnimation((prev: any) => ({
+                        ...prev,
+                        ...detail,
+                        isMilitaryAid: true,
+                        primaryWar: {
+                            attacker: primaryAttacker,
+                            target: primaryTarget,
+                        },
+                    }));
+                    return;
+                }
+
                 // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
                 setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
                 reportDebugStatus('queued');
@@ -11848,6 +11869,7 @@ export default function MapPage() {
                         isUserDefender={isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         isMilitaryAid={activeWarAnimation.isMilitaryAid === true}
+                        primaryWar={activeWarAnimation.primaryWar}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
                         shouldShowBattleAnalysis={activeWarAnimation.shouldShowBattleAnalysis === true}

@@ -822,6 +822,10 @@ interface WarMapProps {
   isUserDefender?: boolean;
   isNpcWar?: boolean;
   isMilitaryAid?: boolean;
+  primaryWar?: {
+    attacker: CapitalPoint;
+    target: CapitalPoint;
+  };
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
   shouldShowBattleAnalysis?: boolean;
@@ -857,6 +861,7 @@ export default function WarMap({
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
   isMilitaryAid = false,
+  primaryWar,
   requestedInvasion = false,
   isPbbCoalition = false,
   shouldShowBattleAnalysis = true,
@@ -999,14 +1004,49 @@ export default function WarMap({
     };
   }, [target]);
 
+  // Primary war route (misal agresor merah menyerang sekutu, berjalan bersamaan dengan konvoi biru bantuan pemain)
+  const resolvedPrimaryAttacker = useMemo<CapitalPoint | null>(() => {
+    if (!primaryWar?.attacker?.country) return null;
+    const coord = getCapitalCoord(primaryWar.attacker.country);
+    return {
+      ...primaryWar.attacker,
+      lat: coord ? coord.lat : (typeof primaryWar.attacker.lat === 'number' && primaryWar.attacker.lat !== 0 ? primaryWar.attacker.lat : (primaryWar.attacker.latitude ?? 0)),
+      lng: coord ? coord.lng : (typeof primaryWar.attacker.lng === 'number' && primaryWar.attacker.lng !== 0 ? primaryWar.attacker.lng : (primaryWar.attacker.longitude ?? 0)),
+    };
+  }, [primaryWar?.attacker]);
+
+  const resolvedPrimaryTarget = useMemo<CapitalPoint | null>(() => {
+    if (!primaryWar?.target?.country) return null;
+    const coord = getCapitalCoord(primaryWar.target.country);
+    return {
+      ...primaryWar.target,
+      lat: coord ? coord.lat : (typeof primaryWar.target.lat === 'number' && primaryWar.target.lat !== 0 ? primaryWar.target.lat : (primaryWar.target.latitude ?? 0)),
+      lng: coord ? coord.lng : (typeof primaryWar.target.lng === 'number' && primaryWar.target.lng !== 0 ? primaryWar.target.lng : (primaryWar.target.longitude ?? 0)),
+    };
+  }, [primaryWar?.target]);
+
+  const primaryWarPath = useMemo<WarPath | null>(() => {
+    if (!isOpen || !resolvedPrimaryAttacker || !resolvedPrimaryTarget) return null;
+    return buildWarPath({ attacker: resolvedPrimaryAttacker, target: resolvedPrimaryTarget });
+  }, [isOpen, resolvedPrimaryAttacker, resolvedPrimaryTarget]);
+
+  const primaryRouteGeometryRef = useRef<MapRouteGeometry | null>(null);
+  const primaryRoutePathRef = useRef<SVGPathElement>(null);
+  const primaryProgressPathRef = useRef<SVGPathElement>(null);
+  const primaryStartMarkerRef = useRef<SVGCircleElement>(null);
+  const primaryStartHaloRef = useRef<SVGCircleElement>(null);
+  const primaryEndMarkerRef = useRef<SVGCircleElement>(null);
+  const primaryEndHaloRef = useRef<SVGCircleElement>(null);
+  const primaryTankRef = useRef<SVGGElement>(null);
+  const primaryTankRotationRef = useRef<SVGGElement>(null);
+
   const warPath = useMemo<WarPath | null>(() => {
     if (!isOpen) return null;
     const path = buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
     if (!path) return null;
-    return isNpcWar && !isPbbCoalition
-      ? { ...path, travelDays: Math.min(path.travelDays, 1) }
-      : path;
-  }, [isOpen, isNpcWar, isPbbCoalition, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
+    // Animasi perang tidak lagi dipangkas ke 1 hari agar pergerakan tank berdurasi proporsional 120-180 hari antarbenua
+    return path;
+  }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
   const deploymentConfig = useMemo(() => {
     if (committedDeploymentConfig) return committedDeploymentConfig;
@@ -1191,6 +1231,7 @@ export default function WarMap({
     let elapsedDays = 0;
     const startingDayPosition = getSimulationDayPosition();
     let lastGeo: MapRouteGeometry | null = null;
+    let lastPrimaryGeo: MapRouteGeometry | null = null;
 
     const updateOverlayGeometry = (geo: MapRouteGeometry) => {
       routePathRef.current?.setAttribute('d', geo.path);
@@ -1213,6 +1254,27 @@ export default function WarMap({
         tankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
       }
     };
+
+    const updatePrimaryOverlayGeometry = (geo: MapRouteGeometry) => {
+      primaryRoutePathRef.current?.setAttribute('d', geo.path);
+      primaryProgressPathRef.current?.setAttribute('d', geo.path);
+      primaryStartMarkerRef.current?.setAttribute('cx', String(geo.start.x));
+      primaryStartMarkerRef.current?.setAttribute('cy', String(geo.start.y));
+      primaryStartHaloRef.current?.setAttribute('cx', String(geo.start.x));
+      primaryStartHaloRef.current?.setAttribute('cy', String(geo.start.y));
+      primaryEndMarkerRef.current?.setAttribute('cx', String(geo.end.x));
+      primaryEndMarkerRef.current?.setAttribute('cy', String(geo.end.y));
+      primaryEndHaloRef.current?.setAttribute('cx', String(geo.end.x));
+      primaryEndHaloRef.current?.setAttribute('cy', String(geo.end.y));
+
+      if (primaryTankRef.current && primaryTankRotationRef.current) {
+        const currentProgress = progressRef.current;
+        const motion = getQuadraticMotion(geo.start, geo.control, geo.end, currentProgress);
+        primaryTankRef.current.setAttribute('transform', `translate(${motion.x} ${motion.y})`);
+        primaryTankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
+      }
+    };
+
     const isGamePaused = () =>
       isSimulationTimePaused() ||
       (typeof window !== 'undefined' && Boolean((window as Window & { neosantara_is_paused?: boolean }).neosantara_is_paused));
@@ -1225,10 +1287,26 @@ export default function WarMap({
         resolvedTarget.lng,
         0.18
       );
-      if (geo === lastGeo) return;
-      lastGeo = geo;
-      routeGeometryRef.current = geo;
-      updateOverlayGeometry(geo);
+      if (geo !== lastGeo) {
+        lastGeo = geo;
+        routeGeometryRef.current = geo;
+        updateOverlayGeometry(geo);
+      }
+
+      if (resolvedPrimaryAttacker && resolvedPrimaryTarget) {
+        const pGeo = getMapRouteGeometry(
+          resolvedPrimaryAttacker.lat,
+          resolvedPrimaryAttacker.lng,
+          resolvedPrimaryTarget.lat,
+          resolvedPrimaryTarget.lng,
+          0.18
+        );
+        if (pGeo !== lastPrimaryGeo) {
+          lastPrimaryGeo = pGeo;
+          primaryRouteGeometryRef.current = pGeo;
+          updatePrimaryOverlayGeometry(pGeo);
+        }
+      }
     };
     refreshCameraGeometry();
     const initialRefreshFrame = requestAnimationFrame(refreshCameraGeometry);
@@ -1268,15 +1346,27 @@ export default function WarMap({
         const millisecondsPerDay = getSimulationMillisecondsPerDay() ?? 2500;
         elapsedDays += delta / millisecondsPerDay;
       }
-      const currentProgress = Math.min(1, elapsedDays / warPath.travelDays);
+      // Kecepatan dihitung seragam berdasarkan warPath.travelDays (atau primaryWarPath jika ada)
+      const maxTravelDays = primaryWarPath ? Math.max(warPath.travelDays, primaryWarPath.travelDays) : warPath.travelDays;
+      const currentProgress = Math.min(1, elapsedDays / maxTravelDays);
       progressRef.current = currentProgress;
       progressPathRef.current?.setAttribute('stroke-dasharray', `${currentProgress * 100} 100`);
+      primaryProgressPathRef.current?.setAttribute('stroke-dasharray', `${currentProgress * 100} 100`);
+
       const geo = routeGeometryRef.current;
       if (geo && tankRef.current && tankRotationRef.current) {
         const motion = getQuadraticMotion(geo.start, geo.control, geo.end, currentProgress);
         tankRef.current.setAttribute('transform', `translate(${motion.x} ${motion.y})`);
         tankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
       }
+
+      const pGeo = primaryRouteGeometryRef.current;
+      if (pGeo && primaryTankRef.current && primaryTankRotationRef.current) {
+        const pMotion = getQuadraticMotion(pGeo.start, pGeo.control, pGeo.end, currentProgress);
+        primaryTankRef.current.setAttribute('transform', `translate(${pMotion.x} ${pMotion.y})`);
+        primaryTankRotationRef.current.setAttribute('transform', `rotate(${pMotion.angle * 180 / Math.PI})`);
+      }
+
       if (currentProgress >= 1) {
         phaseRef.current = 'impact';
         setPhase('impact');
@@ -1642,6 +1732,66 @@ export default function WarMap({
                   <ellipse cx={34.5} cy={0} rx={0.6} ry={1.6} fill={warTheme.trackDeep} />
                 </g>
               </g>
+            )}
+
+            {/* JALUR UTAMA PERANG (MERAH) - JIKA ADA KONVOI UTAMA SECARA SIMULTAN */}
+            {primaryWarPath && (
+              <>
+                <path
+                  ref={primaryRoutePathRef}
+                  d="M 0 0"
+                  fill="none"
+                  stroke="#FF2D55"
+                  strokeWidth={4}
+                  strokeDasharray="14 10"
+                  opacity={phase === 'travel' ? 0.85 : 0.4}
+                  style={{ animation: 'warPathMarch 1s linear infinite' }}
+                />
+                <path
+                  ref={primaryProgressPathRef}
+                  d="M 0 0"
+                  fill="none"
+                  stroke="#FF2D55"
+                  strokeWidth={6}
+                  strokeLinecap="round"
+                  pathLength={100}
+                  strokeDasharray="0 100"
+                />
+                <circle ref={primaryStartMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
+                <circle ref={primaryStartHaloRef} cx={0} cy={0} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
+                <circle ref={primaryEndMarkerRef} cx={0} cy={0} r={8} fill="#FF2D55" opacity={0.8} />
+                <circle ref={primaryEndHaloRef} cx={0} cy={0} r={20} fill="none" stroke="#FF2D55" strokeWidth={2}>
+                  <animate attributeName="r" values="16;30;16" dur="1.6s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
+                </circle>
+
+                {phase === 'travel' && (
+                  <g
+                    ref={primaryTankRef}
+                    transform="translate(0 0)"
+                    className="pointer-events-auto cursor-pointer focus:outline-none"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Konvoi ${primaryWar?.attacker?.country || 'Agresor'}`}
+                  >
+                    <circle r={36} fill="#FF2D55" opacity={0.10} />
+                    <circle r={24} fill="#FF2D55" opacity={0.18} />
+                    <g ref={primaryTankRotationRef} transform="rotate(0)">
+                      <ellipse cx={1} cy={3} rx={27} ry={15} fill="#000000" opacity={0.45} />
+                      <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill="#3A0714" />
+                      <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+                      <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill="#3A0714" />
+                      <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+                      <path d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z" fill="#FF2D55" stroke="#6B1020" strokeWidth={0.9} />
+                      <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill="#B71C3A" />
+                      <path d="M-10,-4 L6,-4.5 L9,-2 L9,2 L6,4.5 L-10,4 L-12,2 L-12,-2 Z" fill="#FF2D55" stroke="#6B1020" strokeWidth={0.7} />
+                      <rect x={8} y={-2.5} width={4} height={5} rx={1} fill="#B71C3A" stroke="#6B1020" strokeWidth={0.5} />
+                      <rect x={11} y={-1.3} width={19} height={2.6} fill="#D01A42" />
+                      <rect x={30} y={-2} width={4.5} height={4} rx={0.8} fill="#3A0714" stroke="#1A0208" strokeWidth={0.4} />
+                    </g>
+                  </g>
+                )}
+              </>
             )}
 
             {phase === 'impact' && (
