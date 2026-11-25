@@ -32,6 +32,9 @@ export interface BantuanSekutuNotification extends NotificationMessage {
   attackerCountry: string;
   allyIso?: string;
   attackerIso?: string;
+  allyPower?: number;
+  attackerPower?: number;
+  targetPower?: number;
   deadlineDate: string;
   status: BantuanSekutuStatus;
   isHandled?: boolean;
@@ -244,6 +247,9 @@ export function createAllyHelpRequest(
     attackerCountry: context.attackerCountry,
     allyIso: context.targetIso,
     attackerIso: context.attackerIso,
+    allyPower: context.targetPower,
+    attackerPower: context.attackerPower,
+    targetPower: context.targetPower,
     deadlineDate: deadlineDateStr,
     status: 'pending',
     isHandled: false,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, Check, X, Shield, Clock } from 'lucide-react';
+import { ShieldAlert, Check, X, Shield, Clock, Swords } from 'lucide-react';
 import { BantuanSekutuNotification, BANTUAN_SEKUTU_CONFIG } from './bantuanPertahananLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { getInboxNotificationMessage, getInboxNotificationTitle } from '../notificationMessage';
@@ -25,6 +25,13 @@ export default function BantuanPertahananNotificationCard({
   const isAccepted = notification.status === 'accepted';
   const isExpired = notification.status === 'expired';
   const isRejected = notification.status === 'rejected';
+
+  // Perhitungan Perbandingan Pasukan / Militer AI Sekutu vs AI Penyerang
+  const allyRawPower = Number(notification.allyPower ?? notification.targetPower) || 0;
+  const attackerRawPower = Number(notification.attackerPower) || 0;
+  const totalPower = allyRawPower + attackerRawPower;
+  const allyPercentage = totalPower > 0 ? Math.round((allyRawPower / totalPower) * 100) : 35;
+  const attackerPercentage = 100 - allyPercentage;
 
   return (
     <div
@@ -89,6 +96,47 @@ export default function BantuanPertahananNotificationCard({
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
           {getInboxNotificationMessage(notification, t)}
         </p>
+
+        {/* BAR PERBANDINGAN PASUKAN / KEKUATAN MILITER SEKUTU VS PENYERANG */}
+        <div className="bg-root-canvas/90 border border-slate-800/80 rounded-xl p-3 space-y-2 shadow-inner">
+          <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-emerald-400 min-w-0">
+              <Shield className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{getLocalizedCountryName(notification.allyCountry)}</span>
+              {allyRawPower > 0 && (
+                <span className="text-[10px] text-emerald-300/80 font-mono">({allyRawPower.toLocaleString()})</span>
+              )}
+            </div>
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-900 text-[10px] text-amber-400 border border-amber-500/30">
+              <Swords className="w-3 h-3" />
+              <span>VS</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-rose-400 min-w-0 justify-end">
+              {attackerRawPower > 0 && (
+                <span className="text-[10px] text-rose-300/80 font-mono">({attackerRawPower.toLocaleString()})</span>
+              )}
+              <span className="truncate">{getLocalizedCountryName(notification.attackerCountry)}</span>
+              <Swords className="w-3.5 h-3.5 shrink-0" />
+            </div>
+          </div>
+
+          {/* Progress Bar Dual / Komparasi */}
+          <div className="relative h-3 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 flex border border-slate-800 shadow-inner">
+            <div
+              style={{ width: `${allyPercentage}%` }}
+              className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-l-full transition-all duration-500 relative"
+            />
+            <div
+              style={{ width: `${attackerPercentage}%` }}
+              className="h-full bg-gradient-to-r from-rose-500 to-rose-700 rounded-r-full transition-all duration-500 relative"
+            />
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
+            <span className="text-emerald-400">{allyPercentage}% (Kekuatan Sekutu)</span>
+            <span className="text-rose-400">{attackerPercentage}% (Kekuatan Penyerang)</span>
+          </div>
+        </div>
 
         {/* Ringkasan Keadaan & Batas Waktu */}
         <div className="bg-root-canvas border border-amber-500/20 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
