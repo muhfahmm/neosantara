@@ -12,7 +12,7 @@ export type PlayerAttackDebugOptions = {
   showRoute?: boolean;
 };
 
-export type AttackDebugScenario = 'ai-attacks-player' | 'player-attacks-ai' | 'ai-vs-ai';
+export type AttackDebugScenario = 'ai-attacks-player' | 'player-attacks-ai' | 'ai-vs-ai' | 'ai-vs-ally';
 
 export type AttackDebugPoint = {
   x: number;
@@ -358,6 +358,79 @@ export function triggerAiVsAiDebugScenario(): string | null {
   return runId;
 }
 
+export function triggerAiVsAllyDebugScenario(customAllyName?: string): string | null {
+  if (!isDevelopment || typeof window === 'undefined') return null;
+  if ((window as AttackDebugWindow).__neosantara_debug_active_war) {
+    throw new Error('Perang lain sedang berjalan. Tunggu perang selesai sebelum menjalankan debug.');
+  }
+
+  const context = (window as AttackDebugWindow).__neosantara_debug_context;
+  const playerDetail = context?.countryDetail;
+  const playerName = playerDetail?.country ||
+    playerDetail?.nama_negara ||
+    playerDetail?.name_id ||
+    playerDetail?.name_en ||
+    context?.selectedCountry?.country;
+
+  const rawAlliances: unknown = playerDetail?.defenseAlliances;
+  let activeAllies: string[] = Array.isArray(rawAlliances)
+    ? rawAlliances.map(String).filter(Boolean)
+    : [];
+
+  // Jika belum ada sekutu pertahanan yang terdaftar di save state pemain,
+  // pilih satu negara AI otomatis dan daftarkan sebagai sekutu pertahanan uji
+  let allyCountryName = customAllyName;
+  if (!allyCountryName) {
+    if (activeAllies.length > 0) {
+      allyCountryName = activeAllies[Math.floor(Math.random() * activeAllies.length)];
+    } else {
+      const candidates = COUNTRIES_DATA.filter(country =>
+        normalize(country.country) !== normalize(typeof playerName === 'string' ? playerName : '')
+      );
+      if (candidates.length < 2) {
+        throw new Error('Tidak cukup negara untuk membuat skenario sekutu.');
+      }
+      const randomAlly = candidates[Math.floor(Math.random() * candidates.length)];
+      allyCountryName = randomAlly.country;
+
+      // Injeksi otomatis ke defenseAlliances di context agar validasi kelayakan lolos
+      if (playerDetail && typeof playerDetail === 'object') {
+        (playerDetail as Record<string, unknown>).defenseAlliances = [allyCountryName];
+      }
+    }
+  }
+
+  const attackerPool = COUNTRIES_DATA.filter(country =>
+    normalize(country.country) !== normalize(typeof playerName === 'string' ? playerName : '') &&
+    normalize(country.country) !== normalize(allyCountryName ?? '')
+  );
+  if (attackerPool.length === 0) {
+    throw new Error('Tidak ada negara AI agresor yang tersedia.');
+  }
+
+  const attacker = attackerPool[Math.floor(Math.random() * attackerPool.length)];
+  const runId = `attack-debug-ally-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  runDetails.set(runId, {
+    attacker: attacker.country,
+    target: allyCountryName,
+    scenario: 'ai-vs-ally',
+  });
+
+  window.setTimeout(() => {
+    window.dispatchEvent(new CustomEvent('start_war_animation', {
+      detail: {
+        attacker: attacker.country,
+        target: allyCountryName,
+        attackerIso: attacker.iso,
+        isNpcWar: true,
+        resolutionViolationAuthorized: true,
+        __neosantaraDebugRunId: runId,
+      },
+    }));
+  }, 0);
+  return runId;
+}
+
 export function markAttackDebugRouteShown(runId: string): void {
   if (isDevelopment) routeShownRuns.add(runId);
 }
@@ -542,6 +615,46 @@ export function observeAttackOutcome(runId: string, timeoutMs = 8000): Promise<A
 export function buildReport(result: AttackDebugResult): AttackDebugReport {
   if (!isDevelopment) return { checks: [], passed: 0, failed: 0, summary: 'Debug tidak tersedia di production.' };
   const check = (label: string, passed: boolean, detail: string): AttackDebugCheck => ({ label, passed, detail });
+  if (result.scenario === 'ai-vs-ally') {
+    const hasAllyAidNotif = result.notifications.some(
+      n => n.tradeType === 'bantuan_sekutu' ||
+      /permintaan bantuan|bantuan militer|sekutu/i.test(`${n.title ?? ''} ${n.message ?? ''}`)
+    );
+    const checks = [
+      check(
+        'Animasi perang AI agresor vs AI sekutu berjalan',
+        result.activeWarAnimation || result.queued || result.warEnded,
+        result.activeWarAnimation
+          ? 'Animasi perang AI vs Sekutu aktif.'
+          : result.queued
+            ? 'Perang masuk antrean.'
+            : result.warEnded
+              ? 'Siklus perang telah berjalan.'
+              : 'Belum teramati.'
+      ),
+      check(
+        'Notifikasi permintaan bantuan sekutu masuk ke Inbox',
+        hasAllyAidNotif,
+        hasAllyAidNotif
+          ? `Sekutu (${result.target}) meminta bantuan militer menghadapi agresi ${result.attacker}.`
+          : 'Notifikasi permintaan bantuan sekutu belum teramati di Inbox.'
+      ),
+      check(
+        'Dampak perang AI selesai tanpa memotong modal user paksa',
+        result.warEnded,
+        result.warEnded ? 'Perang antar-AI selesai diproses.' : 'Perang masih berjalan dalam jendela observasi.'
+      ),
+    ];
+    const passed = checks.filter(item => item.passed).length;
+    const failed = checks.length - passed;
+    return {
+      checks,
+      passed,
+      failed,
+      summary: failed === 0 ? `Lulus: ${passed}/${checks.length}` : `Lulus ${passed}/${checks.length}; gagal/perlu verifikasi ${failed}.`,
+    };
+  }
+
   if (result.scenario === 'ai-vs-ai') {
     const noModal = result.warEnded && !result.analysisShown &&
       !result.resultPhaseShown && !result.resultModalShown;

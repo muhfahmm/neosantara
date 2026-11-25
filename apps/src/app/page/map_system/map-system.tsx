@@ -4709,6 +4709,42 @@ export default function MapPage() {
             ));
 
             setIsWarAnalysisActive(false);
+
+            // Jika perang ini adalah perang AI vs AI dan target memiliki aliansi pertahanan aktif dengan pemain, picu permintaan bantuan sekutu
+            if (isNpcWar && !isPlayerDefender && !isPlayerAttacker) {
+                const targetCountryName = detail.target;
+                const attackerCountryName = detail.attacker;
+                const defenseAlliances = Array.isArray(countryDetail?.defenseAlliances)
+                    ? countryDetail.defenseAlliances
+                    : [];
+                
+                const hasActiveAlliance = defenseAlliances.some((ally: string) =>
+                    areSameWarCountry(ally, targetCountryName, undefined, detail.targetIso || targetDetailData?.iso)
+                );
+
+                if (hasActiveAlliance) {
+                    const resolvedPlayerCountry = getPlayerCountryIdentity(countryDetail) || selectedCountry?.country || 'Indonesia';
+                    const allyHelpRequest = createAllyHelpRequest({
+                        playerCountry: resolvedPlayerCountry,
+                        playerIso: countryDetail?.iso,
+                        defenseAlliances,
+                        attackerCountry: attackerCountryName,
+                        attackerIso: detail.attackerIso || attackerDetailData?.iso,
+                        targetCountry: targetCountryName,
+                        targetIso: detail.targetIso || targetDetailData?.iso,
+                        currentDateStr: simulationDateString,
+                        existingRequests: notifications as unknown as BantuanSekutuNotification[],
+                    });
+
+                    if (allyHelpRequest) {
+                        setNotifications(prev => prev.some(n => n.id === allyHelpRequest.id)
+                            ? prev
+                            : [allyHelpRequest as unknown as NotificationMessage, ...prev]
+                        );
+                    }
+                }
+            }
+
             setActiveWarAnimation({
                 ...detail,
                 isNpcWar,

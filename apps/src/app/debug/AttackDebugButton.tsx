@@ -11,6 +11,7 @@ import {
   markAttackDebugRouteShown,
   observeAttackOutcome,
   triggerAiVsAiDebugScenario,
+  triggerAiVsAllyDebugScenario,
   triggerAttackOnPlayer,
   triggerPlayerAttackOnAi,
   type AttackDebugReport,
@@ -246,6 +247,45 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
     }
   }, [addLog, isRunning]);
 
+  const runAiVsAlly = useCallback(async () => {
+    if (isRunning) {
+      addLog('Serangan lain masih dalam observasi; permintaan AI vs Sekutu diabaikan.');
+      return;
+    }
+
+    const currentGeneration = ++generation.current;
+    setIsRunning(true);
+    setReport(null);
+    setResult(null);
+    setRunStatus('Menyiapkan skenario AI Serang Sekutu Pemain...');
+    try {
+      const selectedAlly = attacker !== 'random' ? attacker : undefined;
+      const runId = triggerAiVsAllyDebugScenario(selectedAlly);
+      if (!runId) throw new Error('Debug serangan sekutu tidak tersedia.');
+      setActiveRunId(runId);
+      const runInfo = getAttackDebugRunInfo(runId);
+      addLog(`Uji AI Serang Sekutu dimulai: ${runInfo?.attacker ?? 'AI Agresor'} menyerang ${runInfo?.target ?? 'Sekutu Pemain'}.`);
+      const outcome = await observeAttackOutcome(runId);
+      if (currentGeneration !== generation.current) return;
+      setResult(outcome);
+      const finalReport = buildReport(outcome);
+      setReport(finalReport);
+      setRunStatus(outcome.warEnded
+        ? 'Uji AI Serang Sekutu selesai.'
+        : outcome.cancellationReason
+          ? `Dibatalkan: ${outcome.cancellationReason}`
+          : 'Jendela observasi selesai.');
+      addLog(`Uji AI Serang Sekutu selesai: ${finalReport.summary}`);
+    } catch (error) {
+      if (currentGeneration !== generation.current) return;
+      const message = error instanceof Error ? error.message : 'Kesalahan debug tidak diketahui.';
+      setRunStatus(`Gagal: ${message}`);
+      addLog(`Gagal: ${message}`);
+    } finally {
+      if (currentGeneration === generation.current) setIsRunning(false);
+    }
+  }, [addLog, attacker, isRunning]);
+
   const resetLog = () => {
     generation.current += 1;
     setActiveRunId(null);
@@ -389,6 +429,15 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
           className="w-full rounded-md border border-[#00FFAA]/40 px-3 py-2 font-bold text-[#00FFAA] hover:bg-[#00FFAA]/10 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00FFAA]"
         >
           UJI AI VS AI: TANPA MODAL
+        </button>
+        <button
+          type="button"
+          onClick={() => void runAiVsAlly()}
+          disabled={isRunning}
+          aria-label="Uji AI serang negara sekutu pemain"
+          className="w-full rounded-md border border-amber-400/50 bg-amber-500/10 px-3 py-2 font-bold text-amber-300 hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+        >
+          🛡️ AI SERANG SEKUTU PEMAIN
         </button>
         <button
           type="button"
