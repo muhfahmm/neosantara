@@ -1,5 +1,7 @@
 "use client";
 
+import { getCapitalCoord } from "../path-war";
+
 export interface StationedPeacekeeper {
   id: string;
   allyCountry: string;
@@ -12,34 +14,35 @@ export interface StationedPeacekeeper {
   deployedAt: string;
 }
 
-const STORAGE_KEY = "neosantara_stationed_peacekeepers";
 export const PEACEKEEPER_UPDATED_EVENT = "neosantara_peacekeeper_updated";
 
+// In-memory store (hilang saat halaman di-refresh)
+let inMemoryPeacekeepers: StationedPeacekeeper[] = [];
+
 export function loadStationedPeacekeepers(): StationedPeacekeeper[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    console.warn("[PeacekeeperLogic] Failed to load stationed peacekeepers:", e);
-    return [];
-  }
+  // Hanya simpan di memori runtime saat sesi permainan aktif
+  // Ketika user me-refresh halaman (F5), tank penjaga perdamaian akan hilang/reset
+  return [...inMemoryPeacekeepers];
 }
 
 export function saveStationedPeacekeepers(list: StationedPeacekeeper[]): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  inMemoryPeacekeepers = [...list];
+  if (typeof window !== "undefined") {
+    // Bersihkan storage lama jika sebelumnya tersimpan
+    try {
+      localStorage.removeItem("neosantara_stationed_peacekeepers");
+    } catch {}
     window.dispatchEvent(new CustomEvent(PEACEKEEPER_UPDATED_EVENT, { detail: list }));
-  } catch (e) {
-    console.warn("[PeacekeeperLogic] Failed to save stationed peacekeepers:", e);
   }
 }
 
 export function addStationedPeacekeeper(pk: Omit<StationedPeacekeeper, "id">): StationedPeacekeeper {
   const current = loadStationedPeacekeepers();
+  // Selalu pastikan koordinat terkunci di ibukota resmi sekutu
+  const officialCoord = getCapitalCoord(pk.allyCountry);
+  const targetLat = officialCoord?.lat ?? pk.lat;
+  const targetLng = officialCoord?.lng ?? pk.lng;
+
   // Jika sudah ada kontingen di negara sekutu yang sama, gabungkan kekuatannya
   const normAlly = pk.allyCountry.toLowerCase().trim();
   const existingIndex = current.findIndex(
@@ -59,8 +62,8 @@ export function addStationedPeacekeeper(pk: Omit<StationedPeacekeeper, "id">): S
       ...existing,
       power: existing.power + pk.power,
       deployedUnits: combinedUnits,
-      lat: pk.lat || existing.lat,
-      lng: pk.lng || existing.lng,
+      lat: targetLat,
+      lng: targetLng,
       capital: pk.capital || existing.capital,
       deployedAt: pk.deployedAt || existing.deployedAt,
     };
@@ -69,6 +72,8 @@ export function addStationedPeacekeeper(pk: Omit<StationedPeacekeeper, "id">): S
   } else {
     savedEntry = {
       ...pk,
+      lat: targetLat,
+      lng: targetLng,
       id: `pk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     };
     updatedList = [...current, savedEntry];

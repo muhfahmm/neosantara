@@ -239,8 +239,9 @@ export function getMapCanvasTransform(): MapCanvasTransform | null {
   const canvasEl = (cachedRectEl && cachedRectEl.isConnected) ? cachedRectEl : (document.getElementById('map-canvas') as HTMLCanvasElement | null);
   if (!canvasEl) return null;
 
+  const isPanningActive = Boolean((window as any).neosantara_map_pan_active);
   const nowTs = performance.now();
-  if (!cachedRect || cachedRectEl !== canvasEl || nowTs - cachedRectAt > 1000) {
+  if (!cachedRect || cachedRectEl !== canvasEl || isPanningActive || nowTs - cachedRectAt > 100) {
     cachedRect = canvasEl.getBoundingClientRect();
     cachedRectAt = nowTs;
     cachedRectEl = canvasEl;
@@ -266,7 +267,7 @@ export function getMapCanvasTransform(): MapCanvasTransform | null {
 
   const canvasWidth = canvasEl.width || rect.width || 1000;
   const canvasHeight = canvasEl.height || rect.height || 500;
-  const worldCssWidth = rect.width * scale;
+  const worldCssWidth = (rect.width * scale);
 
   return {
     rect,
@@ -284,6 +285,7 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
   if (!transform) return { x: 0, y: 0 };
 
   const { rect, scale, offsetX, offsetY, canvasWidth, canvasHeight, worldCssWidth } = transform;
+  const canvasCenter = rect.left + rect.width / 2;
   const rustPoint = projectMapPointRust(
     lat,
     lng,
@@ -297,7 +299,7 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
     offsetX,
     offsetY,
     worldCssWidth,
-    window.innerWidth,
+    rect.width,
   );
   if (rustPoint) return { x: rustPoint[0], y: rustPoint[1] };
 
@@ -311,8 +313,7 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
   const y = rect.top + (py * scale + offsetY) * (rect.height / canvasHeight);
 
   if (worldCssWidth > 0) {
-    const viewCenter = window.innerWidth / 2;
-    const shiftCopies = Math.round((viewCenter - x) / worldCssWidth);
+    const shiftCopies = Math.round((canvasCenter - x) / worldCssWidth);
     x += shiftCopies * worldCssWidth;
   }
 

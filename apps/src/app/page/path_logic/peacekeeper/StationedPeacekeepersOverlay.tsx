@@ -10,11 +10,16 @@ import {
 
 export default function StationedPeacekeepersOverlay() {
   const [peacekeepers, setPeacekeepers] = useState<StationedPeacekeeper[]>([]);
-  const [, setTick] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const tankGroupsRef = useRef<Map<string, SVGGElement>>(new Map());
 
   // Muat data awal dan dengarkan pembaruan
   useEffect(() => {
+    // Bersihkan storage tersimpan lama jika ada agar saat refresh benar-benar hilang/reset
+    try {
+      localStorage.removeItem("neosantara_stationed_peacekeepers");
+    } catch {}
+
     setPeacekeepers(loadStationedPeacekeepers());
 
     const handleUpdate = () => {
@@ -22,33 +27,39 @@ export default function StationedPeacekeepersOverlay() {
     };
 
     window.addEventListener(PEACEKEEPER_UPDATED_EVENT, handleUpdate);
-    window.addEventListener("storage", handleUpdate);
     return () => {
       window.removeEventListener(PEACEKEEPER_UPDATED_EVENT, handleUpdate);
-      window.removeEventListener("storage", handleUpdate);
     };
   }, []);
 
-  // Update posisi saat peta di-pan atau di-zoom (kamera berubah)
+  // Update langsung transform DOM setiap frame (60fps sinkron dengan WASM engine peta)
   useEffect(() => {
-    let rafId: number;
-    const updatePositions = () => {
-      setTick(t => (t + 1) % 1000000);
-    };
+    let rafId: number | null = null;
+    let isActive = true;
 
-    const onCameraChange = () => {
-      cancelAnimationFrame(rafId);
+    const updatePositions = () => {
+      if (!isActive) return;
+      for (const pk of peacekeepers) {
+        const el = tankGroupsRef.current.get(pk.id);
+        if (!el) continue;
+        const pos = getMapScreenPos(pk.lat, pk.lng);
+        if (!pos || (pos.x === 0 && pos.y === 0)) {
+          el.style.display = "none";
+        } else {
+          el.style.display = "";
+          el.setAttribute("transform", `translate(${pos.x} ${pos.y})`);
+        }
+      }
       rafId = requestAnimationFrame(updatePositions);
     };
 
-    window.addEventListener("neosantara_map_camera", onCameraChange);
-    window.addEventListener("resize", onCameraChange);
+    rafId = requestAnimationFrame(updatePositions);
+
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("neosantara_map_camera", onCameraChange);
-      window.removeEventListener("resize", onCameraChange);
+      isActive = false;
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [peacekeepers]);
 
   if (peacekeepers.length === 0) return null;
 
@@ -71,12 +82,18 @@ export default function StationedPeacekeepersOverlay() {
 
         {peacekeepers.map((pk) => {
           const screenPos = getMapScreenPos(pk.lat, pk.lng);
-          if (!screenPos || (screenPos.x === 0 && screenPos.y === 0)) return null;
 
           return (
             <g
               key={pk.id}
-              transform={`translate(${screenPos.x} ${screenPos.y})`}
+              ref={(node) => {
+                if (node) {
+                  tankGroupsRef.current.set(pk.id, node);
+                } else {
+                  tankGroupsRef.current.delete(pk.id);
+                }
+              }}
+              transform={`translate(${screenPos?.x ?? 0} ${screenPos?.y ?? 0})`}
               className="pointer-events-auto cursor-help"
             >
               <title>
