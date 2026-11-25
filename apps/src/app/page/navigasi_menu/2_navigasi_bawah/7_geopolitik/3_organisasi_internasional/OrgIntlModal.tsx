@@ -174,7 +174,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
           selectedCountry={selectedCountry}
         />
       )}
-      {!infoOrgName && <NotebookModalWrapper onClose={handleClose}>
+      <NotebookModalWrapper onClose={handleClose}>
       <div className="root-modal-util-b74379da23">
         
         <div className="satisfaction-modal-header root-modal-util-9462ce2345">
@@ -322,7 +322,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         )}
 
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
     </>
   );
 }

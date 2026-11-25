@@ -29,6 +29,21 @@
   --root-modal-info-bg: rgb(103 198 216 / 14%);
   --root-modal-neutral-bg: rgb(255 255 255 / 5%);
   --root-modal-alert-error: #FF2D55;
+
+  /* Standard Root Design Radius Tokens */
+  --root-radius-xs: 4px;
+  --root-radius-sm: 6px;
+  --root-radius-md: 8px;
+  --root-radius-lg: 12px;
+  --root-radius-xl: 16px;
+  --root-radius-2xl: 20px;
+  --root-radius-full: 9999px;
+
+  /* Standard Semantic Color Extensions */
+  --root-color-surface-hover: #334155;
+  --root-color-success: #10B981;
+  --root-color-warning: #F59E0B;
+  --root-color-border: rgb(255 255 255 / 10%);
 }
 
 :root[data-theme='light'] {
@@ -58,6 +73,11 @@
   --root-modal-info-bg: #E5ECEC;
   --root-modal-neutral-bg: #F0E9DD;
   --root-modal-alert-error: #A83A32;
+
+  --root-color-surface-hover: #F0E9DD;
+  --root-color-success: #2D6A4F;
+  --root-color-warning: #B45309;
+  --root-color-border: rgb(0 0 0 / 10%);
 }
 
 .root-ai-modal {

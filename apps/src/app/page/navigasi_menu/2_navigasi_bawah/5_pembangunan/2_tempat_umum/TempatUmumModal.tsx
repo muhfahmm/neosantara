@@ -449,7 +449,7 @@ export default function TempatUmumModal({
 
   return (
     <>
-      {!selectedGroupInfo && <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-b74379da23 building-modal-layout">
           <div className="satisfaction-modal-header root-modal-util-9462ce2345">
             <div className="satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar">
@@ -628,7 +628,7 @@ export default function TempatUmumModal({
 
             </RootModalSidebarLayout>
         </div>
-      </NotebookModalWrapper>}
+      </NotebookModalWrapper>
 
       <MenuInfoModal
         isOpen={selectedGroupInfo !== null}

@@ -359,6 +359,29 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
+// Helper format angka, mata uang, dan tanggal menggunakan standar browser Intl
+export function formatLocaleNumber(value: number, locale = 'id'): string {
+  try {
+    const targetLocale = locale === 'id' ? 'id-ID' : locale === 'en' ? 'en-US' : locale;
+    return new Intl.NumberFormat(targetLocale).format(value);
+  } catch {
+    return value.toLocaleString();
+  }
+}
+
+export function formatLocaleCurrency(value: number, locale = 'id', currencySymbol = 'NEO'): string {
+  return `${formatLocaleNumber(value, locale)} ${currencySymbol}`;
+}
+
+export function formatLocaleDate(date: Date | number, locale = 'id', options?: Intl.DateTimeFormatOptions): string {
+  try {
+    const targetLocale = locale === 'id' ? 'id-ID' : locale === 'en' ? 'en-US' : locale;
+    return new Intl.DateTimeFormat(targetLocale, options || { dateStyle: 'medium' }).format(date);
+  } catch {
+    return String(date);
+  }
+}
+
 function resolveNestedValue(obj: Record<string, unknown> | undefined, path: string[]): string | undefined {
   let current: unknown = obj;
   for (const seg of path) {
@@ -463,7 +486,18 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // 2. Fallback ke bahasa Indonesia (id)
+      // 2. Fallback hierarki: ke bahasa Inggris (en) jika tersedia dan bukan bahasa aktif
+      if (language !== 'en') {
+        const enDict = dictionaries['en'];
+        if (enDict && enDict[ns]) {
+          const enFound = resolveNestedValue(enDict[ns] as Record<string, unknown>, keyPath);
+          if (enFound !== undefined && enFound.trim() !== '') {
+            return interpolate(enFound, params);
+          }
+        }
+      }
+
+      // 3. Fallback ke bahasa Indonesia (id)
       const idDict = ID_DICTIONARY[ns];
       if (idDict) {
         const fallbackValue = resolveNestedValue(idDict as Record<string, unknown>, keyPath);
@@ -472,9 +506,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // 3. Jika di `id` juga tidak ada sama sekali
+      // 4. Jika di seluruh fallback tidak ditemukan
       if (process.env.NODE_ENV === 'development') {
-        console.warn(`[i18n] Missing translation for key: "${key}" in language "${language}" and fallback "id"`);
+        console.warn(`[i18n] Missing translation for key: "${key}" across chain [${language} -> en -> id]`);
       }
 
       return key;

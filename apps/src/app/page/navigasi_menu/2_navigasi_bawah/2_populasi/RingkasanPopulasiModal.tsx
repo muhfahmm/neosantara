@@ -372,11 +372,10 @@ export default function RingkasanPopulasiModal({
 
   return (
     <>
-      {!isInfoOpen && (
-        <NotebookModalWrapper
-          onClose={onClose}
-          isHidden={isKesejahteraanOpen || isDetailBirthOpen || isDetailDeathOpen}
-        >
+      <NotebookModalWrapper
+        onClose={onClose}
+        isHidden={isKesejahteraanOpen || isDetailBirthOpen || isDetailDeathOpen}
+      >
         <div className={"root-modal-util-b74379da23"}>
           <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
             <div className={"satisfaction-modal-header-main root-modal-util-020752a5a2 no-scrollbar"}>
@@ -608,7 +607,6 @@ export default function RingkasanPopulasiModal({
         </div>
       </div>
     </NotebookModalWrapper>
-    )}
 
     <MenuInfoModal
       isOpen={isInfoOpen}

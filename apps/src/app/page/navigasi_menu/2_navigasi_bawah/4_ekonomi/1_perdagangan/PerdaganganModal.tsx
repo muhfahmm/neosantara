@@ -953,9 +953,7 @@ export default function PerdaganganModal({
 
   return (
     <>
-      {/* 🔥 Sembunyikan Modal Utama saat Modal Info terbuka */}
-      {!showBlockedInfoModal && !showWTOTradeInfoModal && (
-        <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose}>
           <div className="root-modal-util-b74379da23">
 
             {/* HEADER */}
@@ -1153,7 +1151,6 @@ export default function PerdaganganModal({
             </div>
           </div>
         </NotebookModalWrapper>
-      )}
 
       <TradeMarketBlockedModal
         isOpen={showBlockedInfoModal}

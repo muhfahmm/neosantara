@@ -360,7 +360,6 @@ export default function NaikkanKepuasanModal({
 
   return (
     <>
-      {!isDanaTidakCukupOpen && !isMenuInfoOpen && (
       <NotebookModalWrapper onClose={onClose}>
         <div className={"root-modal-util-52b6b298fe"}>
           
@@ -577,7 +576,6 @@ export default function NaikkanKepuasanModal({
           </div>
         </div>
       </NotebookModalWrapper>
-      )}
 
       <MenuInfoModal
         isOpen={isMenuInfoOpen}

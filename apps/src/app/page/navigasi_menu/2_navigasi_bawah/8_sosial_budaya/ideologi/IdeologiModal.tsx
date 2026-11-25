@@ -297,7 +297,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         bonusText={infoTargetBonusText}
       />
 
-      {!isConfirmOpen && !showErrorModal && !infoTarget && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-52b6b298fe">
           <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
@@ -499,7 +498,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           </div>
         </div>
       </NotebookModalWrapper>
-      )}
     </>,
     document.body
   );

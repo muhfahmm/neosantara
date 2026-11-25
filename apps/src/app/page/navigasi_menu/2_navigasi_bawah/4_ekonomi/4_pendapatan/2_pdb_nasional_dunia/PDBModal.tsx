@@ -422,7 +422,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
 
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="pdb-modal-frame">
+    <NotebookModalWrapper onClose={onClose} frameClassName="pdb-modal-frame">
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title={t("navigation_economy_income.pdb.title")}
@@ -447,7 +447,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
           />
         </div>
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}

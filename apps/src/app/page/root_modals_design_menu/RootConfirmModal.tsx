@@ -36,8 +36,8 @@ export default function RootConfirmModal({
   confirmDisabled = false,
   confirmButtonClassName,
   isDestructive = false,
-  footerBorderClassName = "border-root-accent/20",
-  zIndexClass = "z-[100000001]",
+  footerBorderClassName = "border-root-border",
+  zIndexClass = "z-50",
 }: RootConfirmModalProps) {
   const { t } = useLanguage();
   const titleId = useId();
@@ -79,7 +79,7 @@ export default function RootConfirmModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto px-6 bg-root-accent hover:bg-[#00e699] border border-root-accent rounded-xl py-2 text-center text-root-canvas font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+              className="w-full sm:w-auto min-h-[44px] px-6 bg-[var(--root-color-accent)] hover:brightness-110 border border-[var(--root-color-accent)] rounded-[var(--root-radius-md)] py-2 text-center text-[var(--root-color-accent-ink)] font-bold text-xs tracking-wider uppercase transition-all duration-150 cursor-pointer shadow-sm hover:shadow active:scale-[0.98]"
             >
               {resolvedCancelLabel}
             </button>
@@ -88,7 +88,7 @@ export default function RootConfirmModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-6 bg-root-canvas hover:bg-[#142A2A] border border-root-accent/30 rounded-xl py-2 text-center text-root-text font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+                className="w-full sm:w-auto min-h-[44px] px-6 bg-[var(--root-color-surface)] hover:bg-[var(--root-color-surface-hover)] border border-[var(--root-color-border)] rounded-[var(--root-radius-md)] py-2 text-center text-[var(--root-color-text)] font-semibold text-xs tracking-wider uppercase transition-all duration-150 cursor-pointer shadow-sm hover:shadow active:scale-[0.98]"
               >
                 {resolvedCancelLabel}
               </button>
@@ -101,14 +101,14 @@ export default function RootConfirmModal({
                   onClose();
                 }}
                 disabled={confirmDisabled}
-                className={`w-full sm:w-auto px-6 rounded-xl py-2 text-center font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
+                className={`w-full sm:w-auto min-h-[44px] px-6 rounded-[var(--root-radius-md)] py-2 text-center font-bold text-xs tracking-wider uppercase transition-all duration-150 shadow-sm hover:shadow active:scale-[0.98] ${
                   confirmDisabled
-                    ? "bg-root-canvas text-root-subtle border border-root-accent/20 opacity-40 cursor-not-allowed"
+                    ? "bg-[var(--root-color-surface)] text-[var(--root-color-subtle)] border border-[var(--root-color-border)] opacity-40 cursor-not-allowed"
                     : confirmButtonClassName
                     ? confirmButtonClassName
                     : isDestructive
-                    ? "bg-rose-600 hover:bg-rose-700 active:bg-rose-800 border border-rose-500 text-white cursor-pointer"
-                    : "bg-root-accent hover:bg-[#00e699] border border-root-accent text-root-canvas cursor-pointer"
+                    ? "bg-[var(--root-color-danger)] hover:brightness-110 active:brightness-95 border border-transparent text-white cursor-pointer"
+                    : "bg-[var(--root-color-accent)] hover:brightness-110 active:brightness-95 border border-[var(--root-color-accent)] text-[var(--root-color-accent-ink)] cursor-pointer"
                 }`}
               >
                 {resolvedConfirmLabel}

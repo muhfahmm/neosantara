@@ -381,7 +381,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="economic-system-modal-frame">
+    <NotebookModalWrapper onClose={onClose} frameClassName="economic-system-modal-frame">
       <div className="root-modal-util-b74379da23">
         
         <RootInfoModalHeader
@@ -440,7 +440,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         </RootModalSidebarLayout>
 
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}

@@ -237,7 +237,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
   return (
     <>
-      {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-b74379da23">
 
           <RootInfoModalHeader
@@ -339,7 +339,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
           </RootModalSidebarLayout>
         </div>
-      </NotebookModalWrapper>}
+      </NotebookModalWrapper>
 
       <MenuInfoModal
         isOpen={isInfoOpen}

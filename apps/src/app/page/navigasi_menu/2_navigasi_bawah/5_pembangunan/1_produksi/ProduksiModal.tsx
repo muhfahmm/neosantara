@@ -673,7 +673,7 @@ export default function ProduksiModal({
 
   return (
     <>
-      {isOpen && !selectedTabInfo && !showSanctionInfo && (
+      {isOpen && (
         <NotebookModalWrapper onClose={onClose}>
           <div className="root-modal-util-b74379da23 building-modal-layout production-modal-layout">
 

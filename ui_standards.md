@@ -190,3 +190,35 @@ Implementasi perbaikan akan dijalankan setelah mendapatkan persetujuan tertulis 
 * **Langkah C4: Pengaman Kualitas & Validasi Visual**
   * Uji build aplikasi Next.js (`npm run build`) untuk memastikan integritas kode dan nol error TypeScript.
   * Menjalankan skrip validasi kelengkapan kamus agar tidak ada missing keys pada seluruh 8 bahasa.
+
+
+---
+
+## LOG IMPLEMENTASI PERBAIKAN TAHAP C
+
+### C1. Skala Token Desain & Radius Tunggal
+- **Berkas yang Diperbarui:**
+  - `apps/src/app/page/root_design/rootColors.css`: Ditambahkan skala semantik radius (`--root-radius-xs: 4px` hingga `--root-radius-2xl: 20px` dan `--root-radius-full: 9999px`) dan perluasan token warna (`--root-color-surface-hover`, `--root-color-success`, `--root-color-warning`, `--root-color-border`) untuk tema gelap dan terang.
+  - `apps/src/app/globals.css`: Didaftarkan pemetaan `@theme inline` untuk radius token Tailwind (`--radius-token-*`) dan warna semantik (`--color-root-*`).
+  - `apps/src/app/page/root_modals_design_menu/rootBorderRadius.ts`: Diperbarui untuk menggunakan referensi token semantik `rounded-token-*`.
+
+### C2. Komponen Bersama Baku (Shared Components)
+- **Komponen Baru:**
+  - `SharedButton.tsx` (`apps/src/app/page/root_modals_design_menu/shared/SharedButton.tsx`): Komponen tombol terpadu dengan varian `primary`, `secondary`, `danger`, `success`, `ghost`, target sentuh mobile $\ge$ 44px, efek interaktif `:hover`, `:active`, and focus-visible rings.
+  - `SharedModal.tsx` (`apps/src/app/page/root_modals_design_menu/shared/SharedModal.tsx`): Frame modal dialog baku dengan header, scrollable body, sticky footer, dan listener escape key.
+  - `SharedConfirmDialog.tsx` (`apps/src/app/page/root_modals_design_menu/shared/SharedConfirmDialog.tsx`): Dialog konfirmasi dengan penataan aksi standar (Batal di awal, Konfirmasi di akhir).
+  - `SharedBadge.tsx` (`apps/src/app/page/root_modals_design_menu/shared/SharedBadge.tsx`): Badge semantik terpadu.
+- **Refaktor Komponen Eksisting:**
+  - `RootConfirmModal.tsx`: Dimigrasikan dari z-index ekstrem (`z-[100000001]`) ke standar hierarki `z-50`, warna hardcode `#00e699` dan `#142A2A` digantikan oleh token `var(--root-color-accent)` dan `var(--root-color-surface)`.
+
+### C3. Sistem Bahasa (i18n) & Kamus Lengkap
+- **Kamus Terjemahan (53 JSON files x 8 Bahasa):**
+  - Dilakukan penambalan kunci yang sebelumnya hilang pada Bahasa Arab (`military.coup*`), Jerman (`militaryAidTitle`, `militaryAidConfirm`), Korea, dan Mandarin.
+  - **Hasil verifikasi:** 100% dari 6.004 kunci kini lengkap dan identik di seluruh 8 bahasa (`id`, `en`, `ar`, `de`, `es`, `ja`, `ko`, `zh-CN`).
+- **Logika `languageLogic.tsx`:**
+  - Menerapkan **Fallback Berantai**: `Bahasa Aktif -> English (en) -> Bahasa Indonesia (id) -> String Kunci`.
+  - Menambahkan fungsi pembantu lokalisasi berbasis standar browser `Intl`: `formatLocaleNumber`, `formatLocaleCurrency`, dan `formatLocaleDate`.
+
+### C4. Pengujian Kualitas & Kompilasi
+- Pemeriksaan TypeScript Compiler (`npx tsc --noEmit`): **Lulus 100% tanpa error**.
+- Verifikasi integritas kamus: **6.004 kunci pada semua bahasa lengkap (0 missing)**.

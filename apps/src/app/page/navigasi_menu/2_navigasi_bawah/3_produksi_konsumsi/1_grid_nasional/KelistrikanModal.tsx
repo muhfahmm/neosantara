@@ -254,7 +254,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   return (
     <>
-      {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose}>
         <div className={"root-modal-util-b74379da23"}>
           {/* HEADER */}
           <div className={"satisfaction-modal-header root-modal-util-9462ce2345"}>
@@ -464,7 +464,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
           </div>
         </div>
-      </NotebookModalWrapper>}
+      </NotebookModalWrapper>
 
       <MenuInfoModal
         isOpen={isInfoOpen}

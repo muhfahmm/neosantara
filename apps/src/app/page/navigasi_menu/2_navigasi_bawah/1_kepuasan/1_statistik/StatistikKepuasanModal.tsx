@@ -117,7 +117,7 @@ export default function StatistikKepuasanModal({
 
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+    <NotebookModalWrapper onClose={onClose}>
       <div className={"root-modal-util-52b6b298fe"}>
         {/* Header */}
         <div className={"satisfaction-modal-header root-modal-util-4450f1d9ee"}>
@@ -217,7 +217,7 @@ export default function StatistikKepuasanModal({
           </div>
         </div>
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}

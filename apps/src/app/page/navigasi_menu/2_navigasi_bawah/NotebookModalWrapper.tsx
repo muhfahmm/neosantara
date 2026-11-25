@@ -29,7 +29,7 @@ export function NotebookModalWrapper({
   isHidden = false,
   compact = false,
   squareCorners = false,
-  hideWhenInfoModalOpen = false,
+  hideWhenInfoModalOpen = true,
   hideWhenApplicationModalOpen = false,
   frameClassName = '',
   contentSized = false,

@@ -392,7 +392,7 @@ export default function HunianPermukimanModal({
   return (
     <>
       {/* MODAL UTAMA */}
-      {!selectedItemInfo && <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-b74379da23 building-modal-layout">
 
           {/* HEADER */}
@@ -535,7 +535,7 @@ export default function HunianPermukimanModal({
               {/* FOOTER STATISTIK */}
             </RootModalSidebarLayout>
         </div>
-      </NotebookModalWrapper>}
+      </NotebookModalWrapper>
 
       <MenuInfoModal
         isOpen={selectedItemInfo !== null}

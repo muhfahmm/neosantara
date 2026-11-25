@@ -525,7 +525,7 @@ function HargaModalContent({
   // ─────────────────────────────────────────────────────────────────────
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose} frameClassName="harga-modal-frame">
+    <NotebookModalWrapper onClose={onClose} frameClassName="harga-modal-frame">
       <div className="root-modal-util-b74379da23">
         <RootInfoModalHeader
           title={t("navigation_economy_purchasing_power.title")}
@@ -588,7 +588,7 @@ function HargaModalContent({
 
         </div>
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}

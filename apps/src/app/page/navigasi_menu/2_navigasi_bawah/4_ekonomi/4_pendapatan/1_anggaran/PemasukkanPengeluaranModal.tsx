@@ -185,7 +185,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   return (
     <>
-    {!isInfoOpen && <NotebookModalWrapper onClose={onClose}>
+    <NotebookModalWrapper onClose={onClose}>
       <div className="root-modal-util-b74379da23">
 
         <RootInfoModalHeader
@@ -474,7 +474,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
           </div>
         </div>
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
     <MenuInfoModal
       isOpen={isInfoOpen}
       onClose={() => setIsInfoOpen(false)}

@@ -46,6 +46,28 @@ button, a, [role="button"] {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --radius-token-xs: var(--root-radius-xs);
+  --radius-token-sm: var(--root-radius-sm);
+  --radius-token-md: var(--root-radius-md);
+  --radius-token-lg: var(--root-radius-lg);
+  --radius-token-xl: var(--root-radius-xl);
+  --radius-token-2xl: var(--root-radius-2xl);
+  --radius-token-full: var(--root-radius-full);
+
+  --color-root-canvas: var(--root-color-canvas);
+  --color-root-surface: var(--root-color-surface);
+  --color-root-surface-hover: var(--root-color-surface-hover);
+  --color-root-accent: var(--root-color-accent);
+  --color-root-accent-ink: var(--root-color-accent-ink);
+  --color-root-text: var(--root-color-text);
+  --color-root-body: var(--root-color-body);
+  --color-root-muted: var(--root-color-muted);
+  --color-root-subtle: var(--root-color-subtle);
+  --color-root-danger: var(--root-color-danger);
+  --color-root-success: var(--root-color-success);
+  --color-root-warning: var(--root-color-warning);
+  --color-root-border: var(--root-color-border);
 }
 
 :root[data-theme='light'] :is(

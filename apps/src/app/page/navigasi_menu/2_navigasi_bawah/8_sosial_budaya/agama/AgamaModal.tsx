@@ -296,7 +296,6 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       />
 
       {/* MODAL UTAMA AGAMA */}
-      {!isConfirmOpen && !isCurrentReligionInfoOpen && !showErrorModal && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-52b6b298fe">
           <div className="satisfaction-modal-header root-modal-util-4450f1d9ee">
@@ -486,7 +485,6 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
           </div>
         </div>
       </NotebookModalWrapper>
-      )}
     </>,
     document.body
   );

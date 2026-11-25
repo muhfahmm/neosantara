@@ -37,7 +37,9 @@
     "deployGroup": "Teilstreitkraft einsetzen (100%)",
     "resetGroup": "Zurücksetzen (0%)",
     "cancel": "Abbrechen",
-    "confirm": "Angriff bestätigen"
+    "confirm": "Angriff bestätigen",
+    "militaryAidTitle": "MILITÄRHILFE BESTÄTIGEN",
+    "militaryAidConfirm": "MILITÄRHILFE SENDEN"
   },
   "groups": {
     "darat": "Landstreitkräfte",

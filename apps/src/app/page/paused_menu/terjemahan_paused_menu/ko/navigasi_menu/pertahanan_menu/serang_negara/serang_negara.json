@@ -37,7 +37,9 @@
     "deployGroup": "병과 배치(100%)",
     "resetGroup": "초기화(0%)",
     "cancel": "취소",
-    "confirm": "공격 확인"
+    "confirm": "공격 확인",
+    "militaryAidTitle": "군사 지원 확인",
+    "militaryAidConfirm": "군사 지원 보내기"
   },
   "groups": {
     "darat": "육군",

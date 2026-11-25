@@ -15,6 +15,7 @@ import {
   getKomandanArmadaBonusPercent,
 } from "@/app/page/bonus_logic";
 import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
+import { SharedInfoModal } from "@/app/page/root_modals_design_menu/shared/SharedInfoModal";
 
 
 interface ModalProps {
@@ -87,7 +88,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
   return (
     <>
-      {!showDefenseBonusInfo && <NotebookModalWrapper onClose={onClose}>
+      <NotebookModalWrapper onClose={onClose}>
         <div className="root-modal-util-b74379da23 defense-modal">
           
           <div className="satisfaction-modal-header root-modal-util-9462ce2345">
@@ -133,61 +134,46 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
         </RootModalSidebarLayout>
 
       </div>
-    </NotebookModalWrapper>}
+    </NotebookModalWrapper>
 
-    {/* POPUP MODAL INFO BONUS PERTAHANAN */}
-    {showDefenseBonusInfo && (
-      <NotebookModalWrapper
-        onClose={() => setShowDefenseBonusInfo(false)}
-        zIndexClass="z-[200]"
-        contentSized={true}
-        frameClassName="menu-info-content-sized-frame"
-      >
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="defense-bonus-info-title"
-          className="root-modal-util-b74379da23 menu-info-content-sized-dialog"
-        >
-          <RootInfoModalHeader
-            title={tr("menu.infoTitle")}
-            titleId="defense-bonus-info-title"
-            onClose={() => setShowDefenseBonusInfo(false)}
-            size="standard"
-          />
-          <div className={`root-info-modal-content min-h-0 bg-root-surface p-4 sm:p-5 lg:p-6 space-y-4 ${rootModalTypography.body}`}>
+    {/* POPUP MODAL INFO BONUS PERTAHANAN - MENUMPUK DI ATAS TANPA UNMOUNT */}
+    <SharedInfoModal
+      isOpen={showDefenseBonusInfo}
+      onClose={() => setShowDefenseBonusInfo(false)}
+      title={tr("menu.infoTitle")}
+      maxWidth="md"
+    >
+      <div className="space-y-4">
+        <p>
+          {tr("info.generalDescription")}
+        </p>
+        <div className="space-y-2.5 rounded-lg border border-[var(--root-color-accent)]/20 bg-[var(--root-color-canvas)] p-3 text-[var(--root-color-body)]">
+          <p>
+            <strong className="text-[var(--root-color-text)]">{tr("info.ministry")}:</strong>{" "}
+            {tr("info.ministryDescription", { percent: pertahananBonusPercent.toFixed(1) })}
+          </p>
+          <p>
+            <strong className="text-[var(--root-color-text)]">{tr("info.commanders")}:</strong>{" "}
+            {tr("info.commandersDescription", {
+              land: getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1),
+              sea: getKomandanArmadaBonusPercent(countryDetail).toFixed(1),
+            })}
+          </p>
+          {ideology && (
             <p>
-              {tr("info.generalDescription")}
+              <strong className="text-[var(--root-color-text)]">
+                {tr("info.ideologyTitle", { ideology: ideologyLabel })}:
+              </strong>{" "}
+              {tr("info.ideologyDescription")}
             </p>
-            <div className="space-y-2.5 rounded-lg border border-root-modal-positive-border bg-root-modal-positive-bg p-3 text-root-body">
-              <p>
-                <strong className="text-root-text">{tr("info.ministry")}:</strong>{" "}
-                {tr("info.ministryDescription", { percent: pertahananBonusPercent.toFixed(1) })}
-              </p>
-              <p>
-                <strong className="text-root-text">{tr("info.commanders")}:</strong>{" "}
-                {tr("info.commandersDescription", {
-                  land: getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1),
-                  sea: getKomandanArmadaBonusPercent(countryDetail).toFixed(1),
-                })}
-              </p>
-              {ideology && (
-                <p>
-                  <strong className="text-root-text">
-                    {tr("info.ideologyTitle", { ideology: ideologyLabel })}:
-                  </strong>{" "}
-                  {tr("info.ideologyDescription")}
-                </p>
-              )}
-              <p>
-                <strong className="text-root-text">{tr("info.allianceResearch")}:</strong>{" "}
-                {tr("info.allianceResearchDescription")}
-              </p>
-            </div>
-          </div>
+          )}
+          <p>
+            <strong className="text-[var(--root-color-text)]">{tr("info.allianceResearch")}:</strong>{" "}
+            {tr("info.allianceResearchDescription")}
+          </p>
         </div>
-      </NotebookModalWrapper>
-      )}
+      </div>
+    </SharedInfoModal>
     </>
   );
 }

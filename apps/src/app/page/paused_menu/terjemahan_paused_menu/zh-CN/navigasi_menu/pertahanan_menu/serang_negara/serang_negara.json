@@ -37,7 +37,9 @@
     "deployGroup": "部署该军种（100%）",
     "resetGroup": "重置（0%）",
     "cancel": "取消",
-    "confirm": "确认攻击"
+    "confirm": "确认攻击",
+    "militaryAidTitle": "确认军事援助",
+    "militaryAidConfirm": "发送军事援助"
   },
   "groups": {
     "darat": "陆军",
