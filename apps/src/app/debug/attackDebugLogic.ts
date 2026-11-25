@@ -358,6 +358,15 @@ export function triggerAiVsAiDebugScenario(): string | null {
   return runId;
 }
 
+export function getActiveDefenseAlliances(): string[] {
+  if (typeof window === 'undefined') return [];
+  const context = (window as AttackDebugWindow).__neosantara_debug_context;
+  const playerDetail = context?.countryDetail;
+  if (!playerDetail || typeof playerDetail !== 'object') return [];
+  const rawAlliances = (playerDetail as Record<string, unknown>).defenseAlliances;
+  return Array.isArray(rawAlliances) ? rawAlliances.map(String).filter(Boolean) : [];
+}
+
 export function triggerAiVsAllyDebugScenario(customAllyName?: string): string | null {
   if (!isDevelopment || typeof window === 'undefined') return null;
   if ((window as AttackDebugWindow).__neosantara_debug_active_war) {
@@ -377,26 +386,12 @@ export function triggerAiVsAllyDebugScenario(customAllyName?: string): string | 
     ? rawAlliances.map(String).filter(Boolean)
     : [];
 
-  // Jika belum ada sekutu pertahanan yang terdaftar di save state pemain,
-  // pilih satu negara AI otomatis dan daftarkan sebagai sekutu pertahanan uji
   let allyCountryName = customAllyName;
   if (!allyCountryName) {
     if (activeAllies.length > 0) {
       allyCountryName = activeAllies[Math.floor(Math.random() * activeAllies.length)];
     } else {
-      const candidates = COUNTRIES_DATA.filter(country =>
-        normalize(country.country) !== normalize(typeof playerName === 'string' ? playerName : '')
-      );
-      if (candidates.length < 2) {
-        throw new Error('Tidak cukup negara untuk membuat skenario sekutu.');
-      }
-      const randomAlly = candidates[Math.floor(Math.random() * candidates.length)];
-      allyCountryName = randomAlly.country;
-
-      // Injeksi otomatis ke defenseAlliances di context agar validasi kelayakan lolos
-      if (playerDetail && typeof playerDetail === 'object') {
-        (playerDetail as Record<string, unknown>).defenseAlliances = [allyCountryName];
-      }
+      throw new Error('Belum ada negara yang memiliki aliansi pertahanan dengan pemain.');
     }
   }
 

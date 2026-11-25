@@ -2,10 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
+import { ShieldAlert } from 'lucide-react';
 import { COUNTRIES_DATA, type CountryData } from '../page/map_system/map-data';
+import RootConfirmModal from '../page/root_modals_design_menu/RootConfirmModal';
 import {
   buildReport,
   configureAttackDebugContext,
+  getActiveDefenseAlliances,
   getAttackDebugRunInfo,
   getRouteGeometry,
   markAttackDebugRouteShown,
@@ -47,6 +50,7 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
   const [copyStatus, setCopyStatus] = useState('');
   const [overlayRoute, setOverlayRoute] = useState<ReturnType<typeof getRouteGeometry>>(null);
   const [durationMs, setDurationMs] = useState(3500);
+  const [noAllianceModalOpen, setNoAllianceModalOpen] = useState(false);
   const portalReady = useSyncExternalStore(
     subscribeClientState,
     getClientState,
@@ -253,13 +257,22 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
       return;
     }
 
+    const selectedAlly = attacker !== 'random' ? attacker : undefined;
+    const activeAllies = getActiveDefenseAlliances();
+
+    // Jika user tidak memilih negara sekutu tertentu dan belum memiliki satupun aliansi pertahanan
+    if (!selectedAlly && activeAllies.length === 0) {
+      setNoAllianceModalOpen(true);
+      addLog('Uji AI vs Sekutu ditangguhkan: pemain belum memiliki negara dengan aliansi pertahanan.');
+      return;
+    }
+
     const currentGeneration = ++generation.current;
     setIsRunning(true);
     setReport(null);
     setResult(null);
     setRunStatus('Menyiapkan skenario AI Serang Sekutu Pemain...');
     try {
-      const selectedAlly = attacker !== 'random' ? attacker : undefined;
       const runId = triggerAiVsAllyDebugScenario(selectedAlly);
       if (!runId) throw new Error('Debug serangan sekutu tidak tersedia.');
       setActiveRunId(runId);
@@ -502,6 +515,26 @@ export function AttackDebugButton({ selectedCountry, countryDetail }: AttackDebu
           onComplete={clearOverlay}
         />
       )}
+      <RootConfirmModal
+        isOpen={noAllianceModalOpen}
+        onClose={() => setNoAllianceModalOpen(false)}
+        variant="info"
+        title="Tidak Ada Aliansi Pertahanan"
+        icon={<ShieldAlert className="w-6 h-6 text-amber-400" />}
+        confirmLabel="Mengerti"
+      >
+        <div className="space-y-3 text-sm text-root-text">
+          <p>
+            Negara Anda saat ini <strong className="text-white">belum memiliki satu pun aliansi pertahanan</strong> dengan negara AI lain.
+          </p>
+          <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-200/90">
+            Skenario <strong>AI Serang Sekutu Pemain</strong> memerlukan negara mitra yang terikat traktat pertahanan dengan Anda agar surat permohonan bantuan militer dapat dikirimkan ke Inbox.
+          </div>
+          <p className="text-xs text-root-subtle">
+            Bentuk aliansi pertahanan terlebih dahulu melalui menu <strong>Geopolitik &gt; Tingkat Hubungan / Kedutaan Besar</strong>, atau pilih negara secara spesifik pada dropdown penyerang/target debug.
+          </p>
+        </div>
+      </RootConfirmModal>
     </>
   );
 }
