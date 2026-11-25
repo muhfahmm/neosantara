@@ -4796,6 +4796,8 @@ export default function MapPage() {
                         attackerIso: detail.attackerIso || attackerDetailData?.iso,
                         targetCountry: targetCountryName,
                         targetIso: detail.targetIso || targetDetailData?.iso,
+                        attackerPower: Number(attackerDetailData?.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
+                        targetPower: targetPowerSummary.totals.totalPower,
                         currentDateStr: currentDateStr,
                         existingRequests: notifications as unknown as BantuanSekutuNotification[],
                         isDebugScenario: isDebugAllyScenario,

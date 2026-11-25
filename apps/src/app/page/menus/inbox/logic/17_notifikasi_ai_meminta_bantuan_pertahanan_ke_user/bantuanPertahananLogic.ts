@@ -49,6 +49,8 @@ export interface AllyRequestContext {
   attackerIso?: string;
   targetCountry: string;
   targetIso?: string;
+  attackerPower?: number;
+  targetPower?: number;
   currentDateStr: string;
   existingRequests?: BantuanSekutuNotification[];
   warProgress?: number;
@@ -111,6 +113,18 @@ export function isEligibleForAllyRequest(context: AllyRequestContext): Eligibili
 
   if (!hasActiveAlliance) {
     return { eligible: false, reason: 'Target tidak memiliki aliansi pertahanan aktif dengan pemain' };
+  }
+
+  // Syarat 2b: Evaluasi Perbandingan Kekuatan Militer
+  // Negara AI hanya meminta bantuan jika kekuatan militernya lebih lemah/kalah dibanding negara penyerang.
+  // Jika militer sekutu lebih kuat atau setara dengan penyerang, sekutu mampu bertahan sendiri dan tidak meminta bantuan.
+  const aPower = typeof context.attackerPower === 'number' && Number.isFinite(context.attackerPower) ? context.attackerPower : undefined;
+  const tPower = typeof context.targetPower === 'number' && Number.isFinite(context.targetPower) ? context.targetPower : undefined;
+  if (!isDebugScenario && aPower !== undefined && tPower !== undefined && tPower >= aPower) {
+    return {
+      eligible: false,
+      reason: `Kekuatan militer sekutu (${tPower}) lebih kuat atau setara dengan penyerang (${aPower}), sekutu mampu bertahan sendiri tanpa bantuan`,
+    };
   }
 
   // Syarat 3: Pemain tidak sedang berperang dengan target

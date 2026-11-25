@@ -57,23 +57,40 @@ console.log('  ✅ Lolos: Perjanjian selain aliansi pertahanan aktif menghasilka
 // 3. UJI ALIANSI PERTAHANAN AKTIF + TARGET DISERANG AI LAIN
 console.log('3. Uji aliansi pertahanan aktif saat diserang AI lain...');
 {
-  const context: AllyRequestContext = {
+  // 3a. Sekutu kalah militer (misal targetPower: 300 < attackerPower: 700) -> Harus minta bantuan
+  const contextLosing: AllyRequestContext = {
     playerCountry: 'Indonesia',
     playerIso: 'IDN',
     defenseAlliances: ['Malaysia'],
     attackerCountry: 'Singapura',
     targetCountry: 'Malaysia',
+    attackerPower: 700,
+    targetPower: 300,
     currentDateStr: '2026-11-06',
   };
-  const notif = createAllyHelpRequest(context);
-  assert(notif !== null, 'Permintaan harus dibuat saat aliansi pertahanan aktif terpenuhi');
+  const notif = createAllyHelpRequest(contextLosing);
+  assert(notif !== null, 'Permintaan harus dibuat saat sekutu kalah militer dari penyerang');
   assert(notif?.allyCountry === 'Malaysia', 'Ally country harus Malaysia');
   assert(notif?.attackerCountry === 'Singapura', 'Attacker country harus Singapura');
   assert(notif?.priority === 'critical', 'Prioritas notifikasi harus critical');
   assert(notif?.tradeType === 'bantuan_sekutu', 'TradeType harus bantuan_sekutu');
   assert(notif?.status === 'pending', 'Status awal harus pending');
+
+  // 3b. Sekutu lebih kuat militer (misal targetPower: 900 >= attackerPower: 500) -> TIDAK minta bantuan
+  const contextWinning: AllyRequestContext = {
+    playerCountry: 'Indonesia',
+    playerIso: 'IDN',
+    defenseAlliances: ['Malaysia'],
+    attackerCountry: 'Singapura',
+    targetCountry: 'Malaysia',
+    attackerPower: 500,
+    targetPower: 900,
+    currentDateStr: '2026-11-06',
+  };
+  const notifWinning = createAllyHelpRequest(contextWinning);
+  assert(notifWinning === null, 'Harus null jika kekuatan militer sekutu lebih besar/setara dari penyerang (mampu bertahan sendiri)');
 }
-console.log('  ✅ Lolos: Permintaan bantuan sekutu dibuat dengan atribut yang tepat.');
+console.log('  ✅ Lolos: Permintaan bantuan sekutu dibuat hanya saat sekutu kalah kekuatan militer.');
 
 // 4. UJI PEMAIN SEBAGAI PENYERANG ATAU TARGET
 console.log('4. Uji pemain sebagai penyerang atau target (bukan AI vs AI)...');
