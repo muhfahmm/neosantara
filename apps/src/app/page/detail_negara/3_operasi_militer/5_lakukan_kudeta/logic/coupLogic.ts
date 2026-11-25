@@ -14,6 +14,7 @@ interface ExecuteCoupInput {
   playerCountryDetail?: Record<string, unknown> | null;
   targetCountryDetail?: Record<string, unknown> | null;
   targetSatisfactionScore?: number;
+  relationValue?: number;
   updatePlayerCountryDetail?: CountryDetailUpdater;
   updateTargetCountryDetail?: CountryDetailUpdater;
   deterministicRoll?: number; // Optional untuk testing
@@ -37,6 +38,7 @@ export function executeCoup({
   playerCountryDetail,
   targetCountryDetail,
   targetSatisfactionScore,
+  relationValue,
   updatePlayerCountryDetail,
   updateTargetCountryDetail,
   deterministicRoll,
@@ -53,12 +55,12 @@ export function executeCoup({
 
   const relationBefore = getRelationValue(playerCountryName, targetCountryName);
 
-  // Hitung persentase peluang sukses kudeta berdasarkan 5 faktor
+  // Hitung peluang berdasarkan kondisi dan riset saat operasi diluncurkan.
   const chanceBreakdown = calculateCoupSuccessChance({
     playerCountryDetail,
     targetCountryDetail,
     targetSatisfactionScore,
-    relationValue: relationBefore,
+    relationValue: typeof relationValue === 'number' ? relationValue : relationBefore,
   });
 
   const isSuccess = rollCoupAttempt(chanceBreakdown.totalChance, deterministicRoll);

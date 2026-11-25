@@ -42,6 +42,7 @@ import {
 } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic';
 import { useTravelFuelQuote } from '../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getRelationValue } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 
 interface OperasiMiliterProps {
   countryName: string;
@@ -107,6 +108,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
     playerCountryDetail?.name_en ||
     '',
   );
+  const coupRelationValue = getRelationValue(playerCountryName, countryName);
   const spionaseFuelQuote = useTravelFuelQuote(
     playerCountryName,
     countryName,
@@ -489,6 +491,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         countryName={countryName}
         playerCountryDetail={playerCountryDetail}
         targetCountryDetail={targetCountryDetail}
+        relationValue={coupRelationValue}
         onClose={() => setIsKudetaOpen(false)}
         onConfirm={() => {
           const targetCountrySlug = String(targetCountryDetail?.country_slug || '');
@@ -506,6 +509,8 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
               senderCountry: playerCountryName,
               targetCountry: countryName,
               targetCountrySlug,
+              targetCountryDetail,
+              relationValue: coupRelationValue,
             },
           }));
           return true;

@@ -135,6 +135,14 @@ export default function KudetaModal({
 								</div>
 								<div className="flex items-center justify-between p-1.5 rounded bg-white/5">
 									<span className="text-gray-400">
+										{t("side_penelitian.categories.diplomasi.effects.peluang_kudeta")}:
+									</span>
+									<span className="font-semibold text-emerald-400">
+										+{chanceBreakdown.coupResearchBonus}%
+									</span>
+								</div>
+								<div className="flex items-center justify-between p-1.5 rounded bg-white/5">
+									<span className="text-gray-400">
 										{t("detail_negara_ai.military.coupFactorMilitary")}:
 									</span>
 									<span

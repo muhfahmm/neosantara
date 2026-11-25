@@ -2,6 +2,7 @@
   "title": "外交与情报研究",
   "tag": "地缘政治与间谍",
   "researchTitles": {
+    "kudeta_strategis": "战略政变行动",
     "manfaat_kedutaan": "使馆效益",
     "suara_pbb": "联合国投票权",
     "biaya_kedutaan": "使馆成本优化",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "内阁官僚改革"
   },
   "effects": {
+    "peluang_kudeta": "政变成功率",
     "waktu_kedutaan": "使馆建设时间",
     "suara_pbb": "联合国票数",
     "biaya_kedutaan": "使馆成本",

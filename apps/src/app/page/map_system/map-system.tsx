@@ -3539,6 +3539,8 @@ export default function MapPage() {
                 senderCountry?: string;
                 targetCountry?: string;
                 targetCountrySlug?: string;
+                targetCountryDetail?: Record<string, unknown> | null;
+                relationValue?: number;
             }>).detail;
             const playerCountryName = String(
                 selectedCountry?.country ||
@@ -3563,6 +3565,8 @@ export default function MapPage() {
                 targetCountrySlug: detail.targetCountrySlug,
                 playerIdeology: String(countryDetail?.ideology || countryDetail?.ideologi || '').trim(),
                 playerCountryDetail: countryDetail,
+                targetCountryDetail: detail.targetCountryDetail,
+                relationValue: detail.relationValue,
                 updatePlayerCountryDetail: setCountryDetail,
             });
             const dateString = [

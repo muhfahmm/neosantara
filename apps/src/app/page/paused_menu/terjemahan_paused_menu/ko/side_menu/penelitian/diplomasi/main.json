@@ -2,6 +2,7 @@
   "title": "외교 및 첩보 연구",
   "tag": "지정학 및 스파이",
   "researchTitles": {
+    "kudeta_strategis": "전략적 쿠데타 작전",
     "manfaat_kedutaan": "대사관 혜택",
     "suara_pbb": "유엔 투표권",
     "biaya_kedutaan": "대사관 비용 효율화",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "내각 관료제 개혁"
   },
   "effects": {
+    "peluang_kudeta": "쿠데타 성공 확률",
     "waktu_kedutaan": "대사관 건설 시간",
     "suara_pbb": "유엔 투표수",
     "biaya_kedutaan": "대사관 비용",

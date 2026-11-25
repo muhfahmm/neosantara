@@ -2,7 +2,7 @@
  * coupChanceCalculator.ts
  * Logika perhitungan probabilitas (persentase) keberhasilan kudeta oleh pemain ke negara lain.
  *
- * 5 Faktor Penentu:
+ * Faktor Penentu:
  * 1. Base Success Rate: 35%
  * 2. Stabilitas / Kepuasan Rakyat Target (-15% s/d +30%):
  *    - Kepuasan rendah (< 50) membuat rakyat rentan membelot, memperbesar peluang kudeta.
@@ -10,10 +10,11 @@
  * 3. Kapabilitas Intelijen & Spionase Pemain (0% s/d +20%):
  *    - Bonus riset militer "spionase_strategis" pemain (0 s/d +15%).
  *    - Bonus jika target memiliki kementerian intelijen/keamanan pemain atau jaringan spionase aktif (+5%).
- * 4. Pertahanan & Stabilitas Militer Target (-25% s/d +5%):
+ * 4. Riset Operasi Kudeta (+2% s/d +10%).
+ * 5. Pertahanan & Stabilitas Militer Target (-25% s/d +5%):
  *    - Berdasarkan total pasukan armada target / kekuatan militer target.
  *    - Semakin kuat militer target, semakin sulit tentara digerakkan untuk kudeta.
- * 5. Keselarasan / Kedekatan Ideologi & Diplomasi (-10% s/d +15%):
+ * 6. Keselarasan / Kedekatan Ideologi & Diplomasi (-10% s/d +15%):
  *    - Jika ideologi pemain sama atau serumpun dengan target: +10%
  *    - Jika hubungan diplomatik sangat buruk (< 20): target lebih waspada terhadap pengaruh asing (-10%)
  *    - Jika hubungan baik: infiltrasi diplomatik lebih mudah (+5%)
@@ -22,11 +23,13 @@
  */
 
 import { getMilitaryResearchLevelBonus } from '@/app/page/bonus_logic/militaryResearchBonus';
+import { getCoupSuccessResearchBonusPercent } from '@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Operasi Kudeta Strategis';
 
 export interface CoupChanceBreakdown {
   baseChance: number;
   stabilityModifier: number;
   intelligenceBonus: number;
+  coupResearchBonus: number;
   militaryDefensePenalty: number;
   ideologyDiplomacyModifier: number;
   totalChance: number;
@@ -98,6 +101,8 @@ export function calculateCoupSuccessChance(context: CoupChanceContext): CoupChan
     intelligenceBonus += 3;
   }
 
+  const coupResearchBonus = getCoupSuccessResearchBonusPercent(playerCountryDetail);
+
   // 4. Pertahanan & Stabilitas Militer Target
   // Dihitung dari armada militer target atau skor kekuatan militer
   let militaryDefensePenalty = 0;
@@ -150,13 +155,14 @@ export function calculateCoupSuccessChance(context: CoupChanceContext): CoupChan
   }
 
   // Hitung total peluang
-  const rawTotal = baseChance + stabilityModifier + intelligenceBonus + militaryDefensePenalty + ideologyDiplomacyModifier;
+  const rawTotal = baseChance + stabilityModifier + intelligenceBonus + coupResearchBonus + militaryDefensePenalty + ideologyDiplomacyModifier;
   const totalChance = Math.max(COUP_MIN_CHANCE, Math.min(COUP_MAX_CHANCE, Math.round(rawTotal)));
 
   return {
     baseChance,
     stabilityModifier,
     intelligenceBonus,
+    coupResearchBonus,
     militaryDefensePenalty,
     ideologyDiplomacyModifier,
     totalChance,

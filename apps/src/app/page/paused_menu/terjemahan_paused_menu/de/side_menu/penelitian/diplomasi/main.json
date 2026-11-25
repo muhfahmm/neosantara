@@ -2,6 +2,7 @@
   "title": "Diplomatie- & Geheimdienstforschung",
   "tag": "Geopolitik & Spionage",
   "researchTitles": {
+    "kudeta_strategis": "Strategische Putschoperation",
     "manfaat_kedutaan": "Botschaftsvorteile",
     "suara_pbb": "Stimmgewicht bei den Vereinten Nationen",
     "biaya_kedutaan": "Kosteneffizienz von Botschaften",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "Bürokratiereform des Kabinetts"
   },
   "effects": {
+    "peluang_kudeta": "Erfolgschance eines Staatsstreichs",
     "waktu_kedutaan": "Bauzeit für Botschaften",
     "suara_pbb": "UN-Stimmen",
     "biaya_kedutaan": "Botschaftskosten",

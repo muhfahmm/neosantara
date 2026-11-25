@@ -2,6 +2,7 @@
   "title": "外交・諜報研究",
   "tag": "地政学・スパイ",
   "researchTitles": {
+    "kudeta_strategis": "戦略的クーデター作戦",
     "manfaat_kedutaan": "大使館の効果",
     "suara_pbb": "国連での投票力",
     "biaya_kedutaan": "大使館費用の効率化",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "内閣官僚制度の改革"
   },
   "effects": {
+    "peluang_kudeta": "クーデター成功率",
     "waktu_kedutaan": "大使館の建設時間",
     "suara_pbb": "国連票",
     "biaya_kedutaan": "大使館の費用",

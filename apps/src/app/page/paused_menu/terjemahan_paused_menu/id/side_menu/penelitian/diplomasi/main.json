@@ -2,6 +2,7 @@
   "title": "Riset Diplomasi & Intelijen",
   "tag": "Geopolitik & Spionase",
   "researchTitles": {
+    "kudeta_strategis": "Operasi Kudeta Strategis",
     "manfaat_kedutaan": "Manfaat Kedutaan",
     "suara_pbb": "Suara di PBB",
     "biaya_kedutaan": "Efisiensi Biaya Kedutaan",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "Reformasi Birokrasi Kabinet"
   },
   "effects": {
+    "peluang_kudeta": "Peluang Keberhasilan Kudeta",
     "waktu_kedutaan": "Waktu Pembangunan Kedutaan",
     "suara_pbb": "Suara PBB",
     "biaya_kedutaan": "Biaya Kedutaan Besar",

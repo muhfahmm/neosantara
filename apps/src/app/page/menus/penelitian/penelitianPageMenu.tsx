@@ -35,6 +35,10 @@ import {
   getMilitaryResearchBaseBonus,
   getMilitaryResearchLevelBonus,
 } from '@/app/page/bonus_logic/militaryResearchBonus';
+import {
+  getCoupSuccessResearchLevelBonusPercent,
+  KUDETA_STRATEGIS_RESEARCH_ID,
+} from '@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Operasi Kudeta Strategis';
 import { generateResearchStartNotification } from '../inbox/logic/11_notifikasi_penelitian/researchChangeLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 
@@ -220,7 +224,7 @@ const getResearchTier = (research: Research, data: Research[]): number => {
 // ║  RESEARCH_DATA — FINAL                                          ║
 // ║  Ekonomi: 17 kartu (Kolom 1-3 × 4 tier + 5 kartu Tier 5)         ║
 // ║  Militer: 18 kartu (5/5/5/3)                                    ║
-// ║  Diplomasi: 20 kartu (5/5/5/5)                                  ║
+// ║  Diplomasi: 21 kartu (5/5/5/5/1)                                ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const RESEARCH_DATA: Research[] = [
   // ══════════════════════════════════════════════════════════════════
@@ -244,12 +248,14 @@ const RESEARCH_DATA: Research[] = [
   { id: 'pengolahan_pangan', name: 'Pengolahan Pangan Dasar', category: 'ekonomi', tier: 3, cost: 6300, duration: 90, prerequisites: ['perikanan_pascapanen'], icon: Wheat, description: 'Teknologi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
   { id: 'industri_pangan_terpadu', name: 'Industri Pangan Terintegrasi', category: 'ekonomi', tier: 4, cost: 10800, duration: 120, prerequisites: ['pengolahan_pangan'], icon: Wheat, description: 'Integrasi produksi untuk mempercepat pembangunan pabrik olahan pangan.', effects: [{ stat: 'waktu_pembangunan_olahan_pangan', value: -2, label: '-2% Waktu Pembangunan Olahan Pangan' }] },
 
+  // KOLOM 4: PERMUKIMAN & EKONOMI GLOBAL
+  { id: 'isolasi_total_musuh', name: 'Program Permukiman Terpadu', category: 'ekonomi', tier: 1, cost: 2200, duration: 30, prerequisites: [], icon: Globe2, description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
+  { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'ekonomi', tier: 2, cost: 4200, duration: 60, prerequisites: ['isolasi_total_musuh'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
+
   // TIER 5 EKONOMI
   { id: 'hegemoni_diplomasi', name: 'Harmonisasi Fiskal Global', category: 'ekonomi', tier: 5, cost: 20000, duration: 150, prerequisites: ['manufaktur_lanjut'], icon: Banknote, description: 'Sinkronisasi kebijakan fiskal dengan standar internasional untuk memaksimalkan penerimaan pajak di semua lini.', effects: [{ stat: 'pajak_semua_lini', value: 2, label: '+2% Penerimaan Pajak Seluruh Lini' }] },
   { id: 'kriptografi_kuantum', name: 'Diplomasi Perdagangan Strategis', category: 'ekonomi', tier: 5, cost: 22000, duration: 150, prerequisites: ['industri_pangan_terpadu'], icon: Lock, description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
   { id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu', category: 'ekonomi', tier: 5, cost: 21000, duration: 150, prerequisites: ['agrikultur_cerdas'], icon: Wifi, description: 'Mengurangi biaya subsidi negara sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'biaya_subsidi', value: -2, label: '-2% Biaya Subsidi Negara' }] },
-  { id: 'isolasi_total_musuh', name: 'Program Permukiman Terpadu', category: 'ekonomi', tier: 5, cost: 19000, duration: 150, prerequisites: ['manufaktur_lanjut'], icon: Globe2, description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
-  { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'ekonomi', tier: 5, cost: 25000, duration: 150, prerequisites: ['agrikultur_cerdas'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 
   // ══════════════════════════════════════════════════════════════════
   // 2. MILITER & PERTAHANAN (16 kartu — 5/5/3/3)
@@ -310,6 +316,9 @@ const RESEARCH_DATA: Research[] = [
   { id: 'bonus_tempat_wisata', name: 'Promosi Wisata Diplomatik', category: 'diplomasi', tier: 4, cost: 9500, duration: 120, prerequisites: ['mitigasi_bencana'], icon: Palette, description: 'Meningkatkan pendapatan destinasi wisata di PDB dan neraca keuangan sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'bonus_wisata', value: 2, label: '+2% Bonus Tempat Wisata' }] },
   { id: 'sanksi_ekonomi', name: 'Perangkat Sanksi Ekonomi', category: 'diplomasi', tier: 4, cost: 10800, duration: 120, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Pembekuan aset musuh.', effects: [{ stat: 'sanksi', value: 2, label: '+2% Efek Sanksi Musuh' }] },
   { id: 'suara_dewan_keamanan', name: 'Reformasi Birokrasi Kabinet', category: 'diplomasi', tier: 4, cost: 12500, duration: 120, prerequisites: ['pertahanan_diri'], icon: Globe2, description: 'Restrukturisasi tata kelola Dewan Kabinet Menteri untuk menekan biaya upgrade.', effects: [{ stat: 'biaya_upgrade_kabinet', value: -2, label: '-2% Biaya Upgrade Dewan Kabinet' }] },
+
+  // TIER 5
+  { id: KUDETA_STRATEGIS_RESEARCH_ID, name: 'Operasi Kudeta Strategis', category: 'diplomasi', tier: 5, cost: 25000, duration: 150, prerequisites: ['pertahanan_diri'], icon: Eye, description: 'Doktrin operasi rahasia meningkatkan peluang keberhasilan kudeta sebesar 2–10% sesuai level penelitian.', effects: [{ stat: 'peluang_kudeta', value: 2, label: '+2% Peluang Keberhasilan Kudeta' }] },
 ];
 
 const CATEGORIES: { key: CategoryKey; icon: React.ElementType }[] = [
@@ -488,7 +497,7 @@ export default function PenelitianPageModal({
     const duration = getEffectiveResearchDuration(research.duration, research.category);
     const endDateStr = addDays(safeDate, duration);
 
-    const notif = generateResearchStartNotification(research.name, research.category, duration, safeDate, false, 1);
+    const notif = generateResearchStartNotification(getResearchTitle(research), research.category, duration, safeDate, false, 1);
     const currentPending = Array.isArray(countryDetail.pending_notifications) ? countryDetail.pending_notifications : [];
 
     const newCategoryMap = {
@@ -527,7 +536,7 @@ export default function PenelitianPageModal({
     const duration = getEffectiveResearchDuration(getCardUpgradeDuration(research, targetLevel), research.category);
     const endDateStr = addDays(safeDate, duration);
 
-    const notif = generateResearchStartNotification(research.name, research.category, duration, safeDate, true, targetLevel);
+    const notif = generateResearchStartNotification(getResearchTitle(research), research.category, duration, safeDate, true, targetLevel);
     const currentPending = Array.isArray(countryDetail.pending_notifications) ? countryDetail.pending_notifications : [];
 
     const upgradeIdStr = `upgrade:${research.id}:${targetLevel}`;
@@ -608,8 +617,11 @@ export default function PenelitianPageModal({
     total: RESEARCH_DATA.length,
   };
 
-  const getResearchTitle = (research: Research) =>
-    t(`side_penelitian.categories.${research.category}.researchTitles.${research.id}`);
+  const getResearchTitle = (research: Research) => {
+    const key = `side_penelitian.categories.${research.category}.researchTitles.${research.id}`;
+    const translated = t(key);
+    return translated && translated !== key ? translated : research.name;
+  };
 
   const applyLevelBonus = (
     effect: ResearchEffect,
@@ -619,7 +631,9 @@ export default function PenelitianPageModal({
     category: CategoryKey = activeCategory
   ): string => {
     const isFlat = !effect.label.includes('%');
-    const localizedLabel = t(`side_penelitian.categories.${category}.effects.${effect.stat}`);
+    const key = `side_penelitian.categories.${category}.effects.${effect.stat}`;
+    const translatedLabel = t(key);
+    const localizedLabel = translatedLabel && translatedLabel !== key ? translatedLabel : effect.label.replace(/^([+-]?\d+(?:\.\d+)?%?)\s*/, '');
     const numericPrefix = effect.label.match(/^([+-]?\d+(?:\.\d+)?%?)\s*/)?.[1];
     if (level <= 0) return numericPrefix ? `${numericPrefix} ${localizedLabel}` : localizedLabel;
 
@@ -965,6 +979,8 @@ export default function PenelitianPageModal({
                                       baseValue,
                                       research.category === 'militer'
                                         ? getMilitaryResearchLevelBonus(research.id, Math.max(1, level))
+                                        : research.id === KUDETA_STRATEGIS_RESEARCH_ID
+                                          ? getCoupSuccessResearchLevelBonusPercent(level)
                                         : undefined,
                                       research.category
                                     );
@@ -1215,6 +1231,8 @@ export default function PenelitianPageModal({
                       : eff.value,
                     confirmTarget.category === 'militer'
                       ? getMilitaryResearchLevelBonus(confirmTarget.id, 1)
+                      : confirmTarget.id === KUDETA_STRATEGIS_RESEARCH_ID
+                        ? getCoupSuccessResearchLevelBonusPercent(1)
                       : undefined,
                       confirmTarget.category
                   )}
@@ -1332,7 +1350,9 @@ export default function PenelitianPageModal({
               <p className="text-[10px] font-black text-root-accent uppercase tracking-wider mb-2">
                 {t('side_penelitian.page.newEffect', {
                   level: confirmUpgrade.targetLevel,
-                  bonus: getCardBonus(confirmUpgrade.targetLevel),
+                  bonus: confirmUpgrade.research.id === KUDETA_STRATEGIS_RESEARCH_ID
+                    ? getCoupSuccessResearchLevelBonusPercent(confirmUpgrade.targetLevel)
+                    : getCardBonus(confirmUpgrade.targetLevel),
                 })}
               </p>
               {confirmUpgrade.research.effects.map((eff, i) => (
@@ -1345,6 +1365,8 @@ export default function PenelitianPageModal({
                       : eff.value,
                     confirmUpgrade.research.category === 'militer'
                       ? getMilitaryResearchLevelBonus(confirmUpgrade.research.id, confirmUpgrade.targetLevel)
+                      : confirmUpgrade.research.id === KUDETA_STRATEGIS_RESEARCH_ID
+                        ? getCoupSuccessResearchLevelBonusPercent(confirmUpgrade.targetLevel)
                       : undefined,
                       confirmUpgrade.research.category
                   )}

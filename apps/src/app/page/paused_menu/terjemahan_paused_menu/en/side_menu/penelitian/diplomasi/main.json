@@ -2,6 +2,7 @@
   "title": "Diplomacy & Intelligence Research",
   "tag": "Geopolitics & Espionage",
   "researchTitles": {
+    "kudeta_strategis": "Strategic Coup Operations",
     "manfaat_kedutaan": "Embassy Benefits",
     "suara_pbb": "UN Voting Power",
     "biaya_kedutaan": "Embassy Cost Efficiency",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "Cabinet Bureaucracy Reform"
   },
   "effects": {
+    "peluang_kudeta": "Coup Success Chance",
     "waktu_kedutaan": "Embassy Construction Time",
     "suara_pbb": "UN Votes",
     "biaya_kedutaan": "Embassy Cost",

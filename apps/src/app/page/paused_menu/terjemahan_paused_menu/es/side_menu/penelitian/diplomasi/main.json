@@ -2,6 +2,7 @@
   "title": "Investigación Diplomática e Inteligencia",
   "tag": "Geopolítica y Espionaje",
   "researchTitles": {
+    "kudeta_strategis": "Operación de golpe estratégico",
     "manfaat_kedutaan": "Beneficios de las embajadas",
     "suara_pbb": "Poder de voto en la ONU",
     "biaya_kedutaan": "Eficiencia de costes de embajada",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "Reforma burocrática del gabinete"
   },
   "effects": {
+    "peluang_kudeta": "Probabilidad de éxito del golpe",
     "waktu_kedutaan": "Tiempo de construcción de embajadas",
     "suara_pbb": "Votos en la ONU",
     "biaya_kedutaan": "Coste de embajadas",

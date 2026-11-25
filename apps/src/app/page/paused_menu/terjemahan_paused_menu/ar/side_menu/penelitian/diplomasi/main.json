@@ -2,6 +2,7 @@
   "title": "بحوث الدبلوماسية والاستخبارات",
   "tag": "الجيوسياسية والتجسس",
   "researchTitles": {
+    "kudeta_strategis": "عمليات الانقلاب الاستراتيجية",
     "manfaat_kedutaan": "فوائد السفارات",
     "suara_pbb": "قوة التصويت في الأمم المتحدة",
     "biaya_kedutaan": "كفاءة تكاليف السفارات",
@@ -24,6 +25,7 @@
     "suara_dewan_keamanan": "إصلاح بيروقراطية مجلس الوزراء"
   },
   "effects": {
+    "peluang_kudeta": "احتمال نجاح الانقلاب",
     "waktu_kedutaan": "مدة إنشاء السفارات",
     "suara_pbb": "أصوات الأمم المتحدة",
     "biaya_kedutaan": "تكاليف السفارات",

@@ -60,6 +60,8 @@ interface ActiveDiplomacyPath {
   operationTarget?: string;
   operationSucceeded?: boolean;
   targetCountrySlug?: string;
+  targetCountryDetail?: Record<string, unknown> | null;
+  relationValue?: number;
 }
 
 interface DiplomacyTrackingProps {
@@ -109,6 +111,8 @@ export default function DiplomacyTracking({
       operationTarget?: unknown,
       operationSucceeded?: unknown,
       targetCountrySlug?: unknown,
+      targetCountryDetail?: unknown,
+      relationValue?: unknown,
     ) => {
       const kind = String(kindValue || '') as DiplomacyPathKind;
       const senderCountry = String(senderValue || '').trim();
@@ -131,6 +135,10 @@ export default function DiplomacyTracking({
             operationTarget: typeof operationTarget === 'string' ? operationTarget : undefined,
             operationSucceeded: typeof operationSucceeded === 'boolean' ? operationSucceeded : undefined,
             targetCountrySlug: typeof targetCountrySlug === 'string' ? targetCountrySlug : undefined,
+            targetCountryDetail: targetCountryDetail && typeof targetCountryDetail === 'object' && !Array.isArray(targetCountryDetail)
+              ? targetCountryDetail as Record<string, unknown>
+              : undefined,
+            relationValue: typeof relationValue === 'number' && Number.isFinite(relationValue) ? relationValue : undefined,
           }]);
     };
 
@@ -146,6 +154,8 @@ export default function DiplomacyTracking({
         operationTarget?: unknown;
         operationSucceeded?: unknown;
         targetCountrySlug?: unknown;
+        targetCountryDetail?: unknown;
+        relationValue?: unknown;
       }>).detail;
       addPath(
         detail?.kind,
@@ -158,6 +168,8 @@ export default function DiplomacyTracking({
         detail?.operationTarget,
         detail?.operationSucceeded,
         detail?.targetCountrySlug,
+        detail?.targetCountryDetail,
+        detail?.relationValue,
       );
     };
 
