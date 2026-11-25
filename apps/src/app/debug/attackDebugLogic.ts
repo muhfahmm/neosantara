@@ -418,6 +418,7 @@ export function triggerAiVsAllyDebugScenario(customAllyName?: string): string | 
         target: allyCountryName,
         attackerIso: attacker.iso,
         isNpcWar: true,
+        scenario: 'ai-vs-ally',
         resolutionViolationAuthorized: true,
         __neosantaraDebugRunId: runId,
       },

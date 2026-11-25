@@ -5,7 +5,7 @@ import {
   BANTUAN_SEKUTU_CONFIG,
   type AllyRequestContext,
   type BantuanSekutuNotification,
-} from '../src/app/page/menus/inbox/logic/15_notifikasi_bantuan_sekutu/bantuanSekutuLogic.ts';
+} from '../src/app/page/menus/inbox/logic/17_notifikasi_ai_meminta_bantuan_pertahanan_ke_user/bantuanPertahananLogic.ts';
 
 function assert(condition: boolean, message: string) {
   if (!condition) {

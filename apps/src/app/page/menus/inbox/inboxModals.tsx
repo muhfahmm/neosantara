@@ -19,7 +19,7 @@ import EmbassyNotification from './logic/4_notifikasi_kedubes/embassyNotificatio
 import BencanaNotification from './logic/6_notifikasi_bencana/1_bencana_alam/bencanaNotification';
 import WabahNotification from './logic/6_notifikasi_bencana/2_wabah_penyakit/wabahNotification';
 import KeamananNotificationCard from './logic/14_notifikasi_keamanan/keamananNotification';
-import BantuanSekutuNotificationCard from './logic/15_notifikasi_bantuan_sekutu/bantuanSekutuNotification';
+import BantuanSekutuNotificationCard from './logic/17_notifikasi_ai_meminta_bantuan_pertahanan_ke_user/bantuanPertahananNotification';
 import OrganizationMembershipNotificationCard from './logic/16_notifikasi_organisasi_internasional/OrganizationMembershipNotificationCard';
 import type { OrganizationMembershipNotification } from './logic/16_notifikasi_organisasi_internasional/organizationMembershipNotificationLogic';
 import TradeRelationNotification from './logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationNotification';

@@ -190,7 +190,7 @@ import {
     expireAllyHelpRequest,
     BANTUAN_SEKUTU_CONFIG,
     BantuanSekutuNotification,
-} from '../menus/inbox/logic/15_notifikasi_bantuan_sekutu/bantuanSekutuLogic';
+} from '../menus/inbox/logic/17_notifikasi_ai_meminta_bantuan_pertahanan_ke_user/bantuanPertahananLogic';
 import {
     EPIDEMIC_BASE_CHANCE_PERCENT,
     generateWabahPenyakitNotification,
@@ -4745,29 +4745,39 @@ export default function MapPage() {
                     }, ...previous];
                 });
 
-                // 2. Jika target memiliki aliansi pertahanan aktif dengan pemain, picu permintaan bantuan sekutu
+                // 2. Jika target memiliki aliansi pertahanan aktif dengan pemain (atau skenario debug ai-vs-ally), picu permintaan bantuan sekutu
                 const effectiveCountryDetail = countryDetail ||
                     (typeof window !== 'undefined' ? (window as any).neosantara_player_country_detail : null);
                 const defenseAlliances = Array.isArray(effectiveCountryDetail?.defenseAlliances)
                     ? effectiveCountryDetail.defenseAlliances
                     : [];
                 
-                const hasActiveAlliance = defenseAlliances.some((ally: string) =>
+                const isDebugAllyScenario = Boolean(
+                    detail.scenario === 'ai-vs-ally' ||
+                    detail.__neosantaraDebugRunId?.includes('ally')
+                );
+
+                const hasActiveAlliance = isDebugAllyScenario || defenseAlliances.some((ally: string) =>
                     areSameWarCountry(ally, targetCountryName, undefined, detail.targetIso || targetDetailData?.iso)
                 );
 
                 if (hasActiveAlliance) {
                     const resolvedPlayerCountry = getPlayerCountryIdentity(effectiveCountryDetail) || selectedCountry?.country || 'Indonesia';
+                    const effectiveAlliances = isDebugAllyScenario && !defenseAlliances.includes(targetCountryName)
+                        ? [...defenseAlliances, targetCountryName]
+                        : defenseAlliances;
+
                     const allyHelpRequest = createAllyHelpRequest({
                         playerCountry: resolvedPlayerCountry,
                         playerIso: effectiveCountryDetail?.iso,
-                        defenseAlliances,
+                        defenseAlliances: effectiveAlliances,
                         attackerCountry: attackerCountryName,
                         attackerIso: detail.attackerIso || attackerDetailData?.iso,
                         targetCountry: targetCountryName,
                         targetIso: detail.targetIso || targetDetailData?.iso,
                         currentDateStr: currentDateStr,
                         existingRequests: notifications as unknown as BantuanSekutuNotification[],
+                        isDebugScenario: isDebugAllyScenario,
                     });
 
                     if (allyHelpRequest) {
