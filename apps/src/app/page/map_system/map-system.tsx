@@ -74,6 +74,8 @@ import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
+const StationedPeacekeepersOverlay = dynamic(() => import('../path_logic/peacekeeper/StationedPeacekeepersOverlay'), { ssr: false });
+import { addStationedPeacekeeper, getStationedPeacekeeperPower } from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
@@ -4812,10 +4814,15 @@ export default function MapPage() {
                 }
             }
 
+            // Tambahkan kekuatan pasukan penjaga perdamaian (peacekeepers) pemain yang sedang bertugas di negara target
+            const stationedPower = getStationedPeacekeeperPower(detail.target);
+            const effectiveTargetPower = targetPowerSummary.totals.totalPower + stationedPower;
+
             setActiveWarAnimation({
                 ...detail,
                 isNpcWar,
                 isMilitaryAid: detail.isMilitaryAid === true,
+                isPeacekeeperDeploy: detail.isPeacekeeperDeploy === true,
                 targetCityId: targetCity?.cityId,
                 targetCityName: targetCity?.cityName,
                 targetCityLat: targetCity?.lat,
@@ -4829,7 +4836,7 @@ export default function MapPage() {
                 unauthorizedAttackSanctionsApplied,
                 invasionMandateAtLaunch: hasApprovedInvasionMandate,
                 attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
-                targetPower: targetPowerSummary.totals.totalPower,
+                targetPower: effectiveTargetPower,
                 shouldShowBattleAnalysis: showBattleAnalysis,
                 isPlayerCoalitionAttacker,
             });
@@ -11871,6 +11878,7 @@ export default function MapPage() {
                         isUserDefender={isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         isMilitaryAid={activeWarAnimation.isMilitaryAid === true}
+                        isPeacekeeperDeploy={activeWarAnimation.isPeacekeeperDeploy === true}
                         primaryWar={activeWarAnimation.primaryWar}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
@@ -12240,7 +12248,33 @@ export default function MapPage() {
                             );
                         }}
                         onClose={(battleOutcome) => {
-                            if (activeWarAnimation && !battleOutcome) {
+                            // Jika ini adalah pengiriman pasukan penjaga perdamaian yang telah sampai di ibukota sekutu
+                            if (activeWarAnimation?.isPeacekeeperDeploy === true) {
+                                const targetCapital = buildCapitalPoint(activeWarAnimation.target);
+                                addStationedPeacekeeper({
+                                    allyCountry: activeWarAnimation.target,
+                                    allyIso: activeWarAnimation.targetCountryDetail?.iso,
+                                    capital: targetCapital?.capital || activeWarAnimation.target,
+                                    lat: targetCapital?.lat || 0,
+                                    lng: targetCapital?.lng || 0,
+                                    power: activeWarAnimation.playerPower || 100,
+                                    deployedUnits: activeWarAnimation.deployedUnitsConfig || {},
+                                    deployedAt: currentDate.toISOString().slice(0, 10),
+                                });
+
+                                setNotifications(prev => [{
+                                    id: `notif-peacekeeper-arrived-${Date.now()}`,
+                                    title: '🕊️ PASUKAN PERDAMAIAN TIBA',
+                                    sender: `Markas Pasukan Perdamaian PBB`,
+                                    message: `Kontingen pasukan penjaga perdamaian telah sampai dan resmi bertugas menjaga ibukota ${activeWarAnimation.target}. Pasukan ini akan ikut mempertahankan kedaulatan sekutu jika diserang.`,
+                                    timestamp: currentDate.toISOString().slice(0, 10),
+                                    type: 'peringkat',
+                                    value: 100,
+                                    isRead: false,
+                                }, ...prev]);
+                            }
+
+                            if (activeWarAnimation && !battleOutcome && !activeWarAnimation.isPeacekeeperDeploy) {
                                 submitSanctionsForWar(activeWarAnimation, 'failed');
                             }
                             if (activeWarAnimation?.requestedInvasion === true) {
@@ -12253,7 +12287,8 @@ export default function MapPage() {
                             if (
                                 activeWarAnimation?.troopsCommitted === true &&
                                 activeWarAnimation.committedArmySnapshot &&
-                                !battleOutcome
+                                !battleOutcome &&
+                                !activeWarAnimation.isPeacekeeperDeploy
                             ) {
                                 setCountryDetail(activeWarAnimation.committedArmySnapshot);
                             }
@@ -12516,6 +12551,9 @@ export default function MapPage() {
                     />
                 );
             })()}
+
+            {/* Overlay Tank Penjaga Perdamaian PBB yang Berjaga di Ibukota Sekutu */}
+            <StationedPeacekeepersOverlay />
 
             {/* Shifted Canvas Container */}
             <MapCanvasView
