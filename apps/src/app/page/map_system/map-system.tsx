@@ -4211,7 +4211,8 @@ export default function MapPage() {
                 isPlayerAttacker &&
                 !isPlayerDefender &&
                 detail.requestedInvasion !== true &&
-                detail.isNpcWar !== true;
+                detail.isNpcWar !== true &&
+                detail.isPeacekeeperDeploy !== true;
 
             if (isPlayerAttack) {
                 const activePlayerAttack = getActivePlayerAttack();
@@ -4326,7 +4327,8 @@ export default function MapPage() {
 
             const hasApprovedInvasionMandate = detail.invasionMandateAtLaunch === true;
             const unauthorizedAttackSanctionsApplied =
-                detail.unauthorizedAttackSanctionsApplied === true ||
+                detail.isPeacekeeperDeploy !== true &&
+                (detail.unauthorizedAttackSanctionsApplied === true ||
                 (Boolean(playerCountryName) &&
                 areSameWarCountry(
                     detail.attacker,
@@ -4339,7 +4341,7 @@ export default function MapPage() {
                     target: detail.target,
                     isPbbCoalition: detail.isPbbCoalition === true,
                     approvedMandates: approvedMandatesAtLaunch,
-                }));
+                })));
             const resolutionViolationAuthorized = detail.resolutionViolationAuthorized === true;
             if (
                 !detail.isPbbCoalition &&
@@ -4434,12 +4436,16 @@ export default function MapPage() {
                 }, ...previous]);
             }
 
-            if (playerCountryName && areSameWarCountry(
-                detail.attacker,
-                playerCountryName,
-                detail.attackerCountryDetail?.iso,
-                selectedCountry?.iso || countryDetail?.iso
-            )) {
+            if (
+                detail.isPeacekeeperDeploy !== true &&
+                playerCountryName &&
+                areSameWarCountry(
+                    detail.attacker,
+                    playerCountryName,
+                    detail.attackerCountryDetail?.iso,
+                    selectedCountry?.iso || countryDetail?.iso
+                )
+            ) {
                 setMilitaryAttackRelation(detail.attacker, detail.target, 1);
             }
 
@@ -12262,11 +12268,19 @@ export default function MapPage() {
                                     deployedAt: currentDate.toISOString().slice(0, 10),
                                 });
 
+                                // Tambahkan hubungan bilateral dengan sekutu sebesar 5 - 10 poin secara acak
+                                const bonusRelation = Math.floor(Math.random() * 6) + 5; // 5 sampai 10
+                                const senderCountry = activeWarAnimation.attacker || playerCountryName || 'Indonesia';
+                                setRelationModifier(senderCountry, activeWarAnimation.target, bonusRelation);
+                                if (typeof window !== 'undefined') {
+                                    window.dispatchEvent(new CustomEvent('country_relations_updated'));
+                                }
+
                                 setNotifications(prev => [{
                                     id: `notif-peacekeeper-arrived-${Date.now()}`,
                                     title: '🕊️ PASUKAN PERDAMAIAN TIBA',
                                     sender: `Markas Pasukan Perdamaian PBB`,
-                                    message: `Kontingen pasukan penjaga perdamaian telah sampai dan resmi bertugas menjaga ibukota ${activeWarAnimation.target}. Pasukan ini akan ikut mempertahankan kedaulatan sekutu jika diserang.`,
+                                    message: `Kontingen pasukan penjaga perdamaian telah sampai dan resmi bertugas menjaga ibukota ${activeWarAnimation.target}. Kehadiran pasukan mempererat persahabatan antarkedua negara (Hubungan +${bonusRelation}).`,
                                     timestamp: currentDate.toISOString().slice(0, 10),
                                     type: 'peringkat',
                                     value: 100,

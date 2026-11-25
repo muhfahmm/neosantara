@@ -318,36 +318,38 @@ export default function SerangModals({
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-root-surface relative z-10 neon-scrollbar flex flex-col">
           <div className="w-full space-y-6">
 
-            {/* STATUS MANDAT PBB & EMBARGO (INFORMATIF) */}
-            <div className="flex flex-col gap-2">
-              {hasInvasionMandate ? (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
-                  <Shield className="w-5 h-5 shrink-0 text-emerald-400" />
-                  <div>
-                    <span className="font-black uppercase tracking-wider block">Mandat Operasi Militer PBB Aktif</span>
-                    <span>Serangan terhadap {targetName} didukung oleh Resolusi Dewan Keamanan PBB. Anda tidak akan dikenakan sanksi agresi sepihak.</span>
+            {/* STATUS MANDAT PBB & EMBARGO (INFORMATIF) - Hanya tampil jika mode serang biasa, bukan bantuan militer / kirim pasukan sekutu */}
+            {!isMilitaryAid && (
+              <div className="flex flex-col gap-2">
+                {hasInvasionMandate ? (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
+                    <Shield className="w-5 h-5 shrink-0 text-emerald-400" />
+                    <div>
+                      <span className="font-black uppercase tracking-wider block">Mandat Operasi Militer PBB Aktif</span>
+                      <span>Serangan terhadap {targetName} didukung oleh Resolusi Dewan Keamanan PBB. Anda tidak akan dikenakan sanksi agresi sepihak.</span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
-                  <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400" />
-                  <div>
-                    <span className="font-black uppercase tracking-wider block">Peringatan: Tanpa Mandat Resmi PBB</span>
-                    <span>Serangan ini merupakan inisiatif sepihak tanpa resolusi DK PBB. Berisiko memicu sanksi diplomatik dan embargo multilateral terhadap negara Anda.</span>
+                ) : (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+                    <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400" />
+                    <div>
+                      <span className="font-black uppercase tracking-wider block">Peringatan: Tanpa Mandat Resmi PBB</span>
+                      <span>Serangan ini merupakan inisiatif sepihak tanpa resolusi DK PBB. Berisiko memicu sanksi diplomatik dan embargo multilateral terhadap negara Anda.</span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {targetEmbargoResolution && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs">
-                  <ShieldAlert className="w-5 h-5 shrink-0 text-sky-400" />
-                  <div>
-                    <span className="font-black uppercase tracking-wider block">Target Sedang Dalam Embargo PBB</span>
-                    <span>{targetName} saat ini dikenakan sanksi resolusi PBB ({targetEmbargoResolution.label || targetEmbargoResolution.desc}). Pasokan militer target melemah.</span>
+                {targetEmbargoResolution && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs">
+                    <ShieldAlert className="w-5 h-5 shrink-0 text-sky-400" />
+                    <div>
+                      <span className="font-black uppercase tracking-wider block">Target Sedang Dalam Embargo PBB</span>
+                      <span>{targetName} saat ini dikenakan sanksi resolusi PBB ({targetEmbargoResolution.label || targetEmbargoResolution.desc}). Pasokan militer target melemah.</span>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
             {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
             <div className="flex flex-col bg-root-canvas border border-root-accent/20 p-6 rounded-2xl shadow-sm gap-4">
