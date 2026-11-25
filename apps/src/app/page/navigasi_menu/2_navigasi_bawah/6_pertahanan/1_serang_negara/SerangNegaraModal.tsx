@@ -411,11 +411,12 @@ export default function SerangNegaraModal({
     closeAttackFlow();
 
     if (typeof window !== 'undefined') {
+      const isAid = Boolean(militaryAidContext);
       window.dispatchEvent(
         new CustomEvent('start_war_animation', {
           detail: {
             attacker: selectedCountryName,
-            target: selectedTarget.countryName,
+            target: isAid && militaryAidContext?.allyCountry ? militaryAidContext.allyCountry : selectedTarget.countryName,
             playerPower: attackerPower,
             targetPower,
             attackerCountryDetail: attackerDetailBeforeDeployment,
@@ -423,6 +424,10 @@ export default function SerangNegaraModal({
             committedArmyDetail: updatedDetail,
             troopsCommitted: true,
             deployedUnitsConfig: committedDeploymentConfig,
+            isMilitaryAid: isAid,
+            allyCountry: militaryAidContext?.allyCountry,
+            allyIso: militaryAidContext?.allyIso,
+            aggressorCountry: selectedTarget.countryName,
           },
         })
       );

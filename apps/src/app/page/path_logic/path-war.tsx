@@ -821,6 +821,7 @@ interface WarMapProps {
   deployedUnitsConfig?: Record<string, number>;
   isUserDefender?: boolean;
   isNpcWar?: boolean;
+  isMilitaryAid?: boolean;
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
   shouldShowBattleAnalysis?: boolean;
@@ -855,6 +856,7 @@ export default function WarMap({
   deployedUnitsConfig: committedDeploymentConfig,
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
+  isMilitaryAid = false,
   requestedInvasion = false,
   isPbbCoalition = false,
   shouldShowBattleAnalysis = true,
@@ -1398,6 +1400,34 @@ export default function WarMap({
 
   const VB = `0 0 ${screenSize.w} ${screenSize.h}`;
 
+  // Warna tema animasi: Merah agresor reguler (#FF2D55) vs Biru Muda PBB bantuan militer (#38BDF8)
+  const warTheme = useMemo(() => {
+    if (isMilitaryAid) {
+      return {
+        main: '#38BDF8', // Biru muda PBB / Sky 400
+        dark: '#0284C7', // Sky 600
+        darker: '#0369A1', // Sky 700
+        border: '#075985', // Sky 800
+        track: '#0C4A6E', // Sky 900
+        trackDeep: '#082F49', // Sky 950
+        light: '#7DD3FC', // Sky 300
+        glow: '#BAE6FD', // Sky 200
+        burstEnd: '#38BDF8',
+      };
+    }
+    return {
+      main: '#FF2D55',
+      dark: '#D01A42',
+      darker: '#B71C3A',
+      border: '#6B1020',
+      track: '#3A0714',
+      trackDeep: '#1A0208',
+      light: '#FF5C7E',
+      glow: '#FF7096',
+      burstEnd: '#FF2D55',
+    };
+  }, [isMilitaryAid]);
+
   return (
     <>
       {(phase === 'travel' || phase === 'impact') && (
@@ -1414,8 +1444,8 @@ export default function WarMap({
 
               <radialGradient id="impact-burst">
                 <stop offset="0%" stopColor="#FFEB3B" stopOpacity="1" />
-                <stop offset="40%" stopColor="#FF2D55" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#FF2D55" stopOpacity="0" />
+                <stop offset="40%" stopColor={warTheme.main} stopOpacity="0.85" />
+                <stop offset="100%" stopColor={warTheme.burstEnd} stopOpacity="0" />
               </radialGradient>
             </defs>
 
@@ -1423,7 +1453,7 @@ export default function WarMap({
               ref={routePathRef}
               d="M 0 0"
               fill="none"
-              stroke="#FF2D55"
+              stroke={warTheme.main}
               strokeWidth={4}
               strokeDasharray="14 10"
               opacity={phase === 'travel' ? 0.85 : 0.4}
@@ -1434,7 +1464,7 @@ export default function WarMap({
               ref={progressPathRef}
               d="M 0 0"
               fill="none"
-              stroke="#FF2D55"
+              stroke={warTheme.main}
               strokeWidth={6}
               strokeLinecap="round"
               pathLength={100}
@@ -1444,8 +1474,8 @@ export default function WarMap({
             <circle ref={startMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
             <circle ref={startHaloRef} cx={0} cy={0} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
 
-            <circle ref={endMarkerRef} cx={0} cy={0} r={8} fill="#FF2D55" opacity={0.8} />
-            <circle ref={endHaloRef} cx={0} cy={0} r={20} fill="none" stroke="#FF2D55" strokeWidth={2}>
+            <circle ref={endMarkerRef} cx={0} cy={0} r={8} fill={warTheme.main} opacity={0.8} />
+            <circle ref={endHaloRef} cx={0} cy={0} r={20} fill="none" stroke={warTheme.main} strokeWidth={2}>
               <animate attributeName="r" values="16;30;16" dur="1.6s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
             </circle>
@@ -1471,8 +1501,8 @@ export default function WarMap({
               >
                 <circle r={44} fill="transparent" pointerEvents="all" />
                 {/* ==== AURA GLOW (dipertahankan dari versi lama) ==== */}
-                <circle r={36} fill="#FF2D55" opacity={0.10} />
-                <circle r={24} fill="#FF2D55" opacity={0.18} />
+                <circle r={36} fill={warTheme.main} opacity={0.10} />
+                <circle r={24} fill={warTheme.main} opacity={0.18} />
 
                 <g ref={tankRotationRef} transform="rotate(0)">
                   {/* ==== SHADOW KONTAK DI TANAH ==== */}
@@ -1480,8 +1510,8 @@ export default function WarMap({
 
                   {/* ==== TRACKS ==== */}
                   {/* Track jauh (atas di local Y) */}
-                  <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill="#3A0714" />
-                  <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+                  <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill={warTheme.track} />
+                  <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill={warTheme.border} />
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
                     <rect
                       key={`ft${i}`}
@@ -1489,14 +1519,14 @@ export default function WarMap({
                       y={-12.3}
                       width={2.4}
                       height={5}
-                      fill="#1A0208"
+                      fill={warTheme.trackDeep}
                       opacity={0.55}
                     />
                   ))}
 
                   {/* Track dekat (bawah di local Y) */}
-                  <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill="#3A0714" />
-                  <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+                  <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill={warTheme.track} />
+                  <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill={warTheme.border} />
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
                     <rect
                       key={`nt${i}`}
@@ -1504,7 +1534,7 @@ export default function WarMap({
                       y={7.3}
                       width={2.4}
                       height={5}
-                      fill="#1A0208"
+                      fill={warTheme.trackDeep}
                       opacity={0.55}
                     />
                   ))}
@@ -1512,63 +1542,63 @@ export default function WarMap({
                   {/* Road wheels mengintip dari track */}
                   {[-16, -10, -4, 2, 8, 14].map((x) => (
                     <g key={`rw${x}`}>
-                      <circle cx={x} cy={-10.5} r={1.6} fill="#6B1020" />
-                      <circle cx={x} cy={10.5} r={1.6} fill="#6B1020" />
+                      <circle cx={x} cy={-10.5} r={1.6} fill={warTheme.border} />
+                      <circle cx={x} cy={10.5} r={1.6} fill={warTheme.border} />
                     </g>
                   ))}
 
                   {/* Drive sprocket (depan) & idler (belakang) */}
-                  <circle cx={-18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
-                  <circle cx={-18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
-                  <circle cx={18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
-                  <circle cx={18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+                  <circle cx={-18} cy={-10} r={2.6} fill={warTheme.darker} stroke={warTheme.track} strokeWidth={0.5} />
+                  <circle cx={-18} cy={10} r={2.6} fill={warTheme.darker} stroke={warTheme.track} strokeWidth={0.5} />
+                  <circle cx={18} cy={-10} r={2.6} fill={warTheme.darker} stroke={warTheme.track} strokeWidth={0.5} />
+                  <circle cx={18} cy={10} r={2.6} fill={warTheme.darker} stroke={warTheme.track} strokeWidth={0.5} />
 
                   {/* ==== HULL ==== */}
                   <path
                     d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z"
-                    fill="#FF2D55"
-                    stroke="#6B1020"
+                    fill={warTheme.main}
+                    stroke={warTheme.border}
                     strokeWidth={0.9}
                   />
                   {/* Permukaan atas hull (lebih terang — menangkap cahaya) */}
-                  <path d="M-19,-6 L18,-6 L20,-3 L-20,-3 Z" fill="#FF5C7E" opacity={0.55} />
+                  <path d="M-19,-6 L18,-6 L20,-3 L-20,-3 Z" fill={warTheme.light} opacity={0.55} />
                   {/* Glacis depan (sisi miring depan) */}
                   <path
                     d="M18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L19,3 L19,-3 Z"
-                    fill="#FF7096"
+                    fill={warTheme.glow}
                     opacity={0.7}
                   />
                   {/* Pelat belakang (lebih gelap) */}
-                  <path d="M-21,-6 L-19,-6.5 L-19,6.5 L-21,6 Z" fill="#B71C3A" />
+                  <path d="M-21,-6 L-19,-6.5 L-19,6.5 L-21,6 Z" fill={warTheme.darker} />
                   {/* Panel line */}
-                  <path d="M-14,-6 L-14,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
-                  <path d="M13,-6 L13,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
+                  <path d="M-14,-6 L-14,6" stroke={warTheme.border} strokeWidth={0.5} opacity={0.55} />
+                  <path d="M13,-6 L13,6" stroke={warTheme.border} strokeWidth={0.5} opacity={0.55} />
                   {/* Lampu depan */}
-                  <circle cx={19.5} cy={-4.2} r={0.9} fill="#FFE5EC" />
-                  <circle cx={19.5} cy={4.2} r={0.9} fill="#FFE5EC" />
+                  <circle cx={19.5} cy={-4.2} r={0.9} fill="#E0F2FE" />
+                  <circle cx={19.5} cy={4.2} r={0.9} fill="#E0F2FE" />
 
                   {/* ==== TURRET ==== */}
                   {/* Ring dasar turret */}
-                  <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill="#B71C3A" />
+                  <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill={warTheme.darker} />
                   {/* Body turret */}
                   <path
                     d="M-10,-4 L6,-4.5 L9,-2 L9,2 L6,4.5 L-10,4 L-12,2 L-12,-2 Z"
-                    fill="#FF2D55"
-                    stroke="#6B1020"
+                    fill={warTheme.main}
+                    stroke={warTheme.border}
                     strokeWidth={0.7}
                   />
                   {/* Highlight atas turret */}
-                  <path d="M-10,-3.5 L6,-4 L8.5,-1.5 L-11,-1.5 Z" fill="#FF7096" opacity={0.5} />
+                  <path d="M-10,-3.5 L6,-4 L8.5,-1.5 L-11,-1.5 Z" fill={warTheme.glow} opacity={0.5} />
                   {/* Shadow sisi kanan turret */}
-                  <path d="M6,-4.5 L9,-2 L9,2 L6,4.5 L8,2 L8,-2 Z" fill="#B71C3A" opacity={0.7} />
+                  <path d="M6,-4.5 L9,-2 L9,2 L6,4.5 L8,2 L8,-2 Z" fill={warTheme.darker} opacity={0.7} />
 
                   {/* Cupola komandan */}
-                  <circle cx={-5} cy={-1} r={2.2} fill="#D01A42" stroke="#6B1020" strokeWidth={0.5} />
-                  <circle cx={-5} cy={-1} r={1.1} fill="#FF7096" opacity={0.6} />
-                  <circle cx={-5} cy={-1} r={0.5} fill="#6B1020" />
+                  <circle cx={-5} cy={-1} r={2.2} fill={warTheme.dark} stroke={warTheme.border} strokeWidth={0.5} />
+                  <circle cx={-5} cy={-1} r={1.1} fill={warTheme.glow} opacity={0.6} />
+                  <circle cx={-5} cy={-1} r={0.5} fill={warTheme.border} />
                   {/* Hatch loader */}
-                  <circle cx={1} cy={1.5} r={1.3} fill="#D01A42" stroke="#6B1020" strokeWidth={0.4} />
-                  <circle cx={1} cy={1.5} r={0.5} fill="#B71C3A" />
+                  <circle cx={1} cy={1.5} r={1.3} fill={warTheme.dark} stroke={warTheme.border} strokeWidth={0.4} />
+                  <circle cx={1} cy={1.5} r={0.5} fill={warTheme.darker} />
 
                   {/* ==== BARREL ==== */}
                   {/* Mantlet */}
@@ -1578,14 +1608,14 @@ export default function WarMap({
                     width={4}
                     height={5}
                     rx={1}
-                    fill="#B71C3A"
-                    stroke="#6B1020"
+                    fill={warTheme.darker}
+                    stroke={warTheme.border}
                     strokeWidth={0.5}
                   />
                   {/* Laras utama */}
-                  <rect x={11} y={-1.3} width={19} height={2.6} fill="#D01A42" />
-                  <rect x={11} y={-1.3} width={19} height={0.9} fill="#FF7096" opacity={0.55} />
-                  <rect x={11} y={0.7} width={19} height={0.6} fill="#6B1020" opacity={0.5} />
+                  <rect x={11} y={-1.3} width={19} height={2.6} fill={warTheme.dark} />
+                  <rect x={11} y={-1.3} width={19} height={0.9} fill={warTheme.glow} opacity={0.55} />
+                  <rect x={11} y={0.7} width={19} height={0.6} fill={warTheme.border} opacity={0.5} />
                   {/* Bore evacuator (penebalan tengah laras) */}
                   <rect
                     x={19}
@@ -1593,8 +1623,8 @@ export default function WarMap({
                     width={3}
                     height={3.6}
                     rx={0.7}
-                    fill="#B71C3A"
-                    stroke="#6B1020"
+                    fill={warTheme.darker}
+                    stroke={warTheme.border}
                     strokeWidth={0.3}
                   />
                   {/* Muzzle brake */}
@@ -1604,12 +1634,12 @@ export default function WarMap({
                     width={4.5}
                     height={4}
                     rx={0.8}
-                    fill="#3A0714"
-                    stroke="#1A0208"
+                    fill={warTheme.track}
+                    stroke={warTheme.trackDeep}
                     strokeWidth={0.4}
                   />
-                  <rect x={30} y={-2} width={4.5} height={1.2} rx={0.4} fill="#B71C3A" />
-                  <ellipse cx={34.5} cy={0} rx={0.6} ry={1.6} fill="#1A0208" />
+                  <rect x={30} y={-2} width={4.5} height={1.2} rx={0.4} fill={warTheme.darker} />
+                  <ellipse cx={34.5} cy={0} rx={0.6} ry={1.6} fill={warTheme.trackDeep} />
                 </g>
               </g>
             )}

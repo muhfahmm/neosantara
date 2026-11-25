@@ -4792,6 +4792,7 @@ export default function MapPage() {
             setActiveWarAnimation({
                 ...detail,
                 isNpcWar,
+                isMilitaryAid: detail.isMilitaryAid === true,
                 targetCityId: targetCity?.cityId,
                 targetCityName: targetCity?.cityName,
                 targetCityLat: targetCity?.lat,
@@ -11846,6 +11847,7 @@ export default function MapPage() {
                         deployedUnitsConfig={activeWarAnimation.deployedUnitsConfig}
                         isUserDefender={isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
+                        isMilitaryAid={activeWarAnimation.isMilitaryAid === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
                         shouldShowBattleAnalysis={activeWarAnimation.shouldShowBattleAnalysis === true}
