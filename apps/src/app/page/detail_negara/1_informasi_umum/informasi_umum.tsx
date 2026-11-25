@@ -1066,6 +1066,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         isOpen={isKirimPasukanModalOpen}
         countryName={countryName}
         playerCountryDetail={playerCountryDetail}
+        targetCountryDetail={provinceData}
         onClose={() => setIsKirimPasukanModalOpen(false)}
         onConfirm={(deploymentConfig) => {
           if (blockDiplomaticAction()) return;

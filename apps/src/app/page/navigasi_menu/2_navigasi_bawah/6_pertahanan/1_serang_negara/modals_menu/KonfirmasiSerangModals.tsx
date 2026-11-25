@@ -11,6 +11,8 @@ import type { TravelFuelStatus } from "../../../3_produksi_konsumsi/fuelLogic/tr
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import { loadActiveResolutions } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { loadActiveSecurityCouncilItems } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { countryPaths } from "@/app/page/map_system/mapDataAssets";
+import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
 interface SerangModalsProps {
   isOpen: boolean;
@@ -143,6 +145,57 @@ export default function SerangModals({
   const displayTitle = customTitle || (isMilitaryAid ? (tr("deployment.militaryAidTitle") || "KONFIRMASI BANTUAN MILITER") : tr("deployment.title"));
   const displayConfirmLabel = customConfirmLabel || (isMilitaryAid ? (tr("deployment.militaryAidConfirm") || "KIRIM BANTUAN MILITER") : tr("deployment.confirm"));
   const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
+  const [asyncTargetData, setAsyncTargetData] = useState<any>(null);
+
+  const initialTargetSource = targetCountry?.payload || targetCountry;
+  const targetName = targetCountry?.countryName ||
+    targetCountry?.payload?.countryName ||
+    initialTargetSource?.country ||
+    initialTargetSource?.nama_negara ||
+    initialTargetSource?.name_id ||
+    initialTargetSource?.name_en ||
+    tr("fallback.target");
+
+  // Jika targetCountry belum punya data armada (misal hanya { countryName: "Aljazair" }), coba fetch otomatis
+  React.useEffect(() => {
+    if (!isOpen || !targetName) return;
+    const initialSummary = getArmadaPowerSummary(initialTargetSource);
+    if (initialSummary.totals.totalPower > 0) return;
+
+    let isSubscribed = true;
+    const loadTargetMilitaryData = async () => {
+      try {
+        const normTargetName = String(targetName)
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '');
+
+        const matchedPath = Object.entries(countryPaths as Record<string, string>).find(
+          ([k]) => String(k).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '') === normTargetName
+        )?.[1];
+
+        if (matchedPath) {
+          const res = await fetch(`/api/country-data?path=${encodeURIComponent(matchedPath)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (isSubscribed && data && !data.error) {
+              setAsyncTargetData(applyNpcCountrySimulationState(data));
+            }
+          }
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[KonfirmasiSerang] Gagal fetch data militer target:', err);
+        }
+      }
+    };
+
+    loadTargetMilitaryData();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [isOpen, targetName, initialTargetSource]);
 
   React.useEffect(() => {
     if (!isOpen || typeof window === "undefined") return;
@@ -159,15 +212,8 @@ export default function SerangModals({
 
   if (!isOpen || !targetCountry) return null;
 
-  const targetSource = targetCountry?.payload || targetCountry;
+  const targetSource = asyncTargetData || initialTargetSource;
   const attackerName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || tr("fallback.yourCountry");
-  const targetName = targetCountry?.countryName ||
-    targetCountry?.payload?.countryName ||
-    targetSource?.country ||
-    targetSource?.nama_negara ||
-    targetSource?.name_id ||
-    targetSource?.name_en ||
-    tr("fallback.target");
   const handleConfirm = () => {
     const activeAttack = getActivePlayerAttack();
     if (activeAttack) {
@@ -356,34 +402,38 @@ export default function SerangModals({
               
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                 
-                {/* KARTU KIRI: PENYERANG */}
+                {/* KARTU KIRI: PENYERANG / PENGIRIM */}
                 <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border border-root-accent/20">
                   <div className="p-2.5 rounded-full bg-root-accent/10 border border-root-accent/30">
                     <Shield className="w-6 h-6 text-root-accent" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("deployment.attacker")}</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
+                    {isMilitaryAid ? "Pasukan Pengirim" : tr("deployment.attacker")}
+                  </p>
                   <p className="text-xl font-black text-root-accent">{attackerName}</p>
                   <p className="text-xs text-root-text">
                     {tr("deployment.power")}: <span className="font-black text-root-accent">{formatNumber(attackerTotalPower, language)}</span>
                   </p>
                 </div>
 
-                {/* ELEMEN TENGAH: VS */}
+                {/* ELEMEN TENGAH: STRIP (-) ATAU VS */}
                 <div className="flex items-center justify-center py-2 md:py-0">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-root-accent/30 bg-root-surface text-xl font-black text-root-accent shadow-sm">
-                    {tr("deployment.versus")}
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-root-accent/30 bg-root-surface text-2xl font-black text-root-accent shadow-sm select-none">
+                    -
                   </div>
                 </div>
 
-                {/* KARTU KANAN: TARGET */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border border-rose-500/20">
-                  <div className="p-2.5 rounded-full bg-rose-500/10 border border-rose-500/30">
-                    <Shield className="w-6 h-6 text-rose-400" />
+                {/* KARTU KANAN: TARGET / SEKUTU PENERIMA */}
+                <div className={`flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-root-surface border ${isMilitaryAid ? 'border-sky-500/20' : 'border-rose-500/20'}`}>
+                  <div className={`p-2.5 rounded-full ${isMilitaryAid ? 'bg-sky-500/10 border border-sky-500/30' : 'bg-rose-500/10 border border-rose-500/30'}`}>
+                    <Shield className={`w-6 h-6 ${isMilitaryAid ? 'text-sky-400' : 'text-rose-400'}`} />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">{tr("deployment.target")}</p>
-                  <p className="text-xl font-black text-rose-400">{targetName}</p>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
+                    {isMilitaryAid ? "Pasukan Sekutu" : tr("deployment.target")}
+                  </p>
+                  <p className={`text-xl font-black ${isMilitaryAid ? 'text-sky-400' : 'text-rose-400'}`}>{targetName}</p>
                   <p className="text-xs text-root-text">
-                    {tr("deployment.power")}: <span className="font-black text-rose-400">{formatNumber(targetTotalPower, language)}</span>
+                    {tr("deployment.power")}: <span className={`font-black ${isMilitaryAid ? 'text-sky-400' : 'text-rose-400'}`}>{formatNumber(targetTotalPower, language)}</span>
                   </p>
                 </div>
               </div>

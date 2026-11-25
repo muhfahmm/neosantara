@@ -13,6 +13,7 @@ interface KirimPasukanModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	playerCountryDetail?: any;
+	targetCountryDetail?: any;
 	onClose: () => void;
 	onConfirm: (deploymentConfig: Record<string, number>) => void;
 }
@@ -21,6 +22,7 @@ export default function KirimPasukanModal({
 	isOpen,
 	countryName,
 	playerCountryDetail,
+	targetCountryDetail,
 	onClose,
 	onConfirm,
 }: KirimPasukanModalProps) {
@@ -72,12 +74,7 @@ export default function KirimPasukanModal({
 		const targetCountryObj = {
 			countryName: targetName,
 			displayCountryName: targetName,
-			totalPower: 0,
-			totalHealth: 0,
-			darat: 0,
-			laut: 0,
-			udara: 0,
-			payload: {},
+			payload: targetCountryDetail || { country: targetName },
 		};
 
 		return (
