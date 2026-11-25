@@ -101,7 +101,7 @@ export default function ShopModal({
 
             {/* Container Body */}
             <div
-              className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-3 sm:p-5 flex flex-col gap-4"
+              className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-2.5 sm:p-4 flex flex-col gap-2.5 sm:gap-3"
               style={{
                 backgroundColor: "var(--root-color-canvas)",
               }}
@@ -113,7 +113,7 @@ export default function ShopModal({
                   alignItems: "center",
                   gap: "0.5rem",
                   borderBottom: "1px solid color-mix(in srgb, var(--root-color-accent) 25%, transparent)",
-                  paddingBottom: "0.25rem",
+                  paddingBottom: "0.15rem",
                 }}
               >
                 <button
@@ -122,9 +122,9 @@ export default function ShopModal({
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.625rem 1.25rem",
-                    fontSize: "0.875rem",
+                    gap: "0.375rem",
+                    padding: "0.45rem 1rem",
+                    fontSize: "0.8125rem",
                     fontWeight: 800,
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
@@ -143,7 +143,7 @@ export default function ShopModal({
                     transition: "all 0.2s ease",
                   }}
                 >
-                  <Coins size={16} />
+                  <Coins size={15} />
                   <span>{t('side_shop.coins')}</span>
                 </button>
 
@@ -153,9 +153,9 @@ export default function ShopModal({
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.625rem 1.25rem",
-                    fontSize: "0.875rem",
+                    gap: "0.375rem",
+                    padding: "0.45rem 1rem",
+                    fontSize: "0.8125rem",
                     fontWeight: 800,
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
@@ -174,7 +174,7 @@ export default function ShopModal({
                     transition: "all 0.2s ease",
                   }}
                 >
-                  <Gem size={16} />
+                  <Gem size={15} />
                   <span>{t('side_shop.gems')}</span>
                 </button>
               </div>
@@ -189,15 +189,15 @@ export default function ShopModal({
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: "0.75rem",
-                  marginTop: "0.5rem",
-                  paddingTop: "1rem",
+                  gap: "0.5rem",
+                  marginTop: "0.25rem",
+                  paddingTop: "0.75rem",
                   borderTop: "1px solid color-mix(in srgb, var(--root-color-accent) 15%, transparent)",
                 }}
               >
                 <div
                   style={{
-                    fontSize: "0.75rem",
+                    fontSize: "0.6875rem",
                     fontWeight: 800,
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
@@ -208,11 +208,7 @@ export default function ShopModal({
                 </div>
 
                 <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                    gap: "0.75rem",
-                  }}
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3"
                 >
                   <PremiumItems />
                   <DiscountItems />

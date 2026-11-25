@@ -76,11 +76,7 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
 
   return (
     <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-        gap: "0.75rem",
-      }}
+      className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5"
     >
       {COIN_PACKAGES.map((pkg) => {
         const totalNeo = pkg.neoAmount + (pkg.bonusNeo || 0);
@@ -93,8 +89,8 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              padding: "0.875rem",
-              borderRadius: "var(--root-radius-card, 0.75rem)",
+              padding: "0.5rem 0.625rem",
+              borderRadius: "var(--root-radius-card, 0.5rem)",
               backgroundColor: "var(--root-color-surface)",
               border: pkg.isBestValue
                 ? "1.5px solid #F59E0B"
@@ -113,12 +109,12 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
               <div
                 style={{
                   position: "absolute",
-                  top: "-0.5rem",
-                  right: "0.625rem",
-                  fontSize: "0.625rem",
+                  top: "-0.45rem",
+                  right: "0.5rem",
+                  fontSize: "0.5625rem",
                   fontWeight: 900,
                   textTransform: "uppercase",
-                  padding: "0.15rem 0.5rem",
+                  padding: "0.1rem 0.4rem",
                   borderRadius: "9999px",
                   backgroundColor: pkg.isBestValue
                     ? "#F59E0B"
@@ -133,13 +129,13 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
             )}
 
             {/* Konten Atas: Ikon, Nama, dan Nominal */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
                 <div
                   style={{
-                    width: "2.25rem",
-                    height: "2.25rem",
-                    borderRadius: "0.5rem",
+                    width: "1.875rem",
+                    height: "1.875rem",
+                    borderRadius: "0.45rem",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -149,27 +145,31 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                     flexShrink: 0,
                   }}
                 >
-                  <Coins size={20} className="text-amber-400" />
+                  <Coins size={16} className="text-amber-400" />
                 </div>
-                <div style={{ minWidth: 0 }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
                   <h3
                     style={{
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       fontWeight: 800,
                       color: "var(--root-color-text)",
                       margin: 0,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
+                      lineHeight: 1.2,
                     }}
+                    title={t(`side_shop.coinPackages.${pkg.nameKey}`)}
                   >
                     {t(`side_shop.coinPackages.${pkg.nameKey}`)}
                   </h3>
                   <span
                     style={{
-                      fontSize: "0.625rem",
+                      fontSize: "0.5625rem",
                       color: "var(--root-color-subtle)",
                       fontWeight: 600,
+                      lineHeight: 1.1,
+                      display: "block",
                     }}
                   >
                     {t("side_shop.neoBalance")}
@@ -183,26 +183,28 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                   display: "flex",
                   alignItems: "baseline",
                   justifyContent: "space-between",
-                  padding: "0.45rem 0.625rem",
-                  borderRadius: "0.5rem",
+                  padding: "0.25rem 0.45rem",
+                  borderRadius: "0.45rem",
                   backgroundColor: "var(--root-color-canvas)",
                   border: "1px solid color-mix(in srgb, var(--root-color-accent) 15%, transparent)",
                 }}
               >
                 <span
                   style={{
-                    fontSize: "1.125rem",
-                    fontWeight: 900,
+                    fontSize: "0.75rem",
+                    fontWeight: 800,
                     color: "var(--root-color-accent)",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   +{totalNeo.toLocaleString(language)}
                 </span>
                 <span
                   style={{
-                    fontSize: "0.6875rem",
-                    fontWeight: 800,
+                    fontSize: "0.5rem",
+                    fontWeight: 700,
                     color: "var(--root-color-subtle)",
+                    letterSpacing: "0.02em",
                   }}
                 >
                   NEO
@@ -213,8 +215,8 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
             {/* Tombol Pembelian */}
             <div
               style={{
-                marginTop: "0.75rem",
-                paddingTop: "0.625rem",
+                marginTop: "0.5rem",
+                paddingTop: "0.45rem",
                 borderTop: "1px solid color-mix(in srgb, var(--root-color-accent) 12%, transparent)",
               }}
             >
@@ -226,12 +228,12 @@ export default function ShopCoinsItems({ onBuy }: ShopCoinsItemsProps) {
                   alignItems: "center",
                   justifyContent: "center",
                   width: "100%",
-                  padding: "0.5rem",
-                  borderRadius: "0.5rem",
+                  padding: "0.375rem 0.5rem",
+                  borderRadius: "0.45rem",
                   backgroundColor: "var(--root-color-accent)",
                   border: "1px solid var(--root-color-accent)",
                   color: "#0F172A",
-                  fontSize: "0.75rem",
+                  fontSize: "0.6875rem",
                   fontWeight: 900,
                   cursor: "pointer",
                 }}

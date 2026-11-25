@@ -10,67 +10,83 @@ export default function PremiumItems() {
   return (
     <div
       style={{
+        position: "relative",
         display: "flex",
-        alignItems: "center",
+        flexDirection: "column",
         justifyContent: "space-between",
-        padding: "0.75rem 1rem",
-        borderRadius: "var(--root-radius-card, 0.75rem)",
+        padding: "0.625rem 0.75rem",
+        borderRadius: "var(--root-radius-card, 0.5rem)",
         backgroundColor: "var(--root-color-surface)",
         border: "1px solid color-mix(in srgb, #F59E0B 25%, transparent)",
-        gap: "0.75rem",
+        gap: "0.5rem",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+      {/* Baris Atas: Ikon + Judul Lengkap */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0 }}>
         <div
           style={{
-            width: "2.25rem",
-            height: "2.25rem",
-            borderRadius: "0.5rem",
+            width: "1.875rem",
+            height: "1.875rem",
+            borderRadius: "0.45rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "color-mix(in srgb, #F59E0B 15%, transparent)",
             color: "#FBBF24",
+            flexShrink: 0,
           }}
         >
-          <Crown size={20} />
+          <Crown size={16} />
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <span
-            style={{
-              fontSize: "0.875rem",
-              fontWeight: 800,
-              color: "var(--root-color-text)",
-            }}
-          >
-            {t("side_shop.premiumItems.title")}
-          </span>
-          <span
-            style={{
-              fontSize: "0.75rem",
-              color: "var(--root-color-subtle)",
-              fontWeight: 600,
-            }}
-          >
-            {t("side_shop.premiumItems.description")}
-          </span>
-        </div>
+        <span
+          style={{
+            fontSize: "0.8125rem",
+            fontWeight: 800,
+            color: "var(--root-color-text)",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          title={t("side_shop.premiumItems.title")}
+        >
+          {t("side_shop.premiumItems.title")}
+        </span>
       </div>
 
-      <span
+      {/* Baris Tengah: Deskripsi */}
+      <p
         style={{
-          fontSize: "0.6875rem",
-          fontWeight: 700,
-          padding: "0.2rem 0.5rem",
-          borderRadius: "9999px",
-          backgroundColor: "color-mix(in srgb, var(--root-color-muted) 15%, transparent)",
-          color: "var(--root-color-muted)",
-          border: "1px solid color-mix(in srgb, var(--root-color-muted) 25%, transparent)",
-          whiteSpace: "nowrap",
+          margin: 0,
+          fontSize: "0.625rem",
+          color: "var(--root-color-subtle)",
+          fontWeight: 600,
+          lineHeight: 1.3,
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
         }}
       >
-        {t("side_shop.inDevelopment")}
-      </span>
+        {t("side_shop.premiumItems.description")}
+      </p>
+
+      {/* Baris Bawah: Badge Status */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.25rem" }}>
+        <span
+          style={{
+            fontSize: "0.5625rem",
+            fontWeight: 700,
+            padding: "0.15rem 0.45rem",
+            borderRadius: "9999px",
+            backgroundColor: "color-mix(in srgb, var(--root-color-muted) 15%, transparent)",
+            color: "var(--root-color-muted)",
+            border: "1px solid color-mix(in srgb, var(--root-color-muted) 25%, transparent)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {t("side_shop.inDevelopment")}
+        </span>
+      </div>
     </div>
   );
 }
