@@ -22,10 +22,6 @@
     "bonus_tempat_wisata": "外交観光の促進",
     "sanksi_ekonomi": "経済制裁ツール",
     "suara_dewan_keamanan": "内閣官僚制度の改革",
-    "hegemoni_diplomasi": "世界的な財政調和",
-    "kriptografi_kuantum": "戦略的貿易外交",
-    "intelijen_satelit_quantum": "統合補助金配分",
-    "isolasi_total_musuh": "統合居住計画",
     "tatanan_dunia_baru": "世界経済の相乗効果"
   },
   "effects": {
@@ -49,11 +45,6 @@
     "bonus_wisata": "観光地ボーナス",
     "sanksi": "敵国への制裁効果",
     "biaya_upgrade_kabinet": "閣僚評議会の強化費用",
-    "pajak_semua_lini": "全分野の税収",
-    "harga_beli": "商品の購入価格",
-    "harga_jual": "商品の販売価格",
-    "biaya_subsidi": "国家補助金費用",
-    "kapasitas_permukiman": "居住区の収容力",
     "produksi_semua_lini": "全分野の生産量"
   }
 }

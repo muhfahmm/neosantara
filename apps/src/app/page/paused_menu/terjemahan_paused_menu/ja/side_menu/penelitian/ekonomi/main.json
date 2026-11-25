@@ -13,7 +13,11 @@
     "perikanan_modern": "統合養殖",
     "perikanan_pascapanen": "水産・収穫後技術",
     "pengolahan_pangan": "基礎食品加工",
-    "industri_pangan_terpadu": "統合食品産業"
+    "industri_pangan_terpadu": "統合食品産業",
+    "hegemoni_diplomasi": "世界的な財政調和",
+    "kriptografi_kuantum": "戦略的貿易外交",
+    "intelijen_satelit_quantum": "統合補助金配分",
+    "isolasi_total_musuh": "統合居住計画"
   },
   "effects": {
     "manufaktur": "製造生産",
@@ -27,6 +31,11 @@
     "perikanan": "水産生産",
     "waktu_pembangunan_perikanan": "水産施設の建設時間",
     "olahan_pangan": "加工食品の生産",
-    "waktu_pembangunan_olahan_pangan": "食品工場の建設時間"
+    "waktu_pembangunan_olahan_pangan": "食品工場の建設時間",
+    "pajak_semua_lini": "全分野の税収",
+    "harga_beli": "商品の購入価格",
+    "harga_jual": "商品の販売価格",
+    "biaya_subsidi": "国家補助金費用",
+    "kapasitas_permukiman": "居住区の収容力"
   }
 }

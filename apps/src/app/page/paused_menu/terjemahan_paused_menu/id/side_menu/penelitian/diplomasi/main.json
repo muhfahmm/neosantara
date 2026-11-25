@@ -22,10 +22,6 @@
     "bonus_tempat_wisata": "Promosi Wisata Diplomatik",
     "sanksi_ekonomi": "Perangkat Sanksi Ekonomi",
     "suara_dewan_keamanan": "Reformasi Birokrasi Kabinet",
-    "hegemoni_diplomasi": "Harmonisasi Fiskal Global",
-    "kriptografi_kuantum": "Diplomasi Perdagangan Strategis",
-    "intelijen_satelit_quantum": "Alokasi Subsidi Terpadu",
-    "isolasi_total_musuh": "Program Permukiman Terpadu",
     "tatanan_dunia_baru": "Sinergi Ekonomi Global"
   },
   "effects": {
@@ -49,11 +45,6 @@
     "bonus_wisata": "Bonus Tempat Wisata",
     "sanksi": "Efek Sanksi Musuh",
     "biaya_upgrade_kabinet": "Biaya Upgrade Dewan Kabinet",
-    "pajak_semua_lini": "Penerimaan Pajak Seluruh Lini",
-    "harga_beli": "Harga Beli Komoditas",
-    "harga_jual": "Harga Jual Komoditas",
-    "biaya_subsidi": "Biaya Subsidi Negara",
-    "kapasitas_permukiman": "Kapasitas Permukiman",
     "produksi_semua_lini": "Produksi Semua Lini"
   }
 }

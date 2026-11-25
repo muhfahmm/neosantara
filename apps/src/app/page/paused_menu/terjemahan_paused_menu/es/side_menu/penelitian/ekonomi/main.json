@@ -13,7 +13,11 @@
     "perikanan_modern": "Acuicultura integrada",
     "perikanan_pascapanen": "Tecnología pesquera y poscosecha",
     "pengolahan_pangan": "Procesamiento básico de alimentos",
-    "industri_pangan_terpadu": "Industria alimentaria integrada"
+    "industri_pangan_terpadu": "Industria alimentaria integrada",
+    "hegemoni_diplomasi": "Armonización fiscal mundial",
+    "kriptografi_kuantum": "Diplomacia comercial estratégica",
+    "intelijen_satelit_quantum": "Asignación integrada de subsidios",
+    "isolasi_total_musuh": "Programa de asentamientos integrados"
   },
   "effects": {
     "manufaktur": "Producción manufacturera",
@@ -27,6 +31,11 @@
     "perikanan": "Producción pesquera",
     "waktu_pembangunan_perikanan": "Tiempo de construcción pesquera",
     "olahan_pangan": "Producción de alimentos procesados",
-    "waktu_pembangunan_olahan_pangan": "Tiempo de construcción de fábricas de alimentos"
+    "waktu_pembangunan_olahan_pangan": "Tiempo de construcción de fábricas de alimentos",
+    "pajak_semua_lini": "Ingresos fiscales de todos los sectores",
+    "harga_beli": "Precios de compra de productos",
+    "harga_jual": "Precios de venta de productos",
+    "biaya_subsidi": "Coste de subsidios estatales",
+    "kapasitas_permukiman": "Capacidad de asentamientos"
   }
 }

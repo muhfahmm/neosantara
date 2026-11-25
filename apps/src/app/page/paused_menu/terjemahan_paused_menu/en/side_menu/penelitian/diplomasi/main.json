@@ -22,10 +22,6 @@
     "bonus_tempat_wisata": "Diplomatic Tourism Promotion",
     "sanksi_ekonomi": "Economic Sanctions Toolkit",
     "suara_dewan_keamanan": "Cabinet Bureaucracy Reform",
-    "hegemoni_diplomasi": "Global Fiscal Harmonization",
-    "kriptografi_kuantum": "Strategic Trade Diplomacy",
-    "intelijen_satelit_quantum": "Integrated Subsidy Allocation",
-    "isolasi_total_musuh": "Integrated Settlement Program",
     "tatanan_dunia_baru": "Global Economic Synergy"
   },
   "effects": {
@@ -49,11 +45,6 @@
     "bonus_wisata": "Tourism Site Bonus",
     "sanksi": "Enemy Sanction Effect",
     "biaya_upgrade_kabinet": "Cabinet Council Upgrade Cost",
-    "pajak_semua_lini": "Tax Revenue Across All Sectors",
-    "harga_beli": "Commodity Purchase Prices",
-    "harga_jual": "Commodity Sale Prices",
-    "biaya_subsidi": "National Subsidy Cost",
-    "kapasitas_permukiman": "Settlement Capacity",
     "produksi_semua_lini": "Production Across All Sectors"
   }
 }

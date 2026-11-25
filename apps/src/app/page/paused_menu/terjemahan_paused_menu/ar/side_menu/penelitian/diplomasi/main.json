@@ -22,10 +22,6 @@
     "bonus_tempat_wisata": "الترويج السياحي الدبلوماسي",
     "sanksi_ekonomi": "أدوات العقوبات الاقتصادية",
     "suara_dewan_keamanan": "إصلاح بيروقراطية مجلس الوزراء",
-    "hegemoni_diplomasi": "التنسيق المالي العالمي",
-    "kriptografi_kuantum": "دبلوماسية التجارة الاستراتيجية",
-    "intelijen_satelit_quantum": "توزيع متكامل للإعانات",
-    "isolasi_total_musuh": "برنامج إسكان متكامل",
     "tatanan_dunia_baru": "التآزر الاقتصادي العالمي"
   },
   "effects": {
@@ -49,11 +45,6 @@
     "bonus_wisata": "مكافأة المواقع السياحية",
     "sanksi": "تأثير العقوبات على العدو",
     "biaya_upgrade_kabinet": "تكلفة ترقية مجلس الوزراء",
-    "pajak_semua_lini": "إيرادات الضرائب في جميع القطاعات",
-    "harga_beli": "أسعار شراء السلع",
-    "harga_jual": "أسعار بيع السلع",
-    "biaya_subsidi": "تكلفة إعانات الدولة",
-    "kapasitas_permukiman": "سعة المستوطنات",
     "produksi_semua_lini": "الإنتاج في جميع القطاعات"
   }
 }

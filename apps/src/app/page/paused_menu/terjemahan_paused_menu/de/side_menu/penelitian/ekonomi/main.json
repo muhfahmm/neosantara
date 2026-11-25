@@ -13,7 +13,11 @@
     "perikanan_modern": "Integrierte Aquakultur",
     "perikanan_pascapanen": "Fischerei- und Nachernte-Technologie",
     "pengolahan_pangan": "Grundlegende Lebensmittelverarbeitung",
-    "industri_pangan_terpadu": "Integrierte Lebensmittelindustrie"
+    "industri_pangan_terpadu": "Integrierte Lebensmittelindustrie",
+    "hegemoni_diplomasi": "Globale Steuerharmonisierung",
+    "kriptografi_kuantum": "Strategische Handelsdiplomatie",
+    "intelijen_satelit_quantum": "Integrierte Subventionsverteilung",
+    "isolasi_total_musuh": "Integriertes Siedlungsprogramm"
   },
   "effects": {
     "manufaktur": "Fertigungsproduktion",
@@ -27,6 +31,11 @@
     "perikanan": "Fischereiproduktion",
     "waktu_pembangunan_perikanan": "Bauzeit für Fischereianlagen",
     "olahan_pangan": "Produktion verarbeiteter Lebensmittel",
-    "waktu_pembangunan_olahan_pangan": "Bauzeit für Lebensmittelwerke"
+    "waktu_pembangunan_olahan_pangan": "Bauzeit für Lebensmittelwerke",
+    "pajak_semua_lini": "Steuereinnahmen aller Sektoren",
+    "harga_beli": "Einkaufspreise für Waren",
+    "harga_jual": "Verkaufspreise für Waren",
+    "biaya_subsidi": "Staatliche Subventionskosten",
+    "kapasitas_permukiman": "Siedlungskapazität"
   }
 }

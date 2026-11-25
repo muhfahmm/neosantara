@@ -295,6 +295,32 @@ export {
   OLAHAN_PANGAN_TERPADU_RESOURCES,
 } from "./penelitian_bonus_logic/1_riset_ekonomi_industri/12_Industri Pangan Terintegrasi";
 
+export {
+  HARMONISASI_FISKAL_GLOBAL_RESEARCH_ID,
+  getHarmonisasiFiskalGlobalBonusPercent,
+  applyHarmonisasiFiskalGlobalTaxRevenueBonus,
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/13_Harmonisasi Fiskal Global";
+
+export {
+  DIPLOMASI_PERDAGANGAN_STRATEGIS_RESEARCH_ID,
+  getStrategicTradeBonusPercent,
+  applyStrategicTradeSellPriceMultiplier,
+  applyStrategicTradeBuyPriceMultiplier,
+  applyStrategicTradePrice,
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/14_Diplomasi Perdagangan Strategis";
+
+export {
+  ALOKASI_SUBSIDI_TERPADU_RESEARCH_ID,
+  getAlokasiSubsidiTerpaduBonusPercent,
+  applyAlokasiSubsidiTerpaduBonus,
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/15_Alokasi Subsidi Terpadu";
+
+export {
+  PROGRAM_PERMUKIMAN_DIPLOMATIK_RESEARCH_ID,
+  getProgramPermukimanDiplomatikBonusPercent,
+  applyProgramPermukimanDiplomatikBonus,
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/16_Program Permukiman Terpadu";
+
 // 2_riset_militer_pertahanan
 export { getWaktuPembangunanBarakMiliterBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/1_Pos Pertahanan Perbatasan";
 export { getWaktuPembangunanGudangSenjataBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/2_Senapan Serbu Presisi";
@@ -340,12 +366,6 @@ export {
 };
 
 export {
-  HARMONISASI_FISKAL_GLOBAL_RESEARCH_ID,
-  getHarmonisasiFiskalGlobalBonusPercent,
-  applyHarmonisasiFiskalGlobalTaxRevenueBonus,
-} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/5_Harmonisasi Fiskal Global";
-
-export {
   SUARA_PBB_RESEARCH_ID,
   getSuaraPBBResearchBonus,
   applySuaraPBBResearchBonus,
@@ -368,14 +388,6 @@ export {
   KURSI_TETAP_DEWAN_PBB_LEGACY_ID,
   hasPermanentSecurityCouncilSeatResearch,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/9_Kursi Tetap Dewan Keamanan PBB";
-
-export {
-  DIPLOMASI_PERDAGANGAN_STRATEGIS_RESEARCH_ID,
-  getStrategicTradeBonusPercent,
-  applyStrategicTradeSellPriceMultiplier,
-  applyStrategicTradeBuyPriceMultiplier,
-  applyStrategicTradePrice,
-} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/10_Diplomasi Perdagangan Strategis";
 
 export {
   EFISIENSI_BIAYA_KEDUTAAN_RESEARCH_ID,
@@ -401,12 +413,6 @@ export {
   getPromosiWisataDiplomatikBonusPercent,
   applyPromosiWisataDiplomatikBonus,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/14_Promosi Wisata Diplomatik";
-
-export {
-  ALOKASI_SUBSIDI_TERPADU_RESEARCH_ID,
-  getAlokasiSubsidiTerpaduBonusPercent,
-  applyAlokasiSubsidiTerpaduBonus,
-} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/15_Alokasi Subsidi Terpadu";
 
 export {
   PENCEGAHAN_SEPARATISME_RESEARCH_ID,
@@ -461,13 +467,6 @@ export {
   getSinergiEkonomiGlobalBonusPercent,
   applySinergiEkonomiGlobalMultiplier,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Sinergi Ekonomi Global";
-
-export {
-  PROGRAM_PERMUKIMAN_DIPLOMATIK_RESEARCH_ID,
-  getProgramPermukimanDiplomatikBonusPercent,
-  applyProgramPermukimanDiplomatikBonus,
-} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/20_Program Permukiman Terpadu";
-
 
 export {
   getKementerianInfrastrukturBuildSpeedBonusPercent,

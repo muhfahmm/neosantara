@@ -22,10 +22,6 @@
     "bonus_tempat_wisata": "외교 관광 홍보",
     "sanksi_ekonomi": "경제 제재 도구",
     "suara_dewan_keamanan": "내각 관료제 개혁",
-    "hegemoni_diplomasi": "세계 재정 조화",
-    "kriptografi_kuantum": "전략 무역 외교",
-    "intelijen_satelit_quantum": "통합 보조금 배정",
-    "isolasi_total_musuh": "통합 정착 프로그램",
     "tatanan_dunia_baru": "세계 경제 시너지"
   },
   "effects": {
@@ -49,11 +45,6 @@
     "bonus_wisata": "관광지 보너스",
     "sanksi": "적국 제재 효과",
     "biaya_upgrade_kabinet": "내각 회의 업그레이드 비용",
-    "pajak_semua_lini": "전 분야 세수",
-    "harga_beli": "상품 구매 가격",
-    "harga_jual": "상품 판매 가격",
-    "biaya_subsidi": "국가 보조금 비용",
-    "kapasitas_permukiman": "정착지 수용량",
     "produksi_semua_lini": "전 분야 생산량"
   }
 }

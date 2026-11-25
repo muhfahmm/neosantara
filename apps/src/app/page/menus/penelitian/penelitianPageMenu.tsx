@@ -218,9 +218,9 @@ const getResearchTier = (research: Research, data: Research[]): number => {
 
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  RESEARCH_DATA — FINAL                                          ║
-// ║  Ekonomi: 12 kartu (3 kolom × 4 tier)                           ║
+// ║  Ekonomi: 16 kartu (Kolom 1-3 × 4 tier + Tier 5 Ekonomi)         ║
 // ║  Militer: 18 kartu (5/5/5/3)                                    ║
-// ║  Diplomasi: 25 kartu (5×5)                                      ║
+// ║  Diplomasi: 21 kartu                                            ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const RESEARCH_DATA: Research[] = [
   // ══════════════════════════════════════════════════════════════════
@@ -243,6 +243,12 @@ const RESEARCH_DATA: Research[] = [
   { id: 'perikanan_pascapanen', name: 'Teknologi Perikanan & Pascapanen', category: 'ekonomi', tier: 2, cost: 3100, duration: 60, prerequisites: ['perikanan_modern'], icon: Leaf, description: 'Penanganan hasil tangkap untuk mempercepat pembangunan fasilitas perikanan.', effects: [{ stat: 'waktu_pembangunan_perikanan', value: -2, label: '-2% Waktu Pembangunan Perikanan' }] },
   { id: 'pengolahan_pangan', name: 'Pengolahan Pangan Dasar', category: 'ekonomi', tier: 3, cost: 6300, duration: 90, prerequisites: ['perikanan_pascapanen'], icon: Wheat, description: 'Teknologi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
   { id: 'industri_pangan_terpadu', name: 'Industri Pangan Terintegrasi', category: 'ekonomi', tier: 4, cost: 10800, duration: 120, prerequisites: ['pengolahan_pangan'], icon: Wheat, description: 'Integrasi produksi untuk mempercepat pembangunan pabrik olahan pangan.', effects: [{ stat: 'waktu_pembangunan_olahan_pangan', value: -2, label: '-2% Waktu Pembangunan Olahan Pangan' }] },
+
+  // TIER 5 EKONOMI
+  { id: 'hegemoni_diplomasi', name: 'Harmonisasi Fiskal Global', category: 'ekonomi', tier: 5, cost: 20000, duration: 150, prerequisites: ['manufaktur_lanjut'], icon: Banknote, description: 'Sinkronisasi kebijakan fiskal dengan standar internasional untuk memaksimalkan penerimaan pajak di semua lini.', effects: [{ stat: 'pajak_semua_lini', value: 2, label: '+2% Penerimaan Pajak Seluruh Lini' }] },
+  { id: 'kriptografi_kuantum', name: 'Diplomasi Perdagangan Strategis', category: 'ekonomi', tier: 5, cost: 22000, duration: 150, prerequisites: ['industri_pangan_terpadu'], icon: Lock, description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
+  { id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu', category: 'ekonomi', tier: 5, cost: 21000, duration: 150, prerequisites: ['agrikultur_cerdas'], icon: Wifi, description: 'Mengurangi biaya subsidi negara sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'biaya_subsidi', value: -2, label: '-2% Biaya Subsidi Negara' }] },
+  { id: 'isolasi_total_musuh', name: 'Program Permukiman Terpadu', category: 'ekonomi', tier: 5, cost: 19000, duration: 150, prerequisites: ['manufaktur_lanjut'], icon: Globe2, description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
 
   // ══════════════════════════════════════════════════════════════════
   // 2. MILITER & PERTAHANAN (16 kartu — 5/5/3/3)
@@ -305,10 +311,6 @@ const RESEARCH_DATA: Research[] = [
   { id: 'suara_dewan_keamanan', name: 'Reformasi Birokrasi Kabinet', category: 'diplomasi', tier: 4, cost: 12500, duration: 120, prerequisites: ['pertahanan_diri'], icon: Globe2, description: 'Restrukturisasi tata kelola Dewan Kabinet Menteri untuk menekan biaya upgrade.', effects: [{ stat: 'biaya_upgrade_kabinet', value: -2, label: '-2% Biaya Upgrade Dewan Kabinet' }] },
 
   // TIER 5
-  { id: 'hegemoni_diplomasi', name: 'Harmonisasi Fiskal Global', category: 'diplomasi', tier: 5, cost: 20000, duration: 150, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Sinkronisasi kebijakan fiskal dengan standar internasional untuk memaksimalkan penerimaan pajak di semua lini.', effects: [{ stat: 'pajak_semua_lini', value: 2, label: '+2% Penerimaan Pajak Seluruh Lini' }] },
-  { id: 'kriptografi_kuantum', name: 'Diplomasi Perdagangan Strategis', category: 'diplomasi', tier: 5, cost: 22000, duration: 150, prerequisites: ['kursi_tetap_dewan_pbb'], icon: Lock, description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
-  { id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu', category: 'diplomasi', tier: 5, cost: 21000, duration: 150, prerequisites: ['bonus_tempat_wisata'], icon: Wifi, description: 'Mengurangi biaya subsidi negara sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'biaya_subsidi', value: -2, label: '-2% Biaya Subsidi Negara' }] },
-  { id: 'isolasi_total_musuh', name: 'Program Permukiman Terpadu', category: 'diplomasi', tier: 5, cost: 19000, duration: 150, prerequisites: ['sanksi_ekonomi'], icon: Globe2, description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
   { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'diplomasi', tier: 5, cost: 25000, duration: 150, prerequisites: ['suara_dewan_keamanan'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 ];
 

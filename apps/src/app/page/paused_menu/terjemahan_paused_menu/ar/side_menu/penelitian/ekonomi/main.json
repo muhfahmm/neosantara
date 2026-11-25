@@ -13,7 +13,11 @@
     "perikanan_modern": "استزراع مائي متكامل",
     "perikanan_pascapanen": "تقنيات الصيد وما بعد الحصاد",
     "pengolahan_pangan": "معالجة الأغذية الأساسية",
-    "industri_pangan_terpadu": "صناعة غذائية متكاملة"
+    "industri_pangan_terpadu": "صناعة غذائية متكاملة",
+    "hegemoni_diplomasi": "التنسيق المالي العالمي",
+    "kriptografi_kuantum": "دبلوماسية التجارة الاستراتيجية",
+    "intelijen_satelit_quantum": "توزيع متكامل للإعانات",
+    "isolasi_total_musuh": "برنامج إسكان متكامل"
   },
   "effects": {
     "manufaktur": "إنتاج التصنيع",
@@ -27,6 +31,11 @@
     "perikanan": "إنتاج مصايد الأسماك",
     "waktu_pembangunan_perikanan": "مدة إنشاء مرافق الصيد",
     "olahan_pangan": "إنتاج الأغذية المصنعة",
-    "waktu_pembangunan_olahan_pangan": "مدة إنشاء مصانع الأغذية"
+    "waktu_pembangunan_olahan_pangan": "مدة إنشاء مصانع الأغذية",
+    "pajak_semua_lini": "إيرادات الضرائب في جميع القطاعات",
+    "harga_beli": "أسعار شراء السلع",
+    "harga_jual": "أسعار بيع السلع",
+    "biaya_subsidi": "تكلفة إعانات الدولة",
+    "kapasitas_permukiman": "سعة المستوطنات"
   }
 }

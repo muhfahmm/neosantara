@@ -13,7 +13,11 @@
     "perikanan_modern": "Integrated Aquaculture",
     "perikanan_pascapanen": "Fisheries and Post-Harvest Technology",
     "pengolahan_pangan": "Basic Food Processing",
-    "industri_pangan_terpadu": "Integrated Food Industry"
+    "industri_pangan_terpadu": "Integrated Food Industry",
+    "hegemoni_diplomasi": "Global Fiscal Harmonization",
+    "kriptografi_kuantum": "Strategic Trade Diplomacy",
+    "intelijen_satelit_quantum": "Integrated Subsidy Allocation",
+    "isolasi_total_musuh": "Integrated Settlement Program"
   },
   "effects": {
     "manufaktur": "Manufacturing Output",
@@ -27,6 +31,11 @@
     "perikanan": "Fisheries Output",
     "waktu_pembangunan_perikanan": "Fisheries Facility Construction Time",
     "olahan_pangan": "Processed Food Output",
-    "waktu_pembangunan_olahan_pangan": "Processed Food Factory Construction Time"
+    "waktu_pembangunan_olahan_pangan": "Processed Food Factory Construction Time",
+    "pajak_semua_lini": "Tax Revenue Across All Sectors",
+    "harga_beli": "Commodity Purchase Prices",
+    "harga_jual": "Commodity Sale Prices",
+    "biaya_subsidi": "National Subsidy Cost",
+    "kapasitas_permukiman": "Settlement Capacity"
   }
 }

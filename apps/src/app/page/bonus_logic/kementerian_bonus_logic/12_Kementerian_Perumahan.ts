@@ -1,5 +1,5 @@
 import { getCabinetMinistryBonusPercent } from "./ministryBonusUtils";
-import { getProgramPermukimanDiplomatikBonusPercent } from "../penelitian_bonus_logic/3_riset_diplomasi_intelijen/20_Program Permukiman Terpadu";
+import { getProgramPermukimanDiplomatikBonusPercent } from "../penelitian_bonus_logic/1_riset_ekonomi_industri/16_Program Permukiman Terpadu";
 
 export function getKementerianPerumahanCapacityBonusPercent(
   countryDetail: Record<string, unknown> | null | undefined

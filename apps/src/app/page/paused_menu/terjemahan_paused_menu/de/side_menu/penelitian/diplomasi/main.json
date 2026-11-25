@@ -22,10 +22,6 @@
     "bonus_tempat_wisata": "Diplomatische Tourismusförderung",
     "sanksi_ekonomi": "Instrumente für Wirtschaftssanktionen",
     "suara_dewan_keamanan": "Bürokratiereform des Kabinetts",
-    "hegemoni_diplomasi": "Globale Steuerharmonisierung",
-    "kriptografi_kuantum": "Strategische Handelsdiplomatie",
-    "intelijen_satelit_quantum": "Integrierte Subventionsverteilung",
-    "isolasi_total_musuh": "Integriertes Siedlungsprogramm",
     "tatanan_dunia_baru": "Globale wirtschaftliche Synergie"
   },
   "effects": {
@@ -49,11 +45,6 @@
     "bonus_wisata": "Tourismusbonus",
     "sanksi": "Wirkung feindlicher Sanktionen",
     "biaya_upgrade_kabinet": "Kosten für die Aufwertung des Ministerrats",
-    "pajak_semua_lini": "Steuereinnahmen aller Sektoren",
-    "harga_beli": "Einkaufspreise für Waren",
-    "harga_jual": "Verkaufspreise für Waren",
-    "biaya_subsidi": "Staatliche Subventionskosten",
-    "kapasitas_permukiman": "Siedlungskapazität",
     "produksi_semua_lini": "Produktion aller Sektoren"
   }
 }

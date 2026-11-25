@@ -13,7 +13,11 @@
     "perikanan_modern": "综合水产养殖",
     "perikanan_pascapanen": "渔业与收获后技术",
     "pengolahan_pangan": "基础食品加工",
-    "industri_pangan_terpadu": "综合食品工业"
+    "industri_pangan_terpadu": "综合食品工业",
+    "hegemoni_diplomasi": "全球财政协调",
+    "kriptografi_kuantum": "战略贸易外交",
+    "intelijen_satelit_quantum": "综合补贴分配",
+    "isolasi_total_musuh": "综合居住计划"
   },
   "effects": {
     "manufaktur": "制造业产量",
@@ -27,6 +31,11 @@
     "perikanan": "渔业产量",
     "waktu_pembangunan_perikanan": "渔业设施建设时间",
     "olahan_pangan": "加工食品产量",
-    "waktu_pembangunan_olahan_pangan": "食品工厂建设时间"
+    "waktu_pembangunan_olahan_pangan": "食品工厂建设时间",
+    "pajak_semua_lini": "所有领域税收",
+    "harga_beli": "商品购买价格",
+    "harga_jual": "商品销售价格",
+    "biaya_subsidi": "国家补贴成本",
+    "kapasitas_permukiman": "居住区容量"
   }
 }

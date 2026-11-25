@@ -13,7 +13,11 @@
     "perikanan_modern": "Budidaya Perikanan Terpadu",
     "perikanan_pascapanen": "Teknologi Perikanan & Pascapanen",
     "pengolahan_pangan": "Pengolahan Pangan Dasar",
-    "industri_pangan_terpadu": "Industri Pangan Terintegrasi"
+    "industri_pangan_terpadu": "Industri Pangan Terintegrasi",
+    "hegemoni_diplomasi": "Harmonisasi Fiskal Global",
+    "kriptografi_kuantum": "Diplomasi Perdagangan Strategis",
+    "intelijen_satelit_quantum": "Alokasi Subsidi Terpadu",
+    "isolasi_total_musuh": "Program Permukiman Terpadu"
   },
   "effects": {
     "manufaktur": "Produksi Manufaktur",
@@ -27,6 +31,11 @@
     "perikanan": "Produksi Perikanan",
     "waktu_pembangunan_perikanan": "Waktu Pembangunan Perikanan",
     "olahan_pangan": "Produksi Olahan Pangan",
-    "waktu_pembangunan_olahan_pangan": "Waktu Pembangunan Olahan Pangan"
+    "waktu_pembangunan_olahan_pangan": "Waktu Pembangunan Olahan Pangan",
+    "pajak_semua_lini": "Penerimaan Pajak Seluruh Lini",
+    "harga_beli": "Harga Beli Komoditas",
+    "harga_jual": "Harga Jual Komoditas",
+    "biaya_subsidi": "Biaya Subsidi Negara",
+    "kapasitas_permukiman": "Kapasitas Permukiman"
   }
 }
