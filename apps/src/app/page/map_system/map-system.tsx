@@ -77,7 +77,7 @@ const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
 const StationedPeacekeepersOverlay = dynamic(() => import('../path_logic/peacekeeper/StationedPeacekeepersOverlay'), { ssr: false });
 import { addStationedPeacekeeper, getStationedPeacekeeperPower } from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
-import { buildCapitalPoint } from '../path_logic/path-war';
+import { buildCapitalPoint, getCapitalCoord } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import {
@@ -1128,6 +1128,61 @@ const MapCanvasView = memo(function MapCanvasView({
         shared.style.touchAction = 'none';
         shared.style.overscrollBehavior = 'none';
     }, [isSelectingTarget, isWarActive, targetCursorStyle]);
+
+    // Saat jendela dipindah antar monitor (DPR/ukuran berbeda) atau di-resize, paksa engine
+    // merender ulang & mempublikasikan kamera terbaru agar rute perang/tank/penanda tetap
+    // sinkron tanpa harus menggeser peta secara manual.
+    useEffect(() => {
+        let rafId: number | null = null;
+        let timeoutId: number | null = null;
+        const resync = () => {
+            const w = window as Window & { __neosantara_wasm?: MapCameraApi & { end_map_pan_on_map?: () => void } };
+            const mod = w.__neosantara_wasm;
+            if (mod && typeof mod.pan_map_by_on_map === 'function') {
+                try {
+                    mod.pan_map_by_on_map(0, 0);
+                    mod.end_map_pan_on_map?.();
+                } catch {}
+            }
+            window.dispatchEvent(new Event('neosantara_map_camera'));
+        };
+        const schedule = () => {
+            if (rafId !== null) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                rafId = null;
+                resync();
+                // Ulangi setelah layout/DPR stabil
+                if (timeoutId !== null) window.clearTimeout(timeoutId);
+                timeoutId = window.setTimeout(resync, 150);
+            });
+        };
+        window.addEventListener('resize', schedule, { passive: true });
+        let observer: ResizeObserver | null = null;
+        const canvas = document.getElementById('map-canvas');
+        if (canvas && typeof ResizeObserver !== 'undefined') {
+            observer = new ResizeObserver(schedule);
+            observer.observe(canvas);
+        }
+        let dprQuery: MediaQueryList | null = null;
+        const watchDpr = () => {
+            dprQuery?.removeEventListener?.('change', onDprChange);
+            dprQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+            dprQuery.addEventListener?.('change', onDprChange);
+        };
+        const onDprChange = () => {
+            schedule();
+            watchDpr();
+        };
+        watchDpr();
+        schedule();
+        return () => {
+            window.removeEventListener('resize', schedule);
+            observer?.disconnect();
+            dprQuery?.removeEventListener?.('change', onDprChange);
+            if (rafId !== null) cancelAnimationFrame(rafId);
+            if (timeoutId !== null) window.clearTimeout(timeoutId);
+        };
+    }, []);
 
     useEffect(() => {
         const canvas = document.getElementById('map-canvas');
@@ -4238,8 +4293,20 @@ export default function MapPage() {
                     const currentActive = activeWarAnimationRef.current;
                     const primaryAttackerCountry = detail.isMilitaryAid ? currentActive.attacker : (detail.aggressorCountry || detail.attacker);
                     const primaryTargetCountry = detail.isMilitaryAid ? currentActive.target : (detail.allyCountry || detail.target);
-                    const primaryAttacker = buildCapitalPoint(primaryAttackerCountry) || { country: primaryAttackerCountry, capital: primaryAttackerCountry, lat: 0, lng: 0 };
-                    const primaryTarget = buildCapitalPoint(primaryTargetCountry) || { country: primaryTargetCountry, capital: primaryTargetCountry, lat: 0, lng: 0 };
+                    const fallbackAttackerCoord = getCapitalCoord(primaryAttackerCountry);
+                    const fallbackTargetCoord = getCapitalCoord(primaryTargetCountry);
+                    const primaryAttacker = buildCapitalPoint(primaryAttackerCountry) || {
+                        country: primaryAttackerCountry,
+                        capital: primaryAttackerCountry,
+                        lat: fallbackAttackerCoord?.lat ?? 0,
+                        lng: fallbackAttackerCoord?.lng ?? 0,
+                    };
+                    const primaryTarget = buildCapitalPoint(primaryTargetCountry) || {
+                        country: primaryTargetCountry,
+                        capital: primaryTargetCountry,
+                        lat: fallbackTargetCoord?.lat ?? 0,
+                        lng: fallbackTargetCoord?.lng ?? 0,
+                    };
 
                     setActiveWarAnimation((prev: any) => ({
                         ...prev,
@@ -10121,8 +10188,11 @@ export default function MapPage() {
 
         const canvas = (document.getElementById('map-canvas') as HTMLCanvasElement | null) || event.currentTarget;
         const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        // Skalakan koordinat client ke resolusi internal canvas agar akurat di semua ukuran layar/laptop/desktop
+        const scaleX = rect.width > 0 ? (canvas.width || rect.width) / rect.width : 1;
+        const scaleY = rect.height > 0 ? (canvas.height || rect.height) / rect.height : 1;
+        const x = (event.clientX - rect.left) * scaleX;
+        const y = (event.clientY - rect.top) * scaleY;
 
         // JIKA SEDANG DALAM MODE PEMILIHAN TEMPAT ICBM:
         if (mapClickContextRef.current.isSelectingIcbmTarget) {

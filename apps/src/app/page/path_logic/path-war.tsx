@@ -131,6 +131,8 @@ export const CAPITAL_COORDS: Record<string, LatLng> = (() => {
 const COUNTRY_NAME_ALIASES: Record<string, string> = {
   brasil: 'Brazil',
   tiongkok: 'China',
+  aljazair: 'Algeria',
+  algeria: 'Algeria',
 };
 
 const resolveCountryAlias = (name: string): string =>
@@ -138,39 +140,43 @@ const resolveCountryAlias = (name: string): string =>
 
 export function getCapitalCoord(countryName: string): LatLng | null {
   if (!countryName) return null;
-  const key = resolveCountryAlias(countryName).trim();
-  if (CAPITAL_COORDS[key]) return CAPITAL_COORDS[key];
+  const rawKey = countryName.trim();
+  const aliasKey = resolveCountryAlias(rawKey).trim();
+  
+  for (const key of [rawKey, aliasKey]) {
+    if (CAPITAL_COORDS[key]) return CAPITAL_COORDS[key];
 
-  const lowerKey = key.toLowerCase();
-  const foundKey = Object.keys(CAPITAL_COORDS).find(
-    (k) => k.toLowerCase() === lowerKey
-  );
-  if (foundKey) return CAPITAL_COORDS[foundKey];
+    const lowerKey = key.toLowerCase();
+    const foundKey = Object.keys(CAPITAL_COORDS).find(
+      (k) => k.toLowerCase() === lowerKey
+    );
+    if (foundKey) return CAPITAL_COORDS[foundKey];
 
-  const cleanNorm = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const cleanKey = cleanNorm(key);
-  if (!cleanKey) return null;
+    const cleanNorm = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanKey = cleanNorm(key);
+    if (cleanKey) {
+      const foundCleanKey = Object.keys(CAPITAL_COORDS).find(
+        (k) => cleanNorm(k) === cleanKey
+      );
+      if (foundCleanKey) return CAPITAL_COORDS[foundCleanKey];
 
-  const foundCleanKey = Object.keys(CAPITAL_COORDS).find(
-    (k) => cleanNorm(k) === cleanKey
-  );
-  if (foundCleanKey) return CAPITAL_COORDS[foundCleanKey];
+      const capMatch = CAPITALS_DATA.find(
+        (c: any) => cleanNorm(String(c.country || '')) === cleanKey
+      );
+      if (capMatch && typeof capMatch.lat === 'number' && typeof capMatch.lng === 'number') {
+        return { lat: capMatch.lat, lng: capMatch.lng };
+      }
 
-  const capMatch = CAPITALS_DATA.find(
-    (c: any) => cleanNorm(String(c.country || '')) === cleanKey
-  );
-  if (capMatch && typeof capMatch.lat === 'number' && typeof capMatch.lng === 'number') {
-    return { lat: capMatch.lat, lng: capMatch.lng };
-  }
-
-  const match = COUNTRIES_DATA.find(
-    (c: any) => cleanNorm(String(c.country || '')) === cleanKey
-  );
-  if (match) {
-    const lat = match.latitude ?? match.lat;
-    const lng = match.longitude ?? match.lng;
-    if (typeof lat === 'number' && typeof lng === 'number') {
-      return { lat, lng };
+      const match = COUNTRIES_DATA.find(
+        (c: any) => cleanNorm(String(c.country || '')) === cleanKey
+      );
+      if (match) {
+        const lat = match.latitude ?? match.lat;
+        const lng = match.longitude ?? match.lng;
+        if (typeof lat === 'number' && typeof lng === 'number') {
+          return { lat, lng };
+        }
+      }
     }
   }
 
@@ -231,6 +237,7 @@ let cachedRectEl: HTMLCanvasElement | null = null;
 if (typeof window !== 'undefined') {
   window.addEventListener('resize', () => {
     cachedRect = null;
+    routeMemo.clear();
   }, { passive: true });
 }
 
