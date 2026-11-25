@@ -21,7 +21,7 @@ import {
   applyKerjaSamaRegionalToFlatBonus,
   applyKerjaSamaRegionalToMultiplier,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
-import { applySinergiEkonomiGlobalMultiplier } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Sinergi Ekonomi Global";
+import { applySinergiEkonomiGlobalMultiplier } from "./penelitian_bonus_logic/1_riset_ekonomi_industri/17_Sinergi Ekonomi Global";
 import {
   getKementerianInfrastrukturBuildSpeedBonusPercent,
   applyKementerianInfrastrukturBuildTimeDiscount,
@@ -321,6 +321,12 @@ export {
   applyProgramPermukimanDiplomatikBonus,
 } from "./penelitian_bonus_logic/1_riset_ekonomi_industri/16_Program Permukiman Terpadu";
 
+export {
+  SINERGI_EKONOMI_GLOBAL_RESEARCH_ID,
+  getSinergiEkonomiGlobalBonusPercent,
+  applySinergiEkonomiGlobalMultiplier,
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/17_Sinergi Ekonomi Global";
+
 // 2_riset_militer_pertahanan
 export { getWaktuPembangunanBarakMiliterBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/1_Pos Pertahanan Perbatasan";
 export { getWaktuPembangunanGudangSenjataBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/2_Senapan Serbu Presisi";
@@ -461,12 +467,6 @@ export {
   getReformasiBirokrasiKabinetBonusPercent,
   applyReformasiBirokrasiToUpgradeCost,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/24_Reformasi Birokrasi Kabinet";
-
-export {
-  SINERGI_EKONOMI_GLOBAL_RESEARCH_ID,
-  getSinergiEkonomiGlobalBonusPercent,
-  applySinergiEkonomiGlobalMultiplier,
-} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Sinergi Ekonomi Global";
 
 export {
   getKementerianInfrastrukturBuildSpeedBonusPercent,

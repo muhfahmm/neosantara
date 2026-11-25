@@ -218,9 +218,9 @@ const getResearchTier = (research: Research, data: Research[]): number => {
 
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  RESEARCH_DATA — FINAL                                          ║
-// ║  Ekonomi: 16 kartu (Kolom 1-3 × 4 tier + Tier 5 Ekonomi)         ║
+// ║  Ekonomi: 17 kartu (Kolom 1-3 × 4 tier + 5 kartu Tier 5)         ║
 // ║  Militer: 18 kartu (5/5/5/3)                                    ║
-// ║  Diplomasi: 21 kartu                                            ║
+// ║  Diplomasi: 20 kartu (5/5/5/5)                                  ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const RESEARCH_DATA: Research[] = [
   // ══════════════════════════════════════════════════════════════════
@@ -249,6 +249,7 @@ const RESEARCH_DATA: Research[] = [
   { id: 'kriptografi_kuantum', name: 'Diplomasi Perdagangan Strategis', category: 'ekonomi', tier: 5, cost: 22000, duration: 150, prerequisites: ['industri_pangan_terpadu'], icon: Lock, description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
   { id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu', category: 'ekonomi', tier: 5, cost: 21000, duration: 150, prerequisites: ['agrikultur_cerdas'], icon: Wifi, description: 'Mengurangi biaya subsidi negara sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'biaya_subsidi', value: -2, label: '-2% Biaya Subsidi Negara' }] },
   { id: 'isolasi_total_musuh', name: 'Program Permukiman Terpadu', category: 'ekonomi', tier: 5, cost: 19000, duration: 150, prerequisites: ['manufaktur_lanjut'], icon: Globe2, description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
+  { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'ekonomi', tier: 5, cost: 25000, duration: 150, prerequisites: ['agrikultur_cerdas'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 
   // ══════════════════════════════════════════════════════════════════
   // 2. MILITER & PERTAHANAN (16 kartu — 5/5/3/3)
@@ -309,9 +310,6 @@ const RESEARCH_DATA: Research[] = [
   { id: 'bonus_tempat_wisata', name: 'Promosi Wisata Diplomatik', category: 'diplomasi', tier: 4, cost: 9500, duration: 120, prerequisites: ['mitigasi_bencana'], icon: Palette, description: 'Meningkatkan pendapatan destinasi wisata di PDB dan neraca keuangan sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'bonus_wisata', value: 2, label: '+2% Bonus Tempat Wisata' }] },
   { id: 'sanksi_ekonomi', name: 'Perangkat Sanksi Ekonomi', category: 'diplomasi', tier: 4, cost: 10800, duration: 120, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Pembekuan aset musuh.', effects: [{ stat: 'sanksi', value: 2, label: '+2% Efek Sanksi Musuh' }] },
   { id: 'suara_dewan_keamanan', name: 'Reformasi Birokrasi Kabinet', category: 'diplomasi', tier: 4, cost: 12500, duration: 120, prerequisites: ['pertahanan_diri'], icon: Globe2, description: 'Restrukturisasi tata kelola Dewan Kabinet Menteri untuk menekan biaya upgrade.', effects: [{ stat: 'biaya_upgrade_kabinet', value: -2, label: '-2% Biaya Upgrade Dewan Kabinet' }] },
-
-  // TIER 5
-  { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'diplomasi', tier: 5, cost: 25000, duration: 150, prerequisites: ['suara_dewan_keamanan'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 ];
 
 const CATEGORIES: { key: CategoryKey; icon: React.ElementType }[] = [

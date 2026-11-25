@@ -17,7 +17,8 @@
     "hegemoni_diplomasi": "全球财政协调",
     "kriptografi_kuantum": "战略贸易外交",
     "intelijen_satelit_quantum": "综合补贴分配",
-    "isolasi_total_musuh": "综合居住计划"
+    "isolasi_total_musuh": "综合居住计划",
+    "tatanan_dunia_baru": "全球经济协同"
   },
   "effects": {
     "manufaktur": "制造业产量",
@@ -36,6 +37,7 @@
     "harga_beli": "商品购买价格",
     "harga_jual": "商品销售价格",
     "biaya_subsidi": "国家补贴成本",
-    "kapasitas_permukiman": "居住区容量"
+    "kapasitas_permukiman": "居住区容量",
+    "produksi_semua_lini": "所有领域产量"
   }
 }

@@ -17,7 +17,8 @@
     "hegemoni_diplomasi": "세계 재정 조화",
     "kriptografi_kuantum": "전략 무역 외교",
     "intelijen_satelit_quantum": "통합 보조금 배정",
-    "isolasi_total_musuh": "통합 정착 프로그램"
+    "isolasi_total_musuh": "통합 정착 프로그램",
+    "tatanan_dunia_baru": "세계 경제 시너지"
   },
   "effects": {
     "manufaktur": "제조 생산량",
@@ -36,6 +37,7 @@
     "harga_beli": "상품 구매 가격",
     "harga_jual": "상품 판매 가격",
     "biaya_subsidi": "국가 보조금 비용",
-    "kapasitas_permukiman": "정착지 수용량"
+    "kapasitas_permukiman": "정착지 수용량",
+    "produksi_semua_lini": "전 분야 생산량"
   }
 }

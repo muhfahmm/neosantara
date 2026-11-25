@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "Ständiger Sitz im UN-Sicherheitsrat",
     "bonus_tempat_wisata": "Diplomatische Tourismusförderung",
     "sanksi_ekonomi": "Instrumente für Wirtschaftssanktionen",
-    "suara_dewan_keamanan": "Bürokratiereform des Kabinetts",
-    "tatanan_dunia_baru": "Globale wirtschaftliche Synergie"
+    "suara_dewan_keamanan": "Bürokratiereform des Kabinetts"
   },
   "effects": {
     "waktu_kedutaan": "Bauzeit für Botschaften",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "Ständigen Sitz im UN-Sicherheitsrat beanspruchen",
     "bonus_wisata": "Tourismusbonus",
     "sanksi": "Wirkung feindlicher Sanktionen",
-    "biaya_upgrade_kabinet": "Kosten für die Aufwertung des Ministerrats",
-    "produksi_semua_lini": "Produktion aller Sektoren"
+    "biaya_upgrade_kabinet": "Kosten für die Aufwertung des Ministerrats"
   }
 }

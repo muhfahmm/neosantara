@@ -17,7 +17,8 @@
     "hegemoni_diplomasi": "Harmonisasi Fiskal Global",
     "kriptografi_kuantum": "Diplomasi Perdagangan Strategis",
     "intelijen_satelit_quantum": "Alokasi Subsidi Terpadu",
-    "isolasi_total_musuh": "Program Permukiman Terpadu"
+    "isolasi_total_musuh": "Program Permukiman Terpadu",
+    "tatanan_dunia_baru": "Sinergi Ekonomi Global"
   },
   "effects": {
     "manufaktur": "Produksi Manufaktur",
@@ -36,6 +37,7 @@
     "harga_beli": "Harga Beli Komoditas",
     "harga_jual": "Harga Jual Komoditas",
     "biaya_subsidi": "Biaya Subsidi Negara",
-    "kapasitas_permukiman": "Kapasitas Permukiman"
+    "kapasitas_permukiman": "Kapasitas Permukiman",
+    "produksi_semua_lini": "Produksi Semua Lini"
   }
 }

@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "Kursi Tetap Dewan Keamanan PBB",
     "bonus_tempat_wisata": "Promosi Wisata Diplomatik",
     "sanksi_ekonomi": "Perangkat Sanksi Ekonomi",
-    "suara_dewan_keamanan": "Reformasi Birokrasi Kabinet",
-    "tatanan_dunia_baru": "Sinergi Ekonomi Global"
+    "suara_dewan_keamanan": "Reformasi Birokrasi Kabinet"
   },
   "effects": {
     "waktu_kedutaan": "Waktu Pembangunan Kedutaan",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "Ambil Kursi Tetap Dewan Keamanan PBB",
     "bonus_wisata": "Bonus Tempat Wisata",
     "sanksi": "Efek Sanksi Musuh",
-    "biaya_upgrade_kabinet": "Biaya Upgrade Dewan Kabinet",
-    "produksi_semua_lini": "Produksi Semua Lini"
+    "biaya_upgrade_kabinet": "Biaya Upgrade Dewan Kabinet"
   }
 }

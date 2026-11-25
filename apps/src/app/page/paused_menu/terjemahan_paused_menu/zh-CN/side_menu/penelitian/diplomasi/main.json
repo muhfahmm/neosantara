@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "联合国安理会常任席位",
     "bonus_tempat_wisata": "外交旅游推广",
     "sanksi_ekonomi": "经济制裁工具",
-    "suara_dewan_keamanan": "内阁官僚改革",
-    "tatanan_dunia_baru": "全球经济协同"
+    "suara_dewan_keamanan": "内阁官僚改革"
   },
   "effects": {
     "waktu_kedutaan": "使馆建设时间",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "取得联合国安理会常任席位",
     "bonus_wisata": "旅游景点加成",
     "sanksi": "敌方制裁效果",
-    "biaya_upgrade_kabinet": "内阁委员会升级成本",
-    "produksi_semua_lini": "所有领域产量"
+    "biaya_upgrade_kabinet": "内阁委员会升级成本"
   }
 }

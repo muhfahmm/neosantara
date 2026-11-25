@@ -17,7 +17,8 @@
     "hegemoni_diplomasi": "Armonización fiscal mundial",
     "kriptografi_kuantum": "Diplomacia comercial estratégica",
     "intelijen_satelit_quantum": "Asignación integrada de subsidios",
-    "isolasi_total_musuh": "Programa de asentamientos integrados"
+    "isolasi_total_musuh": "Programa de asentamientos integrados",
+    "tatanan_dunia_baru": "Sinergia económica mundial"
   },
   "effects": {
     "manufaktur": "Producción manufacturera",
@@ -36,6 +37,7 @@
     "harga_beli": "Precios de compra de productos",
     "harga_jual": "Precios de venta de productos",
     "biaya_subsidi": "Coste de subsidios estatales",
-    "kapasitas_permukiman": "Capacidad de asentamientos"
+    "kapasitas_permukiman": "Capacidad de asentamientos",
+    "produksi_semua_lini": "Producción de todos los sectores"
   }
 }

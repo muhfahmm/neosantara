@@ -17,7 +17,8 @@
     "hegemoni_diplomasi": "Globale Steuerharmonisierung",
     "kriptografi_kuantum": "Strategische Handelsdiplomatie",
     "intelijen_satelit_quantum": "Integrierte Subventionsverteilung",
-    "isolasi_total_musuh": "Integriertes Siedlungsprogramm"
+    "isolasi_total_musuh": "Integriertes Siedlungsprogramm",
+    "tatanan_dunia_baru": "Globale wirtschaftliche Synergie"
   },
   "effects": {
     "manufaktur": "Fertigungsproduktion",
@@ -36,6 +37,7 @@
     "harga_beli": "Einkaufspreise für Waren",
     "harga_jual": "Verkaufspreise für Waren",
     "biaya_subsidi": "Staatliche Subventionskosten",
-    "kapasitas_permukiman": "Siedlungskapazität"
+    "kapasitas_permukiman": "Siedlungskapazität",
+    "produksi_semua_lini": "Produktion aller Sektoren"
   }
 }

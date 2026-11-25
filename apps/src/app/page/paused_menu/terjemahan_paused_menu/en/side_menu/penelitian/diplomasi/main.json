@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "Permanent UN Security Council Seat",
     "bonus_tempat_wisata": "Diplomatic Tourism Promotion",
     "sanksi_ekonomi": "Economic Sanctions Toolkit",
-    "suara_dewan_keamanan": "Cabinet Bureaucracy Reform",
-    "tatanan_dunia_baru": "Global Economic Synergy"
+    "suara_dewan_keamanan": "Cabinet Bureaucracy Reform"
   },
   "effects": {
     "waktu_kedutaan": "Embassy Construction Time",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "Claim a Permanent UN Security Council Seat",
     "bonus_wisata": "Tourism Site Bonus",
     "sanksi": "Enemy Sanction Effect",
-    "biaya_upgrade_kabinet": "Cabinet Council Upgrade Cost",
-    "produksi_semua_lini": "Production Across All Sectors"
+    "biaya_upgrade_kabinet": "Cabinet Council Upgrade Cost"
   }
 }

@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "国連安全保障理事会の常任理事国席",
     "bonus_tempat_wisata": "外交観光の促進",
     "sanksi_ekonomi": "経済制裁ツール",
-    "suara_dewan_keamanan": "内閣官僚制度の改革",
-    "tatanan_dunia_baru": "世界経済の相乗効果"
+    "suara_dewan_keamanan": "内閣官僚制度の改革"
   },
   "effects": {
     "waktu_kedutaan": "大使館の建設時間",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "国連安全保障理事会の常任理事国席を獲得",
     "bonus_wisata": "観光地ボーナス",
     "sanksi": "敵国への制裁効果",
-    "biaya_upgrade_kabinet": "閣僚評議会の強化費用",
-    "produksi_semua_lini": "全分野の生産量"
+    "biaya_upgrade_kabinet": "閣僚評議会の強化費用"
   }
 }

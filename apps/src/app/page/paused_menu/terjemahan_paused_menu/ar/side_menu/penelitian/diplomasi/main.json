@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "مقعد دائم في مجلس الأمن",
     "bonus_tempat_wisata": "الترويج السياحي الدبلوماسي",
     "sanksi_ekonomi": "أدوات العقوبات الاقتصادية",
-    "suara_dewan_keamanan": "إصلاح بيروقراطية مجلس الوزراء",
-    "tatanan_dunia_baru": "التآزر الاقتصادي العالمي"
+    "suara_dewan_keamanan": "إصلاح بيروقراطية مجلس الوزراء"
   },
   "effects": {
     "waktu_kedutaan": "مدة إنشاء السفارات",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "الحصول على مقعد دائم في مجلس الأمن",
     "bonus_wisata": "مكافأة المواقع السياحية",
     "sanksi": "تأثير العقوبات على العدو",
-    "biaya_upgrade_kabinet": "تكلفة ترقية مجلس الوزراء",
-    "produksi_semua_lini": "الإنتاج في جميع القطاعات"
+    "biaya_upgrade_kabinet": "تكلفة ترقية مجلس الوزراء"
   }
 }

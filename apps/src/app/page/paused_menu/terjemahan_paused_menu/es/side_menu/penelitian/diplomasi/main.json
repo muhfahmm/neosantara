@@ -21,8 +21,7 @@
     "kursi_tetap_dewan_pbb": "Asiento permanente en el Consejo de Seguridad de la ONU",
     "bonus_tempat_wisata": "Promoción turística diplomática",
     "sanksi_ekonomi": "Herramientas de sanción económica",
-    "suara_dewan_keamanan": "Reforma burocrática del gabinete",
-    "tatanan_dunia_baru": "Sinergia económica mundial"
+    "suara_dewan_keamanan": "Reforma burocrática del gabinete"
   },
   "effects": {
     "waktu_kedutaan": "Tiempo de construcción de embajadas",
@@ -44,7 +43,6 @@
     "kursi_dewan_keamanan": "Obtener un asiento permanente en el Consejo de Seguridad de la ONU",
     "bonus_wisata": "Bonificación de destinos turísticos",
     "sanksi": "Efecto de sanciones al enemigo",
-    "biaya_upgrade_kabinet": "Coste de mejora del Consejo de Ministros",
-    "produksi_semua_lini": "Producción de todos los sectores"
+    "biaya_upgrade_kabinet": "Coste de mejora del Consejo de Ministros"
   }
 }

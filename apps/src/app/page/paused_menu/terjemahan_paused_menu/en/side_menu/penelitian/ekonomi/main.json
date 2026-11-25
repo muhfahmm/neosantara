@@ -17,7 +17,8 @@
     "hegemoni_diplomasi": "Global Fiscal Harmonization",
     "kriptografi_kuantum": "Strategic Trade Diplomacy",
     "intelijen_satelit_quantum": "Integrated Subsidy Allocation",
-    "isolasi_total_musuh": "Integrated Settlement Program"
+    "isolasi_total_musuh": "Integrated Settlement Program",
+    "tatanan_dunia_baru": "Global Economic Synergy"
   },
   "effects": {
     "manufaktur": "Manufacturing Output",
@@ -36,6 +37,7 @@
     "harga_beli": "Commodity Purchase Prices",
     "harga_jual": "Commodity Sale Prices",
     "biaya_subsidi": "National Subsidy Cost",
-    "kapasitas_permukiman": "Settlement Capacity"
+    "kapasitas_permukiman": "Settlement Capacity",
+    "produksi_semua_lini": "Production Across All Sectors"
   }
 }
