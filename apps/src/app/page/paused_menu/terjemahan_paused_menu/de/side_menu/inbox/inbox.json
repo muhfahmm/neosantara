@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "Wasserwerfer", "subtitle": "Wasserstrahl mit hohem Druck", "description": "Löst die Menge mit einem Hochdruckwasserstrahl auf, ohne tödliche Verletzungen zu verursachen.", "effectiveness": "Niedrig (40% Auflösungswahrscheinlichkeit)", "casualties": "0% Todesfälle", "impact": "Zufriedenheit -5, Zustimmung -2. Bei einem Fehlschlag kann die Menge aggressiver werden und die Sicherheitskräfte verspotten."
+        "title": "Wasserwerfer",
+        "subtitle": "Wasserstrahl mit hohem Druck",
+        "description": "Löst die Menge mit einem Hochdruckwasserstrahl auf, ohne tödliche Verletzungen zu verursachen.",
+        "effectiveness": "Niedrig (40% Auflösungswahrscheinlichkeit)",
+        "casualties": "0% Todesfälle",
+        "impact": "Zufriedenheit -5, Zustimmung -2. Bei einem Fehlschlag kann die Menge aggressiver werden und die Sicherheitskräfte verspotten."
       },
       "gas_air_mata": {
-        "title": "Tränengas", "subtitle": "CS-Gas zur Auflösung der Menge", "description": "Setzt CS-Gas in der Menge ein und reizt Augen und Atemwege.", "effectiveness": "Mittel (70% Auflösungswahrscheinlichkeit)", "casualties": "1%–3% verletzt oder mit Atemnot", "impact": "Zufriedenheit -10, Zustimmung -5. Kann eine leichte Besorgnis der UN auslösen."
+        "title": "Tränengas",
+        "subtitle": "CS-Gas zur Auflösung der Menge",
+        "description": "Setzt CS-Gas in der Menge ein und reizt Augen und Atemwege.",
+        "effectiveness": "Mittel (70% Auflösungswahrscheinlichkeit)",
+        "casualties": "1%–3% verletzt oder mit Atemnot",
+        "impact": "Zufriedenheit -10, Zustimmung -5. Kann eine leichte Besorgnis der UN auslösen."
       },
       "jam_malam": {
-        "title": "Ausgangssperre & Blockade", "subtitle": "Ziviler Notstand, Internetsperre und Straßensperren", "description": "Ruft den zivilen Notstand aus, sperrt Zufahrtsstraßen zur Hauptstadt und unterbricht die Internetkommunikation.", "effectiveness": "Mittel (benötigt 2 Tage)", "casualties": "0% Todesfälle", "impact": "Zufriedenheit -8, Zustimmung -5. Der tägliche Geldfluss verlangsamt sich vorübergehend durch gestörte Geschäftstätigkeit."
+        "title": "Ausgangssperre & Blockade",
+        "subtitle": "Ziviler Notstand, Internetsperre und Straßensperren",
+        "description": "Ruft den zivilen Notstand aus, sperrt Zufahrtsstraßen zur Hauptstadt und unterbricht die Internetkommunikation.",
+        "effectiveness": "Mittel (benötigt 2 Tage)",
+        "casualties": "0% Todesfälle",
+        "impact": "Zufriedenheit -8, Zustimmung -5. Der tägliche Geldfluss verlangsamt sich vorübergehend durch gestörte Geschäftstätigkeit."
       },
       "brimob": {
-        "title": "Bereitschaftspolizei", "subtitle": "Geschützte Einheiten zur Aufstandsbekämpfung", "description": "Setzt geschützte Einheiten mit Schilden und Schlagstöcken ein, um Demonstrierende festzunehmen oder zurückzudrängen.", "effectiveness": "Hoch (85% Auflösungswahrscheinlichkeit)", "casualties": "5%–12% schwer oder kritisch verletzt", "impact": "Zufriedenheit -15, Zustimmung -10. Führt zu UN-Menschenrechtskritik und einem Rückgang der diplomatischen Beziehungen um 20 Punkte."
+        "title": "Bereitschaftspolizei",
+        "subtitle": "Geschützte Einheiten zur Aufstandsbekämpfung",
+        "description": "Setzt geschützte Einheiten mit Schilden und Schlagstöcken ein, um Demonstrierende festzunehmen oder zurückzudrängen.",
+        "effectiveness": "Hoch (85% Auflösungswahrscheinlichkeit)",
+        "casualties": "5%–12% schwer oder kritisch verletzt",
+        "impact": "Zufriedenheit -15, Zustimmung -10. Führt zu UN-Menschenrechtskritik und einem Rückgang der diplomatischen Beziehungen um 20 Punkte."
       },
       "militer": {
-        "title": "Militär (voll bewaffnet)", "subtitle": "Gepanzerte Fahrzeuge, Panzer und bewaffnetes Personal", "description": "Setzt gepanzerte Fahrzeuge, Panzer und Schusswaffen ein, um die Menge gewaltsam aufzulösen.", "effectiveness": "Sehr hoch (95% Auflösungswahrscheinlichkeit)", "casualties": "20%–35% Todesfälle", "impact": "Zufriedenheit -25, Zustimmung -20. Eine UN-Notfallsitzung zu Wirtschaftssanktionen und Embargos ist sehr wahrscheinlich."
+        "title": "Militär (voll bewaffnet)",
+        "subtitle": "Gepanzerte Fahrzeuge, Panzer und bewaffnetes Personal",
+        "description": "Setzt gepanzerte Fahrzeuge, Panzer und Schusswaffen ein, um die Menge gewaltsam aufzulösen.",
+        "effectiveness": "Sehr hoch (95% Auflösungswahrscheinlichkeit)",
+        "casualties": "20%–35% Todesfälle",
+        "impact": "Zufriedenheit -25, Zustimmung -20. Eine UN-Notfallsitzung zu Wirtschaftssanktionen und Embargos ist sehr wahrscheinlich."
       }
     },
-    "causes": { "subsidi": "Subventionen", "harga": "Preise", "pajak": "Steuern" },
-    "statuses": { "active": "Laufend", "inDialogue": "Im Dialog", "ignored": "Ignoriert", "completed": "Abgeschlossen", "riot": "Aufruhr", "ongoing": "Laufend" },
-    "tooltips": { "hardPower": "Sicherheitskräfte einsetzen, um die Menge gewaltsam aufzulösen", "dialog": "Einen öffentlichen Dialog führen und die Anliegen der Demonstrierenden anhören", "fulfill": "Die wirtschaftlichen Forderungen erfüllen, um den öffentlichen Unmut zu lindern", "ignore": "Die Demonstration ohne staatlichen Eingriff fortsetzen lassen" },
+    "causes": {
+      "subsidi": "Subventionen",
+      "harga": "Preise",
+      "pajak": "Steuern"
+    },
+    "statuses": {
+      "active": "Laufend",
+      "inDialogue": "Im Dialog",
+      "ignored": "Ignoriert",
+      "completed": "Abgeschlossen",
+      "riot": "Aufruhr",
+      "ongoing": "Laufend"
+    },
+    "tooltips": {
+      "hardPower": "Sicherheitskräfte einsetzen, um die Menge gewaltsam aufzulösen",
+      "dialog": "Einen öffentlichen Dialog führen und die Anliegen der Demonstrierenden anhören",
+      "fulfill": "Die wirtschaftlichen Forderungen erfüllen, um den öffentlichen Unmut zu lindern",
+      "ignore": "Die Demonstration ohne staatlichen Eingriff fortsetzen lassen"
+    },
     "mass": "Menge",
     "people": "Bürger",
     "status": "Status",
@@ -1006,6 +1047,10 @@
       "reason2": "Eine geschlossene Ideologie verstärkt die staatliche Kontrolle.",
       "reason3": "Protektionistische Spannungen mit internationalen Handelsblöcken.",
       "customReason": "Der Handel mit {partner} erfüllt die nationalen diplomatischen und regulatorischen Anforderungen nicht. Aktuelles Wirtschaftssystem: {economy}."
+    },
+    "alliedAid": {
+      "title": "🛡️ MILITÄRISCHE UNTERSTÜTZUNGSANFRAGE: {target}",
+      "sender": "VERTEIDIGUNGSMINISTERIUM — {target}"
     }
   },
   "dynamicEventTranslations": {
@@ -1015,12 +1060,41 @@
       "sender": "NATIONALE KATASTROPHENSCHUTZBEHÖRDE ({country})",
       "isolatedScale": "Die Lageanalyse bestätigt ein lokal begrenztes Katastrophenausmaß.",
       "catastrophicScale": "Die Lageanalyse bestätigt eine katastrophale Schadenslage.",
-      "categories": { "geological": "Geologische Katastrophe", "hydrometeorological": "Hydrometeorologische Katastrophe", "fire": "Brandkatastrophe", "coastal": "Meeres- und Küstenkatastrophe", "environmentalHealth": "Umwelt- und Gesundheitskrise" },
+      "categories": {
+        "geological": "Geologische Katastrophe",
+        "hydrometeorological": "Hydrometeorologische Katastrophe",
+        "fire": "Brandkatastrophe",
+        "coastal": "Meeres- und Küstenkatastrophe",
+        "environmentalHealth": "Umwelt- und Gesundheitskrise"
+      },
       "eventNames": {
-        "earthquakeLight": "Leichtes Erdbeben", "earthquakeMajor": "Schweres Erdbeben", "volcanicEruption": "Vulkanausbruch", "tsunami": "Tsunami", "landslide": "Erdrutsch",
-        "majorFlood": "Schwere Überschwemmung", "flashFlood": "Sturzflut", "drought": "Langanhaltende Dürre", "tropicalStorm": "Tropischer Sturm", "cyclone": "Tropischer Zyklon", "tornado": "Tornado", "hailstorm": "Extremer Hagelsturm",
-        "forestFire": "Waldbrand", "peatFire": "Torfbrand", "industrialFire": "Industriebrand", "settlementFire": "Brand in dicht besiedeltem Gebiet", "coastalErosion": "Küstenerosion", "waterspout": "Wasserhose", "seaLevelRise": "Steigender Meeresspiegel",
-        "foodPoisoning": "Massive Lebensmittelvergiftung", "waterContamination": "Trinkwasserverschmutzung", "airPollution": "Extreme Luftverschmutzung", "hazardousWaste": "Gefahrstoffkrise", "heatwave": "Tödliche Hitzewelle", "snowstorm": "Extremer Schneesturm und Erfrierungen", "sinkhole": "Plötzliches riesiges Erdloch", "refineryFire": "Brand in Ölraffinerie und Tanklager"
+        "earthquakeLight": "Leichtes Erdbeben",
+        "earthquakeMajor": "Schweres Erdbeben",
+        "volcanicEruption": "Vulkanausbruch",
+        "tsunami": "Tsunami",
+        "landslide": "Erdrutsch",
+        "majorFlood": "Schwere Überschwemmung",
+        "flashFlood": "Sturzflut",
+        "drought": "Langanhaltende Dürre",
+        "tropicalStorm": "Tropischer Sturm",
+        "cyclone": "Tropischer Zyklon",
+        "tornado": "Tornado",
+        "hailstorm": "Extremer Hagelsturm",
+        "forestFire": "Waldbrand",
+        "peatFire": "Torfbrand",
+        "industrialFire": "Industriebrand",
+        "settlementFire": "Brand in dicht besiedeltem Gebiet",
+        "coastalErosion": "Küstenerosion",
+        "waterspout": "Wasserhose",
+        "seaLevelRise": "Steigender Meeresspiegel",
+        "foodPoisoning": "Massive Lebensmittelvergiftung",
+        "waterContamination": "Trinkwasserverschmutzung",
+        "airPollution": "Extreme Luftverschmutzung",
+        "hazardousWaste": "Gefahrstoffkrise",
+        "heatwave": "Tödliche Hitzewelle",
+        "snowstorm": "Extremer Schneesturm und Erfrierungen",
+        "sinkhole": "Plötzliches riesiges Erdloch",
+        "refineryFire": "Brand in Ölraffinerie und Tanklager"
       }
     },
     "outbreak": {
@@ -1033,12 +1107,45 @@
       "pandemic": "GLOBALE PANDEMIE",
       "localizedCluster": "Örtlich begrenzter Cluster",
       "superSpreader": "Mutation eines Superspreader-Stamms",
-      "categories": { "infectious": "Infektionskrankheit (Epidemie)", "animalAndPlant": "Tier- und Pflanzenkrankheit (Epidemie)", "mutations": "Genmutation und Superkeim", "pandemic": "Globale Pandemie" },
+      "categories": {
+        "infectious": "Infektionskrankheit (Epidemie)",
+        "animalAndPlant": "Tier- und Pflanzenkrankheit (Epidemie)",
+        "mutations": "Genmutation und Superkeim",
+        "pandemic": "Globale Pandemie"
+      },
       "eventNames": {
-        "dengue": "Dengue-Ausbruch", "malaria": "Malaria-Ausbruch", "cholera": "Cholera-Ausbruch", "typhoid": "Typhus-Ausbruch", "tuberculosis": "Tuberkulose-Ausbruch", "hepatitisA": "Hepatitis-A-Ausbruch", "measles": "Masern-Ausbruch", "polio": "Polio-Ausbruch", "diphtheria": "Diphtherie-Ausbruch", "rabies": "Tollwutausbruch",
-        "avianFlu": "Vogelgrippe H5N1", "footAndMouth": "Maul- und Klauenseuche", "ricePlanthopper": "Reiszikadenbefall", "ganoderma": "Ganoderma-Pilz", "tungro": "Reistungrovirus", "ratInfestation": "Massiver Rattenbefall", "bananaWilt": "Bakterielle Bananenwelke", "africanSwineFever": "Afrikanische Schweinepest",
-        "superbug": "Ausbruch eines resistenten Superkeims", "candidaAuris": "Tödlicher Candida-auris-Ausbruch", "autoimmune": "Massenerkrankung durch Autoimmunreaktion", "globalInfluenza": "Globale Influenza-Pandemie", "coronavirusVariant": "Pandemie einer Coronavirus-Variante", "pathogenX": "Pandemie eines neuen Virus (Pathogen X)", "mpox": "Mpox-Pandemie", "hivVariant": "Pandemie einer neuen HIV/AIDS-Variante", "zombieVirus": "Zombievirus (Bio-Labor-Ausbruch)", "engineeredSpanishFlu": "Manipulierte Mutation der Spanischen Grippe",
-        "mysteriousEncephalitis": "Ausbruch mysteriöser Enzephalitis", "congoHemorrhagicFever": "Ausbruch des Krim-Kongo-Fiebers", "marburgVariant": "Pandemie einer neuen Marburg-Virusvariante", "redTide": "Marine Biotoxin-Anomalie (Rote Flut)"
+        "dengue": "Dengue-Ausbruch",
+        "malaria": "Malaria-Ausbruch",
+        "cholera": "Cholera-Ausbruch",
+        "typhoid": "Typhus-Ausbruch",
+        "tuberculosis": "Tuberkulose-Ausbruch",
+        "hepatitisA": "Hepatitis-A-Ausbruch",
+        "measles": "Masern-Ausbruch",
+        "polio": "Polio-Ausbruch",
+        "diphtheria": "Diphtherie-Ausbruch",
+        "rabies": "Tollwutausbruch",
+        "avianFlu": "Vogelgrippe H5N1",
+        "footAndMouth": "Maul- und Klauenseuche",
+        "ricePlanthopper": "Reiszikadenbefall",
+        "ganoderma": "Ganoderma-Pilz",
+        "tungro": "Reistungrovirus",
+        "ratInfestation": "Massiver Rattenbefall",
+        "bananaWilt": "Bakterielle Bananenwelke",
+        "africanSwineFever": "Afrikanische Schweinepest",
+        "superbug": "Ausbruch eines resistenten Superkeims",
+        "candidaAuris": "Tödlicher Candida-auris-Ausbruch",
+        "autoimmune": "Massenerkrankung durch Autoimmunreaktion",
+        "globalInfluenza": "Globale Influenza-Pandemie",
+        "coronavirusVariant": "Pandemie einer Coronavirus-Variante",
+        "pathogenX": "Pandemie eines neuen Virus (Pathogen X)",
+        "mpox": "Mpox-Pandemie",
+        "hivVariant": "Pandemie einer neuen HIV/AIDS-Variante",
+        "zombieVirus": "Zombievirus (Bio-Labor-Ausbruch)",
+        "engineeredSpanishFlu": "Manipulierte Mutation der Spanischen Grippe",
+        "mysteriousEncephalitis": "Ausbruch mysteriöser Enzephalitis",
+        "congoHemorrhagicFever": "Ausbruch des Krim-Kongo-Fiebers",
+        "marburgVariant": "Pandemie einer neuen Marburg-Virusvariante",
+        "redTide": "Marine Biotoxin-Anomalie (Rote Flut)"
       }
     },
     "electricity": {
@@ -1046,9 +1153,53 @@
       "message": "{eventName} in {country} verursacht ein Defizit von {deficit} MW und betrifft etwa {areaCount} Gebiete für voraussichtlich {duration} Tage.",
       "sender": "STAATLICHER STROMVERSORGER (PLN) — {country}",
       "ratingImpact": "Bewertung um {impact} Punkte gesunken",
-      "severities": { "ringan": "LEICHT", "sedang": "MITTEL", "berat": "SCHWER", "kritis": "KRITISCH" },
-      "eventNames": { "mildShortage": "Leichter Strommangel", "substationMaintenance": "Wartung des Hauptumspannwerks", "gasShortage": "Gasknappheit für Gaskraftwerke", "transmissionFault": "Störung der Hauptübertragungsleitung", "hydropowerDrought": "Dürre verringert Wasserkraft", "turbineFailure": "Turbinenstörung im Kohlekraftwerk", "nationalEnergyCrisis": "Nationale Energiekrise", "systemicBlackout": "Großflächiger systemischer Stromausfall" },
-      "areas": { "mediumHousing": "Mittleres Wohngebiet", "commercialArea": "Gewerbegebiet", "lightIndustry": "Leichtindustrie", "cityCenterDistrict": "Innenstadtbezirk", "industrialZone": "Industriegebiet", "primaryGasPlant": "Hauptgaskraftwerk", "manufacturingIndustry": "Verarbeitende Industrie", "tradeDistrict": "Handelsviertel", "metropolitanArea": "Metropolregion", "heavyIndustryZone": "Schwerindustriegebiet", "dataCenter": "Rechenzentrum", "primaryHydroSystem": "Hauptwasserkraftsystem", "energyIntensiveIndustry": "Energieintensive Industrie", "hospital": "Krankenhaus", "governmentCenter": "Regierungszentrum", "mainCoalPlant": "Hauptkohlekraftwerk", "strategicIndustrialZone": "Strategisches Industriegebiet", "internationalAirport": "Internationaler Flughafen", "mainPort": "Haupthafen", "nationalGrid": "Gesamtes nationales Stromnetz", "vitalIndustry": "Lebenswichtige Industrie", "healthFacilities": "Gesundheitseinrichtungen", "transportSystem": "Verkehrssystem", "nationalCommunications": "Nationale Kommunikation", "nationwideGrid": "Landesweites Stromnetz", "interconnectionGrid": "Verbundnetz", "criticalInfrastructure": "Kritische Infrastruktur", "financialSector": "Finanzsektor", "emergencyServices": "Rettungsdienste" }
+      "severities": {
+        "ringan": "LEICHT",
+        "sedang": "MITTEL",
+        "berat": "SCHWER",
+        "kritis": "KRITISCH"
+      },
+      "eventNames": {
+        "mildShortage": "Leichter Strommangel",
+        "substationMaintenance": "Wartung des Hauptumspannwerks",
+        "gasShortage": "Gasknappheit für Gaskraftwerke",
+        "transmissionFault": "Störung der Hauptübertragungsleitung",
+        "hydropowerDrought": "Dürre verringert Wasserkraft",
+        "turbineFailure": "Turbinenstörung im Kohlekraftwerk",
+        "nationalEnergyCrisis": "Nationale Energiekrise",
+        "systemicBlackout": "Großflächiger systemischer Stromausfall"
+      },
+      "areas": {
+        "mediumHousing": "Mittleres Wohngebiet",
+        "commercialArea": "Gewerbegebiet",
+        "lightIndustry": "Leichtindustrie",
+        "cityCenterDistrict": "Innenstadtbezirk",
+        "industrialZone": "Industriegebiet",
+        "primaryGasPlant": "Hauptgaskraftwerk",
+        "manufacturingIndustry": "Verarbeitende Industrie",
+        "tradeDistrict": "Handelsviertel",
+        "metropolitanArea": "Metropolregion",
+        "heavyIndustryZone": "Schwerindustriegebiet",
+        "dataCenter": "Rechenzentrum",
+        "primaryHydroSystem": "Hauptwasserkraftsystem",
+        "energyIntensiveIndustry": "Energieintensive Industrie",
+        "hospital": "Krankenhaus",
+        "governmentCenter": "Regierungszentrum",
+        "mainCoalPlant": "Hauptkohlekraftwerk",
+        "strategicIndustrialZone": "Strategisches Industriegebiet",
+        "internationalAirport": "Internationaler Flughafen",
+        "mainPort": "Haupthafen",
+        "nationalGrid": "Gesamtes nationales Stromnetz",
+        "vitalIndustry": "Lebenswichtige Industrie",
+        "healthFacilities": "Gesundheitseinrichtungen",
+        "transportSystem": "Verkehrssystem",
+        "nationalCommunications": "Nationale Kommunikation",
+        "nationwideGrid": "Landesweites Stromnetz",
+        "interconnectionGrid": "Verbundnetz",
+        "criticalInfrastructure": "Kritische Infrastruktur",
+        "financialSector": "Finanzsektor",
+        "emergencyServices": "Rettungsdienste"
+      }
     }
   },
   "tradeAccess": {

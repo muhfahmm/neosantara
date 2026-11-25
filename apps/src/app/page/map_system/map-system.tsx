@@ -4710,12 +4710,46 @@ export default function MapPage() {
 
             setIsWarAnalysisActive(false);
 
-            // Jika perang ini adalah perang AI vs AI dan target memiliki aliansi pertahanan aktif dengan pemain, picu permintaan bantuan sekutu
+            // 1. Notifikasi Perang Antarnegara (AI vs AI) ke Inbox Pemain
             if (isNpcWar && !isPlayerDefender && !isPlayerAttacker) {
-                const targetCountryName = detail.target;
                 const attackerCountryName = detail.attacker;
-                const defenseAlliances = Array.isArray(countryDetail?.defenseAlliances)
-                    ? countryDetail.defenseAlliances
+                const targetCountryName = detail.target;
+                const currentDateStr = simulationDateString || currentDate.toISOString().slice(0, 10);
+                const warNotifId = `notif-npc-war-${currentDateStr}-${detail.attackerIso || attackerDetailData?.iso || 'att'}-${detail.targetIso || targetDetailData?.iso || 'tgt'}`;
+
+                setNotifications(previous => {
+                    const hasExistingAlert = previous.some(n =>
+                        n.id === warNotifId ||
+                        (n.titleKey === 'side_inbox.dynamicNotifications.npcWar.title' &&
+                         areSameWarCountry((n as any).attackerCountry, attackerCountryName) &&
+                         areSameWarCountry((n as any).targetCountry, targetCountryName))
+                    );
+                    if (hasExistingAlert) return previous;
+
+                    return [{
+                        id: warNotifId,
+                        title: '⚔️ PERANG ANTARNEGARA',
+                        titleKey: 'side_inbox.dynamicNotifications.npcWar.title',
+                        sender: `Kementerian Luar Negeri — ${attackerCountryName}`,
+                        senderKey: 'side_inbox.dynamicNotifications.npcWar.sender',
+                        senderParams: { attacker: attackerCountryName },
+                        message: `${attackerCountryName} melancarkan serangan terhadap ${targetCountryName}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan.`,
+                        messageKey: 'side_inbox.dynamicNotifications.npcWar.message',
+                        messageParams: { attacker: attackerCountryName, target: targetCountryName },
+                        attackerCountry: attackerCountryName,
+                        targetCountry: targetCountryName,
+                        timestamp: currentDateStr,
+                        type: 'peringkat',
+                        value: 50,
+                        isRead: false,
+                    }, ...previous];
+                });
+
+                // 2. Jika target memiliki aliansi pertahanan aktif dengan pemain, picu permintaan bantuan sekutu
+                const effectiveCountryDetail = countryDetail ||
+                    (typeof window !== 'undefined' ? (window as any).neosantara_player_country_detail : null);
+                const defenseAlliances = Array.isArray(effectiveCountryDetail?.defenseAlliances)
+                    ? effectiveCountryDetail.defenseAlliances
                     : [];
                 
                 const hasActiveAlliance = defenseAlliances.some((ally: string) =>
@@ -4723,16 +4757,16 @@ export default function MapPage() {
                 );
 
                 if (hasActiveAlliance) {
-                    const resolvedPlayerCountry = getPlayerCountryIdentity(countryDetail) || selectedCountry?.country || 'Indonesia';
+                    const resolvedPlayerCountry = getPlayerCountryIdentity(effectiveCountryDetail) || selectedCountry?.country || 'Indonesia';
                     const allyHelpRequest = createAllyHelpRequest({
                         playerCountry: resolvedPlayerCountry,
-                        playerIso: countryDetail?.iso,
+                        playerIso: effectiveCountryDetail?.iso,
                         defenseAlliances,
                         attackerCountry: attackerCountryName,
                         attackerIso: detail.attackerIso || attackerDetailData?.iso,
                         targetCountry: targetCountryName,
                         targetIso: detail.targetIso || targetDetailData?.iso,
-                        currentDateStr: simulationDateString,
+                        currentDateStr: currentDateStr,
                         existingRequests: notifications as unknown as BantuanSekutuNotification[],
                     });
 

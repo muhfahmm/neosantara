@@ -597,24 +597,65 @@
     },
     "options": {
       "water_cannon": {
-        "title": "高压水炮", "subtitle": "高压喷水", "description": "使用高压水流驱散人群，避免造成致命伤害。", "effectiveness": "较低（驱散概率40%）", "casualties": "死亡率0%", "impact": "满意度-5，支持率-2。若行动失败，人群可能更加激进并嘲讽安保力量。"
+        "title": "高压水炮",
+        "subtitle": "高压喷水",
+        "description": "使用高压水流驱散人群，避免造成致命伤害。",
+        "effectiveness": "较低（驱散概率40%）",
+        "casualties": "死亡率0%",
+        "impact": "满意度-5，支持率-2。若行动失败，人群可能更加激进并嘲讽安保力量。"
       },
       "gas_air_mata": {
-        "title": "催泪瓦斯", "subtitle": "用于驱散人群的CS催泪气体", "description": "向人群施放CS气体，引发眼部和呼吸道刺激。", "effectiveness": "中等（驱散概率70%）", "casualties": "1%–3%受伤或呼吸困难", "impact": "满意度-10，支持率-5。可能引发联合国轻度关切。"
+        "title": "催泪瓦斯",
+        "subtitle": "用于驱散人群的CS催泪气体",
+        "description": "向人群施放CS气体，引发眼部和呼吸道刺激。",
+        "effectiveness": "中等（驱散概率70%）",
+        "casualties": "1%–3%受伤或呼吸困难",
+        "impact": "满意度-10，支持率-5。可能引发联合国轻度关切。"
       },
       "jam_malam": {
-        "title": "宵禁与封锁", "subtitle": "民事紧急状态、断网与封路", "description": "宣布民事紧急状态，封闭通往首都的道路并切断互联网通信。", "effectiveness": "中等（需要2天）", "casualties": "死亡率0%", "impact": "满意度-8，支持率-5。商业活动受阻会使每日现金流暂时放缓。"
+        "title": "宵禁与封锁",
+        "subtitle": "民事紧急状态、断网与封路",
+        "description": "宣布民事紧急状态，封闭通往首都的道路并切断互联网通信。",
+        "effectiveness": "中等（需要2天）",
+        "casualties": "死亡率0%",
+        "impact": "满意度-8，支持率-5。商业活动受阻会使每日现金流暂时放缓。"
       },
       "brimob": {
-        "title": "防暴警察", "subtitle": "配备盾牌的防暴部队", "description": "派遣配备盾牌和警棍的防暴部队逮捕或驱散示威者。", "effectiveness": "较高（驱散概率85%）", "casualties": "5%–12%重伤或情况危急", "impact": "满意度-15，支持率-10。将引发联合国人权谴责，并使外交关系下降20点。"
+        "title": "防暴警察",
+        "subtitle": "配备盾牌的防暴部队",
+        "description": "派遣配备盾牌和警棍的防暴部队逮捕或驱散示威者。",
+        "effectiveness": "较高（驱散概率85%）",
+        "casualties": "5%–12%重伤或情况危急",
+        "impact": "满意度-15，支持率-10。将引发联合国人权谴责，并使外交关系下降20点。"
       },
       "militer": {
-        "title": "军队（全副武装）", "subtitle": "装甲车、坦克与武装人员", "description": "调动装甲车、坦克和枪械，强行驱散人群。", "effectiveness": "很高（驱散概率95%）", "casualties": "死亡率20%–35%", "impact": "满意度-25，支持率-20。联合国几乎必然召开紧急会议讨论经济禁运制裁。"
+        "title": "军队（全副武装）",
+        "subtitle": "装甲车、坦克与武装人员",
+        "description": "调动装甲车、坦克和枪械，强行驱散人群。",
+        "effectiveness": "很高（驱散概率95%）",
+        "casualties": "死亡率20%–35%",
+        "impact": "满意度-25，支持率-20。联合国几乎必然召开紧急会议讨论经济禁运制裁。"
       }
     },
-    "causes": { "subsidi": "补贴", "harga": "价格", "pajak": "税收" },
-    "statuses": { "active": "进行中", "inDialogue": "对话中", "ignored": "已忽略", "completed": "已完成", "riot": "骚乱", "ongoing": "进行中" },
-    "tooltips": { "hardPower": "调动安全部队强制驱散人群", "dialog": "开展公开对话并听取示威者诉求", "fulfill": "满足示威者的经济诉求，以缓和公众不满", "ignore": "不进行政府干预，任由示威继续" },
+    "causes": {
+      "subsidi": "补贴",
+      "harga": "价格",
+      "pajak": "税收"
+    },
+    "statuses": {
+      "active": "进行中",
+      "inDialogue": "对话中",
+      "ignored": "已忽略",
+      "completed": "已完成",
+      "riot": "骚乱",
+      "ongoing": "进行中"
+    },
+    "tooltips": {
+      "hardPower": "调动安全部队强制驱散人群",
+      "dialog": "开展公开对话并听取示威者诉求",
+      "fulfill": "满足示威者的经济诉求，以缓和公众不满",
+      "ignore": "不进行政府干预，任由示威继续"
+    },
     "mass": "集会群体规模",
     "people": "人",
     "status": "状态",
@@ -1006,6 +1047,10 @@
       "reason2": "封闭的意识形态加强了国家控制。",
       "reason3": "与国际贸易集团存在保护主义摩擦。",
       "customReason": "与{partner}的贸易不符合国家外交和法规要求。当前经济体制：{economy}。"
+    },
+    "alliedAid": {
+      "title": "🛡️ 军事援助请求：{target}",
+      "sender": "国防部 — {target}"
     }
   },
   "dynamicEventTranslations": {
@@ -1015,12 +1060,41 @@
       "sender": "{country}国家灾害管理局",
       "isolatedScale": "现场分析确认这是局部规模的灾害。",
       "catastrophicScale": "现场分析确认发生了灾难性灾害。",
-      "categories": { "geological": "地质灾害", "hydrometeorological": "水文气象灾害", "fire": "火灾灾害", "coastal": "海洋与沿海灾害", "environmentalHealth": "环境健康危机" },
+      "categories": {
+        "geological": "地质灾害",
+        "hydrometeorological": "水文气象灾害",
+        "fire": "火灾灾害",
+        "coastal": "海洋与沿海灾害",
+        "environmentalHealth": "环境健康危机"
+      },
       "eventNames": {
-        "earthquakeLight": "轻微地震", "earthquakeMajor": "强烈地震", "volcanicEruption": "火山喷发", "tsunami": "海啸", "landslide": "山体滑坡",
-        "majorFlood": "严重洪水", "flashFlood": "山洪暴发", "drought": "长期干旱", "tropicalStorm": "热带风暴", "cyclone": "热带气旋", "tornado": "龙卷风", "hailstorm": "极端冰雹",
-        "forestFire": "森林火灾", "peatFire": "泥炭地火灾", "industrialFire": "工业火灾", "settlementFire": "高密度居民区火灾", "coastalErosion": "海岸侵蚀", "waterspout": "海龙卷", "seaLevelRise": "海平面上升",
-        "foodPoisoning": "大规模食物中毒", "waterContamination": "饮用水污染", "airPollution": "极端空气污染", "hazardousWaste": "有害废物危机", "heatwave": "致命热浪", "snowstorm": "极端暴风雪与冻伤", "sinkhole": "突发巨型天坑", "refineryFire": "炼油厂与油库火灾"
+        "earthquakeLight": "轻微地震",
+        "earthquakeMajor": "强烈地震",
+        "volcanicEruption": "火山喷发",
+        "tsunami": "海啸",
+        "landslide": "山体滑坡",
+        "majorFlood": "严重洪水",
+        "flashFlood": "山洪暴发",
+        "drought": "长期干旱",
+        "tropicalStorm": "热带风暴",
+        "cyclone": "热带气旋",
+        "tornado": "龙卷风",
+        "hailstorm": "极端冰雹",
+        "forestFire": "森林火灾",
+        "peatFire": "泥炭地火灾",
+        "industrialFire": "工业火灾",
+        "settlementFire": "高密度居民区火灾",
+        "coastalErosion": "海岸侵蚀",
+        "waterspout": "海龙卷",
+        "seaLevelRise": "海平面上升",
+        "foodPoisoning": "大规模食物中毒",
+        "waterContamination": "饮用水污染",
+        "airPollution": "极端空气污染",
+        "hazardousWaste": "有害废物危机",
+        "heatwave": "致命热浪",
+        "snowstorm": "极端暴风雪与冻伤",
+        "sinkhole": "突发巨型天坑",
+        "refineryFire": "炼油厂与油库火灾"
       }
     },
     "outbreak": {
@@ -1033,12 +1107,45 @@
       "pandemic": "全球大流行",
       "localizedCluster": "局部聚集性病例",
       "superSpreader": "超级传播毒株变异",
-      "categories": { "infectious": "传染病（流行病）", "animalAndPlant": "动植物疾病（流行病）", "mutations": "基因突变与超级细菌", "pandemic": "全球大流行" },
+      "categories": {
+        "infectious": "传染病（流行病）",
+        "animalAndPlant": "动植物疾病（流行病）",
+        "mutations": "基因突变与超级细菌",
+        "pandemic": "全球大流行"
+      },
       "eventNames": {
-        "dengue": "登革热疫情", "malaria": "疟疾疫情", "cholera": "霍乱疫情", "typhoid": "伤寒疫情", "tuberculosis": "结核病疫情", "hepatitisA": "甲型肝炎疫情", "measles": "麻疹疫情", "polio": "脊髓灰质炎疫情", "diphtheria": "白喉疫情", "rabies": "狂犬病疫情",
-        "avianFlu": "H5N1禽流感", "footAndMouth": "口蹄疫", "ricePlanthopper": "水稻飞虱虫害", "ganoderma": "灵芝菌病", "tungro": "水稻东格鲁病毒", "ratInfestation": "大规模鼠害", "bananaWilt": "香蕉细菌性枯萎病", "africanSwineFever": "非洲猪瘟",
-        "superbug": "耐药超级细菌疫情", "candidaAuris": "耳念珠菌严重疫情", "autoimmune": "大规模自身免疫疾病", "globalInfluenza": "全球流感大流行", "coronavirusVariant": "变异冠状病毒大流行", "pathogenX": "新型病毒大流行（病原体X）", "mpox": "猴痘大流行", "hivVariant": "新型艾滋病毒变种大流行", "zombieVirus": "僵尸病毒（生物实验室泄漏）", "engineeredSpanishFlu": "人工改造的西班牙流感变种",
-        "mysteriousEncephalitis": "不明原因脑炎疫情", "congoHemorrhagicFever": "克里米亚-刚果出血热疫情", "marburgVariant": "新型马尔堡病毒变种大流行", "redTide": "海洋生物毒素异常（赤潮）"
+        "dengue": "登革热疫情",
+        "malaria": "疟疾疫情",
+        "cholera": "霍乱疫情",
+        "typhoid": "伤寒疫情",
+        "tuberculosis": "结核病疫情",
+        "hepatitisA": "甲型肝炎疫情",
+        "measles": "麻疹疫情",
+        "polio": "脊髓灰质炎疫情",
+        "diphtheria": "白喉疫情",
+        "rabies": "狂犬病疫情",
+        "avianFlu": "H5N1禽流感",
+        "footAndMouth": "口蹄疫",
+        "ricePlanthopper": "水稻飞虱虫害",
+        "ganoderma": "灵芝菌病",
+        "tungro": "水稻东格鲁病毒",
+        "ratInfestation": "大规模鼠害",
+        "bananaWilt": "香蕉细菌性枯萎病",
+        "africanSwineFever": "非洲猪瘟",
+        "superbug": "耐药超级细菌疫情",
+        "candidaAuris": "耳念珠菌严重疫情",
+        "autoimmune": "大规模自身免疫疾病",
+        "globalInfluenza": "全球流感大流行",
+        "coronavirusVariant": "变异冠状病毒大流行",
+        "pathogenX": "新型病毒大流行（病原体X）",
+        "mpox": "猴痘大流行",
+        "hivVariant": "新型艾滋病毒变种大流行",
+        "zombieVirus": "僵尸病毒（生物实验室泄漏）",
+        "engineeredSpanishFlu": "人工改造的西班牙流感变种",
+        "mysteriousEncephalitis": "不明原因脑炎疫情",
+        "congoHemorrhagicFever": "克里米亚-刚果出血热疫情",
+        "marburgVariant": "新型马尔堡病毒变种大流行",
+        "redTide": "海洋生物毒素异常（赤潮）"
       }
     },
     "electricity": {
@@ -1046,9 +1153,53 @@
       "message": "{country}发生{eventName}，造成{deficit} MW电力缺口，约{areaCount}个区域预计受影响{duration}天。",
       "sender": "{country}国家电力公司（PLN）",
       "ratingImpact": "评级下降 {impact} 点",
-      "severities": { "ringan": "轻微", "sedang": "中等", "berat": "严重", "kritis": "危急" },
-      "eventNames": { "mildShortage": "轻微电力缺口", "substationMaintenance": "主变电站维护", "gasShortage": "燃气电厂供应危机", "transmissionFault": "主输电线路故障", "hydropowerDrought": "干旱导致水电减少", "turbineFailure": "燃煤电厂涡轮机故障", "nationalEnergyCrisis": "国家能源危机", "systemicBlackout": "大范围系统性停电" },
-      "areas": { "mediumHousing": "中等住宅区", "commercialArea": "商业区", "lightIndustry": "轻工业区", "cityCenterDistrict": "市中心区", "industrialZone": "工业区", "primaryGasPlant": "主要燃气电厂", "manufacturingIndustry": "制造业区", "tradeDistrict": "贸易区", "metropolitanArea": "大都市区", "heavyIndustryZone": "重工业区", "dataCenter": "数据中心", "primaryHydroSystem": "主要水电系统", "energyIntensiveIndustry": "高耗能产业", "hospital": "医院", "governmentCenter": "政府中心", "mainCoalPlant": "主要燃煤电厂", "strategicIndustrialZone": "战略工业区", "internationalAirport": "国际机场", "mainPort": "主要港口", "nationalGrid": "全国电网", "vitalIndustry": "关键产业", "healthFacilities": "医疗设施", "transportSystem": "交通系统", "nationalCommunications": "国家通信系统", "nationwideGrid": "全国电网区域", "interconnectionGrid": "互联电网", "criticalInfrastructure": "关键基础设施", "financialSector": "金融业", "emergencyServices": "应急服务" }
+      "severities": {
+        "ringan": "轻微",
+        "sedang": "中等",
+        "berat": "严重",
+        "kritis": "危急"
+      },
+      "eventNames": {
+        "mildShortage": "轻微电力缺口",
+        "substationMaintenance": "主变电站维护",
+        "gasShortage": "燃气电厂供应危机",
+        "transmissionFault": "主输电线路故障",
+        "hydropowerDrought": "干旱导致水电减少",
+        "turbineFailure": "燃煤电厂涡轮机故障",
+        "nationalEnergyCrisis": "国家能源危机",
+        "systemicBlackout": "大范围系统性停电"
+      },
+      "areas": {
+        "mediumHousing": "中等住宅区",
+        "commercialArea": "商业区",
+        "lightIndustry": "轻工业区",
+        "cityCenterDistrict": "市中心区",
+        "industrialZone": "工业区",
+        "primaryGasPlant": "主要燃气电厂",
+        "manufacturingIndustry": "制造业区",
+        "tradeDistrict": "贸易区",
+        "metropolitanArea": "大都市区",
+        "heavyIndustryZone": "重工业区",
+        "dataCenter": "数据中心",
+        "primaryHydroSystem": "主要水电系统",
+        "energyIntensiveIndustry": "高耗能产业",
+        "hospital": "医院",
+        "governmentCenter": "政府中心",
+        "mainCoalPlant": "主要燃煤电厂",
+        "strategicIndustrialZone": "战略工业区",
+        "internationalAirport": "国际机场",
+        "mainPort": "主要港口",
+        "nationalGrid": "全国电网",
+        "vitalIndustry": "关键产业",
+        "healthFacilities": "医疗设施",
+        "transportSystem": "交通系统",
+        "nationalCommunications": "国家通信系统",
+        "nationwideGrid": "全国电网区域",
+        "interconnectionGrid": "互联电网",
+        "criticalInfrastructure": "关键基础设施",
+        "financialSector": "金融业",
+        "emergencyServices": "应急服务"
+      }
     }
   },
   "tradeAccess": {
