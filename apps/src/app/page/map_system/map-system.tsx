@@ -3562,6 +3562,7 @@ export default function MapPage() {
                 targetCountryName: detail.targetCountry,
                 targetCountrySlug: detail.targetCountrySlug,
                 playerIdeology: String(countryDetail?.ideology || countryDetail?.ideologi || '').trim(),
+                playerCountryDetail: countryDetail,
                 updatePlayerCountryDetail: setCountryDetail,
             });
             const dateString = [

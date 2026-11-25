@@ -1,1 +1,1 @@
-research penambah poin persentase kudeta
+- [x] research penambah poin persentase kudeta (Selesai diimplementasikan: sistem 5 faktor peluang kudeta 5%-95% di `coupChanceCalculator.ts`, UI modal di `kudetaModals.tsx`, eksekusi & penalti diplomatik jika gagal di `coupLogic.ts`)

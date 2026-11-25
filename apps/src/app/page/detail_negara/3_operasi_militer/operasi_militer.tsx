@@ -487,6 +487,8 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       <KudetaModal
         isOpen={isKudetaOpen}
         countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        targetCountryDetail={targetCountryDetail}
         onClose={() => setIsKudetaOpen(false)}
         onConfirm={() => {
           const targetCountrySlug = String(targetCountryDetail?.country_slug || '');
