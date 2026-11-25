@@ -25,6 +25,8 @@ import PaktaNonAgresiModal from './2_pakta_non_agresi/paktaNonAgresiModals';
 import AliansiPertahananModal from './3_aliansi_pertahanan/aliansiPertahananModals';
 import KontrakPenelitianModal from './5_kontrak_penelitian/kontrakPenelitianModals';
 import KirimPasukanModal from './6_kirim_pasukan/kirimPasukanModals';
+import { applyWarLossesToUserArmada } from '@/app/page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import PanggilSekutuModal from './7_panggil_sekutu/panggilSekutuModals';
 import BerikanSanksiModal from './8_berikan_sanksi/berikanSanksiModals';
 import ProvinsiInformasiUmum from './provinsi_logic/ProvinsiInformasiUmum';
@@ -1063,10 +1065,64 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       <KirimPasukanModal
         isOpen={isKirimPasukanModalOpen}
         countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
         onClose={() => setIsKirimPasukanModalOpen(false)}
-        onConfirm={() => {
-          setPlayerCountryDetail?.((prev: Record<string, any> | null) => prev ? withDiplomacyNotification(prev, 'Pasukan Dikirim', `Perintah pengiriman pasukan ke ${countryName} telah dikonfirmasi.`) : prev);
-          console.log(`Perintah kirim pasukan ke ${countryName} dikonfirmasi.`);
+        onConfirm={(deploymentConfig) => {
+          if (blockDiplomaticAction()) return;
+          const playerName = String(
+            playerCountryDetail?.country ||
+            playerCountryDetail?.nama_negara ||
+            playerCountryDetail?.name_id ||
+            playerCountryDetail?.name_en ||
+            'Indonesia'
+          );
+
+          // Potong armada user yang dikerahkan sebagai penjaga perdamaian
+          const { updatedDetail, losses } = applyWarLossesToUserArmada(
+            playerCountryDetail,
+            1,
+            false,
+            deploymentConfig
+          );
+
+          if (setPlayerCountryDetail && losses.length > 0) {
+            setPlayerCountryDetail(withDiplomacyNotification(
+              updatedDetail,
+              'Pasukan Perdamaian Diberangkatkan',
+              `Konvoi pasukan penjaga perdamaian sedang bergerak menuju ibukota ${countryName}.`
+            ));
+          }
+
+          // Hitung kekuatan pasukan yang dikerahkan
+          let peacekeeperPower = 0;
+          for (const [unitKey, pct] of Object.entries(deploymentConfig)) {
+            if (pct > 0) {
+              peacekeeperPower += Math.round(pct * 15);
+            }
+          }
+          if (peacekeeperPower === 0) peacekeeperPower = 100;
+
+          // Dispatch event animasi konvoi penjaga perdamaian (warna biru muda PBB)
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('start_war_animation', {
+                detail: {
+                  attacker: playerName,
+                  target: countryName,
+                  isMilitaryAid: true,
+                  isPeacekeeperDeploy: true,
+                  playerPower: peacekeeperPower,
+                  targetPower: 0,
+                  deployedUnitsConfig: deploymentConfig,
+                  allyCountry: countryName,
+                  allyIso: undefined,
+                  attackerCountryDetail: playerCountryDetail,
+                  troopsCommitted: true,
+                },
+              })
+            );
+          }
+          console.log(`Perintah kirim pasukan penjaga perdamaian ke ${countryName} dikonfirmasi.`, deploymentConfig);
         }}
       />
 

@@ -822,6 +822,7 @@ interface WarMapProps {
   isUserDefender?: boolean;
   isNpcWar?: boolean;
   isMilitaryAid?: boolean;
+  isPeacekeeperDeploy?: boolean;
   primaryWar?: {
     attacker: CapitalPoint;
     target: CapitalPoint;
@@ -861,6 +862,7 @@ export default function WarMap({
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
   isMilitaryAid = false,
+  isPeacekeeperDeploy = false,
   primaryWar,
   requestedInvasion = false,
   isPbbCoalition = false,
@@ -1392,6 +1394,19 @@ export default function WarMap({
     setShowFlash(true);
 
     const outcome = battleOutcomeRef.current || battleOutcome;
+
+    // Jika ini adalah pengiriman pasukan penjaga perdamaian ke ibukota sekutu:
+    // Garis rute hilang dan tank menetap di ibukota (disimpan ke stationedPeacekeepers)
+    if (isPeacekeeperDeploy) {
+      const closeTimer = setTimeout(() => {
+        onCloseRef.current(undefined);
+      }, 800);
+      const flashTimer = setTimeout(() => setShowFlash(false), 500);
+      return () => {
+        clearTimeout(closeTimer);
+        clearTimeout(flashTimer);
+      };
+    }
 
     if (isPbbCoalition && shouldShowBattleAnalysis) {
       if (lastAnalysisVisibilityRef.current !== true) {
