@@ -31,6 +31,7 @@ export interface ResultModalProps {
     targetParty?: WarCountryParty;
     type?: 'success' | 'error' | 'info';
     compact?: boolean;
+    hideLosses?: boolean;
     onClose: () => void;
 }
 
@@ -43,6 +44,7 @@ export default function ResultModal({
     targetParty,
     type = 'success',
     compact = false,
+    hideLosses = false,
     onClose,
 }: ResultModalProps) {
     const { t } = useLanguage();
@@ -167,13 +169,13 @@ export default function ResultModal({
                         size="compact"
                     />
                     <div className="flex-1">
-                        {Boolean(title && !isLosses) && (
+                        {Boolean(title && (!isLosses || hideLosses)) && (
                             <p className="text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
                                 {message}
                             </p>
                         )}
 
-                        {hasParties && (
+                        {!hideLosses && hasParties && (
                             <div className="mt-2 mb-4 flex border-b border-root-accent/20">
                                 <button
                                     type="button"
@@ -202,19 +204,21 @@ export default function ResultModal({
                             </div>
                         )}
 
-                        <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
-                            <div className="mb-3 flex items-center justify-between">
-                                <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
-                                    {t('game.warResultModal.lossesTitle')}
-                                </h4>
-                                {hasParties && (
-                                    <span className="text-[10px] sm:text-xs font-bold uppercase text-slate-400">
-                                        {activeParty.name}
-                                    </span>
-                                )}
-                            </div>
-                            {renderLossCards(currentLosses)}
-                        </section>
+                        {!hideLosses && (
+                            <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
+                                <div className="mb-3 flex items-center justify-between">
+                                    <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-root-accent">
+                                        {t('game.warResultModal.lossesTitle')}
+                                    </h4>
+                                    {hasParties && (
+                                        <span className="text-[10px] sm:text-xs font-bold uppercase text-slate-400">
+                                            {activeParty.name}
+                                        </span>
+                                    )}
+                                </div>
+                                {renderLossCards(currentLosses)}
+                            </section>
+                        )}
                     </div>
                     <div className="mt-6 flex flex-col justify-end gap-3 border-t border-root-accent/20 pt-4 sm:flex-row">
                         <ModalCloseButton
@@ -245,21 +249,21 @@ export default function ResultModal({
 
                 {/* Body Content */}
                 <div className="relative z-10 flex-1 min-h-0 p-4 sm:p-5 lg:p-6 overflow-y-auto bg-root-canvas/80 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-root-canvas [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-root-accent/20 [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-root-accent [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-root-canvas [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-root-accent [&::-webkit-scrollbar-button]:hidden">
-                    {Boolean(title && !isLosses) && (
+                    {Boolean(title && (!isLosses || hideLosses)) && (
                         <h3
                             className={`text-base sm:text-lg lg:text-xl font-black uppercase tracking-wide mb-3 lg:mb-4 ${isError ? 'text-rose-400' : 'text-root-text'}`}
                         >
                             {title}
                         </h3>
                     )}
-                    {Boolean(message && !isLosses) && (
+                    {Boolean(message && (!isLosses || hideLosses)) && (
                         <p className="text-xs sm:text-sm lg:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
                             {message}
                         </p>
                     )}
 
                     {/* Tab Menu jika terdapat kedua belah pihak */}
-                    {hasParties && (
+                    {!hideLosses && hasParties && (
                         <div className="mb-4 flex items-center gap-2 border-b border-root-accent/20 pb-1">
                             <button
                                 type="button"
@@ -298,19 +302,21 @@ export default function ResultModal({
                         </div>
                     )}
 
-                    <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
-                        <div className="mb-3 lg:mb-4 flex items-center justify-between">
-                            <h4 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-root-accent">
-                                {t('game.warResultModal.lossesTitle')}
-                            </h4>
-                            {hasParties && (
-                                <span className="text-xs sm:text-sm font-bold uppercase tracking-wide text-slate-300">
-                                    {activeParty.name}
-                                </span>
-                            )}
-                        </div>
-                        {renderLossCards(currentLosses)}
-                    </section>
+                    {!hideLosses && (
+                        <section aria-label={t('game.warResultModal.lossesAria')} className="pt-1">
+                            <div className="mb-3 lg:mb-4 flex items-center justify-between">
+                                <h4 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-root-accent">
+                                    {t('game.warResultModal.lossesTitle')}
+                                </h4>
+                                {hasParties && (
+                                    <span className="text-xs sm:text-sm font-bold uppercase tracking-wide text-slate-300">
+                                        {activeParty.name}
+                                    </span>
+                                )}
+                            </div>
+                            {renderLossCards(currentLosses)}
+                        </section>
+                    )}
                 </div>
 
                 {/* Footer Actions */}

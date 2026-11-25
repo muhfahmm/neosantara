@@ -5821,6 +5821,7 @@ export default function MapPage() {
         type?: 'success' | 'error' | 'info';
         compact?: boolean;
         persistent?: boolean;
+        hideLosses?: boolean;
     }>({
         isOpen: false,
         title: '',
@@ -11579,6 +11580,7 @@ export default function MapPage() {
                             type: 'success',
                             compact: !isPoliceIncident,
                             persistent: true,
+                            hideLosses: true,
                             // modal decoupled
                         });
                         return;
@@ -13165,6 +13167,7 @@ export default function MapPage() {
                 targetParty={resultModal.targetParty}
                 type={resultModal.type}
                 compact={resultModal.compact}
+                hideLosses={resultModal.hideLosses}
                 onClose={() => {
                     setResultModal(prev => ({ ...prev, isOpen: false }));
                 }}
