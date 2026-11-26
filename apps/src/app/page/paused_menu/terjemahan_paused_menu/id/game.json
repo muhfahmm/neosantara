@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "Rincian kerugian alutsista",
     "lossesTitle": "Rincian Kerugian Alutsista",
+    "noLosses": "Tidak ada kerugian alutsista yang tercatat.",
     "defeatTitle": "Laporan Kekalahan Pertempuran",
-    "victoryTitle": "Laporan Hasil Pertempuran & Perang"
+    "victoryTitle": "Laporan Hasil Pertempuran & Perang",
+    "militaryAidSuccessTitle": "Bantuan Militer Berhasil",
+    "militaryAidFailureTitle": "Bantuan Militer Gagal",
+    "militaryAidSuccess": "{target} dan pasukan bantuan {supportCountry} berhasil menahan serangan {attacker}. Hubungan dengan {target} meningkat {relationBonus} poin. Kerugian pasukan bantuan: {losses}.",
+    "militaryAidFailure": "{target} gagal menahan serangan {attacker}. Hubungan dengan {target} meningkat {relationBonus} poin setelah bantuan diberikan. Kerugian pasukan bantuan: {losses}.",
+    "countryFallback": "Negara"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 KERUGIAN PASUKAN PERTEMPURAN ({lossRate})",
+    "armyCommandSender": "Markas Besar Angkatan Bersenjata ({country})",
+    "armyLossVictory": "Pasukan ditarik mundur setelah memenangkan pertempuran di {target}! Kerugian tempur taktis sebesar {lossRate}: {losses}. Data armada telah diperbarui.",
+    "armyLossDefeat": "Pasukan terpukul mundur dari {target}! Kerugian tempur sebesar {lossRate} dari unit yang dikerahkan: {losses}. Data armada di Pertahanan & Keamanan telah diperbarui.",
+    "relationsDeclinedTitle": "📉 HUBUNGAN DIPLOMATIK MENURUN",
+    "foreignMinistrySender": "Kementerian Luar Negeri",
+    "relationsDeclined": "Hubungan diplomatik {attacker} dengan negara-negara lain turun {penalty} poin setelah operasi militer terhadap {target}.",
+    "lootAndCasualtiesTitle": "⚠️ PRODUKSI DIRAMPAS & KORBAN POPULASI (80%)",
+    "lootAndCasualties": "Pertahanan gagal membendung agresi {attacker}! Seluruh cadangan hasil produksi nasional dirampas hingga 0. Korban perang: {lostPopulation} jiwa ({lossPercent}% populasi). Kerugian armada: {losses}.",
+    "defenseFailedTitle": "Pertahanan Gagal — Produksi Dirampas!",
+    "defenseFailed": "Pertahanan negara Anda gagal menahan agresi militer dari {attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), tetapi seluruh cadangan hasil produksi dirampas hingga 0. Dampak populasi: {lostPopulation} jiwa ({lossPercent}% populasi). Kerugian alutsista dirinci di bawah.",
+    "defenseSucceededTitle": "Pertahanan Berhasil!",
+    "defenseMinistrySender": "Kementerian Pertahanan",
+    "defenseSucceeded": "Pasukan pertahanan nasional berhasil memukul mundur agresi militer dari {attacker}! Kerugian tempur armada pertahanan (25%): {losses}."
   },
   "annexedModal": {
     "defaultAttacker": "Negara Agresor",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "Mengerti",
   "calendar": {
     "simulationCalendar": "Kalender Simulasi",
+    "resumeSimulation": "Lanjutkan simulasi",
+    "pauseSimulation": "Jeda simulasi",
+    "changeSpeed": "Ubah kecepatan menjadi {speed} kali",
     "holidayTitle": "Liburan Negara",
     "militaryTitle": "Militer & Keamanan Negara",
     "holidayActivated": "Mode Liburan Presiden diaktifkan! Rakyat menikmati waktu istirahat.",

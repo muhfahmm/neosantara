@@ -7,6 +7,7 @@ import { clearAllOrganizationMembershipData } from '@/app/page/navigasi_menu/2_n
 import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { clearAllRelationModifiers } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { clearPendingAiNews, clearStoredAiNews } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
+import { clearPendingGameSave } from '@/app/logic/pendingGameSave';
 
 export interface RestartOptions {
     timeManager: SimulationTimeManager | null;
@@ -76,7 +77,9 @@ export function handleGameRestart(options: RestartOptions): void {
 
         // Hapus session storage terkait sesi game berjalan
         try {
-            sessionStorage.removeItem('presiden_simulator_load_save');
+            void clearPendingGameSave().catch(error => {
+                console.error('Gagal membersihkan save sementara:', error);
+            });
             sessionStorage.removeItem('programNuklirActive');
             sessionStorage.removeItem('program_nuklir_modal_open');
             sessionStorage.removeItem('icbm_detail_open');

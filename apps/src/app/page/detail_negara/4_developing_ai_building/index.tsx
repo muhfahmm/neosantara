@@ -193,7 +193,7 @@ export default function DevelopingAIBuilding({
           <Globe className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{countryName}</span>
         </div>
-        <nav aria-label="Kategori detail negara AI" className="flex gap-1.5 overflow-x-auto p-2.5 no-scrollbar md:min-h-0 md:flex-1 md:flex-col md:gap-1 md:overflow-y-auto md:overflow-x-hidden md:p-3">
+        <nav aria-label={t("detail_negara_ai.building.tabs.ariaLabel")} className="flex gap-1.5 overflow-x-auto p-2.5 no-scrollbar md:min-h-0 md:flex-1 md:flex-col md:gap-1 md:overflow-y-auto md:overflow-x-hidden md:p-3">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

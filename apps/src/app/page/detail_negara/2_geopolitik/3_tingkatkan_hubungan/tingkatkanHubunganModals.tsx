@@ -42,9 +42,11 @@ export default function TingkatkanHubunganModal({
 
 	const targetCountryName = countryName || t("detail_negara_ai.geopolitics.targetCountry");
 	const isAllCountries = countryName === "Semua Negara";
-	const targetCountryDisplayName = countryName && !isAllCountries
-		? getLocalizedCountryName(countryName, language)
-		: targetCountryName;
+	const targetCountryDisplayName = isAllCountries
+		? t("navigation_geopolitics_relations.diplomacy.allCountries")
+		: countryName
+			? getLocalizedCountryName(countryName, language)
+			: targetCountryName;
 	const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || "Indonesia";
 	const playerBudget = Number(playerCountryDetail?.anggaran || 0);
 
@@ -254,7 +256,11 @@ export default function TingkatkanHubunganModal({
 								<p className="text-[10px] sm:text-[11px] text-amber-300 flex items-center gap-1.5 mt-2.5">
 									<AlertCircle className="h-3.5 w-3.5 shrink-0" />
 									<span>
-										Nominal {formatNEO(inputAmount)} NEO memberi <strong className="text-white">+{gainedLevels} tingkat</strong> (sisa {formatNEO(inputAmount % 10000)} NEO tidak dihitung).
+										{t("detail_negara_ai.geopolitics.relationAmountRemainder", {
+											amount: formatNEO(inputAmount),
+											levels: gainedLevels,
+											remainder: formatNEO(inputAmount % 10000),
+										})}
 									</span>
 								</p>
 							)}
@@ -265,11 +271,11 @@ export default function TingkatkanHubunganModal({
 							<div className="flex items-center gap-2.5">
 								<Sparkles className="h-4 w-4 text-root-accent shrink-0" />
 								<span className="text-xs text-root-text font-semibold">
-									Efek Global ke Seluruh Negara:
+									{t("detail_negara_ai.geopolitics.globalEffectAllCountries")}
 								</span>
 							</div>
 							<span className="text-sm font-black text-root-accent bg-root-accent/10 px-3 py-1 rounded-lg border border-root-accent/30">
-								+{actualGained} Tingkat untuk Setiap Negara
+								{t("detail_negara_ai.geopolitics.relationIncreasePerCountry", { levels: actualGained })}
 							</span>
 						</div>
 					)}

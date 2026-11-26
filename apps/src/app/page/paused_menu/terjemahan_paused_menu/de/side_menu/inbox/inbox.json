@@ -110,6 +110,15 @@
   "nonAggressionMessage": "Präsident von {user}, die Regierung von {partner} schlägt offiziell einen Nichtangriffspakt vor. Beide Nationen verpflichten sich zu Frieden und Grenzsicherheit. Sind Sie bereit, diesen Pakt zu ratifizieren?",
   "diplomacyPeaceBadge": "Diplomatie & Frieden",
   "senderPrefix": "Absender: {sender} | Datum: {date}",
+  "economicChangeLabels": {
+    "taxIncrease": "Steuer erhöht",
+    "taxDecrease": "Steuer gesenkt",
+    "priceIncrease": "Preis gestiegen",
+    "priceDecrease": "Preis gesunken",
+    "taxLabel": "Steuerart",
+    "commodityLabel": "Ware",
+    "changeLabel": "Änderung"
+  },
   "relation": "Beziehungswert",
   "rejectPact": "Pakt Ablehnen",
   "acceptPact": "Nichtangriffspakt Ratifizieren",

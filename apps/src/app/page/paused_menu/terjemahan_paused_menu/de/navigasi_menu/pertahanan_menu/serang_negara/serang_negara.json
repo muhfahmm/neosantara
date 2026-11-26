@@ -45,6 +45,14 @@
     "militaryAidSender": "Entsendende Truppen",
     "militaryAidTarget": "Verbündete Truppen"
   },
+  "mandate": {
+    "activeTitle": "Aktives UN-Mandat für Militäroperationen",
+    "activeMessage": "Der Angriff auf {target} wird durch eine Resolution des UN-Sicherheitsrats unterstützt. Für einseitige Aggression werden keine Sanktionen verhängt.",
+    "missingTitle": "Warnung: Kein offizielles UN-Mandat",
+    "missingMessage": "Dieser Angriff erfolgt einseitig und ohne Resolution des UN-Sicherheitsrats. Er kann diplomatische Sanktionen und ein multilaterales Embargo gegen Ihr Land auslösen.",
+    "embargoTitle": "Ziel unter UN-Embargo",
+    "embargoMessage": "Gegen {target} gilt derzeit eine UN-Resolution ({resolution}). Die militärischen Versorgungslinien des Ziels sind geschwächt."
+  },
   "groups": {
     "darat": "Landstreitkräfte",
     "laut": "Marine",

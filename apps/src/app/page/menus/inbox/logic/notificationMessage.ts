@@ -545,6 +545,8 @@ function localizeInboxParams(
         ? value
         : name.toLowerCase() === 'duration' && t
           ? getLocalizedInboxDuration(value, t)
+        : name.toLowerCase() === 'taxname'
+          ? getLocalizedTaxName(value, t)
         : countryParam.test(name)
           ? isGlobalCountryTarget(value)
             ? t
@@ -558,6 +560,34 @@ function localizeInboxParams(
             : value,
     ])
   );
+}
+
+const TAX_NAME_TRANSLATIONS: Record<string, { key: string; defaultLabel: string }> = {
+  vat: { key: 'navigation_economy_tax.taxes.vat', defaultLabel: 'Pajak Pertambahan Nilai (PPN)' },
+  corporate_tax: { key: 'navigation_economy_tax.taxes.corporate', defaultLabel: 'Pajak Korporasi' },
+  income_tax: { key: 'navigation_economy_tax.taxes.personalIncome', defaultLabel: 'Pajak Penghasilan Pribadi' },
+  cigarette_tax: { key: 'navigation_economy_tax.taxes.excise', defaultLabel: 'Cukai' },
+  environment_tax: { key: 'navigation_economy_tax.taxes.environmental', defaultLabel: 'Pajak Lingkungan' },
+};
+
+const TAX_NAME_IDS_BY_LABEL: Record<string, string> = {
+  'pajak pertambahan nilai (ppn)': 'vat',
+  'pajak pertambahan nilai': 'vat',
+  ppn: 'vat',
+  'pajak korporasi': 'corporate_tax',
+  'pajak korporasi / perusahaan': 'corporate_tax',
+  'pajak penghasilan pribadi': 'income_tax',
+  cukai: 'cigarette_tax',
+  'pajak lingkungan': 'environment_tax',
+};
+
+export function getLocalizedTaxName(value: string, t?: TranslationFunction): string {
+  const normalizedValue = value.trim().toLowerCase();
+  const taxId = TAX_NAME_TRANSLATIONS[normalizedValue]
+    ? normalizedValue
+    : TAX_NAME_IDS_BY_LABEL[normalizedValue];
+  const tax = taxId ? TAX_NAME_TRANSLATIONS[taxId] : undefined;
+  return tax ? (t ? t(tax.key) : tax.defaultLabel) : value;
 }
 
 export function getDefaultInboxText(

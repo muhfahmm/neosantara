@@ -1,3 +1,5 @@
+import { stagePendingGameSave } from '@/app/logic/pendingGameSave';
+
 export interface LoadGameSave {
     id: number;
     save_name: string;
@@ -23,7 +25,12 @@ export async function deleteGameSave(id: number): Promise<void> {
     }
 }
 
-export function loadGameSave(save: LoadGameSave): void {
-    sessionStorage.setItem('presiden_simulator_load_save', JSON.stringify(save));
-    window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
+export async function loadGameSave(save: LoadGameSave): Promise<void> {
+    try {
+        await stagePendingGameSave(save);
+        window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
+    } catch (error) {
+        console.error('Gagal menyiapkan save untuk dimuat:', error);
+        alert('Gagal membuka save. Pastikan penyimpanan browser tersedia, lalu coba lagi.');
+    }
 }

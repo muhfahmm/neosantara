@@ -45,6 +45,14 @@
     "militaryAidSender": "파견국 병력",
     "militaryAidTarget": "동맹국 병력"
   },
+  "mandate": {
+    "activeTitle": "UN 군사 작전 위임 활성",
+    "activeMessage": "{target} 공격은 UN 안전보장이사회 결의의 승인을 받았습니다. 일방적 침략에 대한 제재가 부과되지 않습니다.",
+    "missingTitle": "경고: 공식 UN 위임 없음",
+    "missingMessage": "이 공격은 안보리 결의가 없는 일방적 행동입니다. 외교 제재와 다자간 금수 조치가 초래될 수 있습니다.",
+    "embargoTitle": "대상국이 UN 금수 조치 중",
+    "embargoMessage": "{target}은(는) 현재 UN 결의 제재를 받고 있습니다({resolution}). 대상국의 군수 보급이 약화되었습니다."
+  },
   "groups": {
     "darat": "육군",
     "laut": "해군",

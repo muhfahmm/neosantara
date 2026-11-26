@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "تفاصيل خسائر المعدات العسكرية",
     "lossesTitle": "تفاصيل خسائر المعدات العسكرية",
+    "noLosses": "لم تُسجّل أي خسائر في المعدات العسكرية.",
     "defeatTitle": "تقرير هزيمة المعركة",
-    "victoryTitle": "تقرير نتائج المعركة والحرب"
+    "victoryTitle": "تقرير نتائج المعركة والحرب",
+    "militaryAidSuccessTitle": "نجاح المساعدة العسكرية",
+    "militaryAidFailureTitle": "فشل المساعدة العسكرية",
+    "militaryAidSuccess": "تمكنت {target} وقوات الدعم من {supportCountry} من صد هجوم {attacker}. تحسنت العلاقات مع {target} بمقدار {relationBonus} نقطة. خسائر قوات الدعم: {losses}.",
+    "militaryAidFailure": "لم تتمكن {target} من صد هجوم {attacker}. تحسنت العلاقات مع {target} بمقدار {relationBonus} نقطة بعد تقديم المساعدة. خسائر قوات الدعم: {losses}.",
+    "countryFallback": "دولة"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 خسائر القوات في المعركة ({lossRate})",
+    "armyCommandSender": "القيادة العامة للقوات المسلحة ({country})",
+    "armyLossVictory": "انسحبت القوات بعد الفوز في معركة {target}. بلغت الخسائر القتالية التكتيكية {lossRate}: {losses}. تم تحديث بيانات الأسطول.",
+    "armyLossDefeat": "تراجعت القوات من {target}. بلغت الخسائر {lossRate} من الوحدات المنتشرة: {losses}. تم تحديث بيانات الدفاع والأمن.",
+    "relationsDeclinedTitle": "📉 تراجعت العلاقات الدبلوماسية",
+    "foreignMinistrySender": "وزارة الخارجية",
+    "relationsDeclined": "انخفضت العلاقات الدبلوماسية بين {attacker} والدول الأخرى بمقدار {penalty} نقطة بعد العملية العسكرية ضد {target}.",
+    "lootAndCasualtiesTitle": "⚠️ نُهبت موارد الإنتاج وسقط ضحايا (80%)",
+    "lootAndCasualties": "عجز الدفاع عن صد عدوان {attacker}! نُهبت جميع مخزونات الإنتاج الوطني حتى وصلت إلى 0. خسائر الحرب: {lostPopulation} شخصًا ({lossPercent}% من السكان). خسائر الأسطول: {losses}.",
+    "defenseFailedTitle": "فشل الدفاع — نُهبت موارد الإنتاج!",
+    "defenseFailed": "عجز دفاع دولتك عن صد العدوان العسكري من {attacker}. تم تجنب الضم الكامل (احتمال النجاة 80%)، لكن نُهبت جميع مخزونات الإنتاج حتى وصلت إلى 0. أثر السكان: {lostPopulation} شخصًا ({lossPercent}% من السكان). تفاصيل خسائر المعدات أدناه.",
+    "defenseSucceededTitle": "نجاح الدفاع!",
+    "defenseMinistrySender": "وزارة الدفاع",
+    "defenseSucceeded": "تمكنت قوات الدفاع الوطني من صد العدوان العسكري من {attacker}! خسائر أسطول الدفاع (25%): {losses}."
   },
   "annexedModal": {
     "defaultAttacker": "الدولة المعتدية",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "فهمت",
   "calendar": {
     "simulationCalendar": "تقويم المحاكاة",
+    "resumeSimulation": "استئناف المحاكاة",
+    "pauseSimulation": "إيقاف المحاكاة مؤقتًا",
+    "changeSpeed": "تغيير السرعة إلى {speed}",
     "holidayTitle": "عطلة وطنية",
     "militaryTitle": "الجيش والأمن القومي",
     "holidayActivated": "تم تفعيل وضع عطلة الرئيس! يستمتع المواطنون بوقت الراحة.",

@@ -275,6 +275,7 @@
     "giftBelowThreshold": "قيمة السلع الحالية ({value}) أقل من الحد الأدنى {threshold} اللازم لزيادة العلاقات مستوى واحداً.",
     "globalEffectAllCountries": "تأثير عالمي على جميع الدول:",
     "relationIncreasePerCountry": "+{levels} مستويات علاقات لكل دولة",
+    "relationAmountRemainder": "يمنح مبلغ {amount} NEO عدد +{levels} مستويات (لا يُحتسب المتبقي {remainder} NEO).",
     "improveRelationSummary": "تقديم {amount} NEO إلى {country} يزيد العلاقات بمقدار مستوى واحد.",
     "transferSuccessToast": "تم نقل {units} وحدة عسكرية إلى {country}. زادت العلاقات بمقدار +{bonus}.",
     "yourStock": "مخزونك",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "البناء",
+      "ariaLabel": "فئات تفاصيل الدولة"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "الإنتاج:",
       "load": "الحمل:",
       "totalSupply": "إجمالي إمداد المحطات",
+      "satisfactionTitle": "رضا السكان (قطاع الكهرباء)",
+      "satisfactionDesc": "توفر الكهرباء للمرافق العامة والمساكن والصناعة",
       "activeUnits": "{count} وحدة نشطة",
       "operatingAtCapacity": "المحطات تعمل وفقاً للسعة المركبة",
       "totalNationalLoad": "إجمالي حمل الاستهلاك",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "المرافق المدنية",
+      "categoryTitle": "فئة القطاع",
       "tabMilitary": "الجيش والبنية التحتية",
       "searchPlaceholder": "البحث في عناصر البناء...",
       "civilianCategories": "التصنيفات المدنية",

@@ -45,6 +45,14 @@
     "militaryAidSender": "Pasukan Pengirim",
     "militaryAidTarget": "Pasukan Sekutu"
   },
+  "mandate": {
+    "activeTitle": "Mandat Operasi Militer PBB Aktif",
+    "activeMessage": "Serangan terhadap {target} didukung oleh Resolusi Dewan Keamanan PBB. Anda tidak akan dikenakan sanksi agresi sepihak.",
+    "missingTitle": "Peringatan: Tanpa Mandat Resmi PBB",
+    "missingMessage": "Serangan ini merupakan inisiatif sepihak tanpa resolusi DK PBB. Berisiko memicu sanksi diplomatik dan embargo multilateral terhadap negara Anda.",
+    "embargoTitle": "Target Sedang Dalam Embargo PBB",
+    "embargoMessage": "{target} saat ini dikenakan sanksi resolusi PBB ({resolution}). Pasokan militer target melemah."
+  },
   "groups": {
     "darat": "Darat",
     "laut": "Laut",

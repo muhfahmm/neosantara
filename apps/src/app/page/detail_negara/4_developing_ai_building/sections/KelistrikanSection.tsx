@@ -226,10 +226,10 @@ export default function KelistrikanSection({
         <div className="flex justify-between items-center mb-2">
           <div>
             <span className="text-xs sm:text-sm font-black text-root-accent uppercase tracking-wider">
-              Indeks Kepuasan Rakyat (Sektor Listrik)
+              {t("detail_negara_ai.building.kelistrikan.satisfactionTitle")}
             </span>
             <p className="text-[10px] text-root-subtle mt-0.5">
-              Ketersediaan pasokan listrik bagi fasilitas umum, permukiman, dan lini industri negara
+              {t("detail_negara_ai.building.kelistrikan.satisfactionDesc")}
             </p>
           </div>
           <span className="text-2xl sm:text-3xl font-black text-root-accent">

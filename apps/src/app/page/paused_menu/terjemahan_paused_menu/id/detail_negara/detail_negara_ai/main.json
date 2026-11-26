@@ -275,6 +275,7 @@
     "giftBelowThreshold": "Nilai komoditas saat ini ({value}) belum mencapai batas minimum {threshold} untuk menaikkan hubungan 1 tingkat.",
     "globalEffectAllCountries": "Efek global ke seluruh negara:",
     "relationIncreasePerCountry": "+{levels} tingkat hubungan untuk setiap negara",
+    "relationAmountRemainder": "Nominal {amount} NEO memberi +{levels} tingkat (sisa {remainder} NEO tidak dihitung).",
     "improveRelationSummary": "Memberikan {amount} NEO kepada {country} meningkatkan hubungan +1 tingkat.",
     "transferSuccessToast": "Berhasil mentransfer {units} unit pasukan ke {country}. Hubungan meningkat +{bonus}.",
     "yourStock": "Stok Anda",
@@ -353,7 +354,8 @@
       "prices": "Harga Barang Pokok",
       "economy": "Kebijakan & Sistem Ekonomi",
       "subsidy": "Subsidi",
-      "construction": "Pembangunan"
+      "construction": "Pembangunan",
+      "ariaLabel": "Kategori detail negara"
     },
     "subtabs": {
       "militaryFacilities": "Fasilitas & Militer",
@@ -588,6 +590,8 @@
       "production": "Produksi:",
       "load": "Beban:",
       "totalSupply": "Total Pasokan Pembangkit",
+      "satisfactionTitle": "Indeks Kepuasan Rakyat (Sektor Listrik)",
+      "satisfactionDesc": "Ketersediaan pasokan listrik bagi fasilitas umum, permukiman, dan lini industri negara",
       "activeUnits": "{count} Unit Aktif",
       "operatingAtCapacity": "Pembangkit beroperasi sesuai kapasitas terpasang",
       "totalNationalLoad": "Total Beban Konsumsi",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "Fasilitas Sipil",
+      "categoryTitle": "Kategori Sektor",
       "tabMilitary": "Militer & Infrastruktur",
       "searchPlaceholder": "Cari item pembangunan...",
       "civilianCategories": "Kategori Sipil",

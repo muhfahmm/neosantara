@@ -110,6 +110,15 @@
   "nonAggressionMessage": "{user} 元首阁下，{partner} 政府正式提议与贵国缔结双边互不侵犯条约。双方恪守和平共处，绝不采取敌对军事行动，并共同维护边界安宁。请问阁下是否签署并批准本条约？",
   "diplomacyPeaceBadge": "和平外交与安全",
   "senderPrefix": "发件方：{sender} | 日期：{date}",
+  "economicChangeLabels": {
+    "taxIncrease": "税率上调",
+    "taxDecrease": "税率下调",
+    "priceIncrease": "价格上涨",
+    "priceDecrease": "价格下跌",
+    "taxLabel": "税种",
+    "commodityLabel": "商品",
+    "changeLabel": "变更"
+  },
   "relation": "关系评分",
   "rejectPact": "拒绝条约",
   "acceptPact": "签署并批准互不侵犯条约",

@@ -84,9 +84,11 @@ export default function BeriHadiahModal({
 
   const targetCountryName = countryName || t("detail_negara_ai.geopolitics.targetCountry");
   const isAllCountries = countryName === "Semua Negara";
-  const targetCountryDisplayName = countryName && !isAllCountries
-    ? getLocalizedCountryName(countryName, language)
-    : targetCountryName;
+  const targetCountryDisplayName = isAllCountries
+    ? t("navigation_geopolitics_relations.diplomacy.allCountries")
+    : countryName
+      ? getLocalizedCountryName(countryName, language)
+      : targetCountryName;
   const playerCountryName =
     playerCountryDetail?.country ||
     playerCountryDetail?.nama ||

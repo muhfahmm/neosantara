@@ -15,6 +15,7 @@ import { soundManager } from '@/lib/soundManager';
 import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobilePrebakedPaths';
 import { isMobileDevice } from './map_system/rust_map_mobile';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { stagePendingGameSave } from '@/app/logic/pendingGameSave';
 
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
@@ -602,9 +603,14 @@ export default function PlayMenuPage() {
         }
     };
 
-    const handleLoadSave = (save: MainMenuSave) => {
-        sessionStorage.setItem('presiden_simulator_load_save', JSON.stringify(save));
-        window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
+    const handleLoadSave = async (save: MainMenuSave) => {
+        try {
+            await stagePendingGameSave(save);
+            window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
+        } catch (error) {
+            console.error('Gagal menyiapkan save untuk dimuat:', error);
+            alert('Gagal membuka save. Pastikan penyimpanan browser tersedia, lalu coba lagi.');
+        }
     };
 
     if (mainMenuScreen === 'continue') {

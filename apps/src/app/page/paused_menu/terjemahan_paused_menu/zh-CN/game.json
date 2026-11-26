@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "军事装备损失明细",
     "lossesTitle": "军事装备损失明细",
+    "noLosses": "未记录军事装备损失。",
     "defeatTitle": "战斗失败报告",
-    "victoryTitle": "战斗与战争结果报告"
+    "victoryTitle": "战斗与战争结果报告",
+    "militaryAidSuccessTitle": "军事援助成功",
+    "militaryAidFailureTitle": "军事援助失败",
+    "militaryAidSuccess": "{target}与来自{supportCountry}的援军成功击退了{attacker}的进攻。与{target}的关系提升了{relationBonus}点。援军损失：{losses}。",
+    "militaryAidFailure": "{target}未能抵挡{attacker}的进攻。接受援助后，与{target}的关系提升了{relationBonus}点。援军损失：{losses}。",
+    "countryFallback": "国家"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 战斗部队损失（{lossRate}）",
+    "armyCommandSender": "武装部队司令部（{country}）",
+    "armyLossVictory": "部队在{target}赢得战斗后撤退。战术损失为{lossRate}：{losses}。舰队数据已更新。",
+    "armyLossDefeat": "部队从{target}撤退。已部署部队的损失为{lossRate}：{losses}。国防与安全舰队数据已更新。",
+    "relationsDeclinedTitle": "📉 外交关系下降",
+    "foreignMinistrySender": "外交部",
+    "relationsDeclined": "针对{target}的军事行动后，{attacker}与其他国家的外交关系下降了{penalty}点。",
+    "lootAndCasualtiesTitle": "⚠️ 生产储备遭掠夺及人口伤亡（80%）",
+    "lootAndCasualties": "未能阻止{attacker}的侵略！所有国家生产储备均被掠夺至 0。战争伤亡：{lostPopulation} 人（占人口的 {lossPercent}%）。舰队损失：{losses}。",
+    "defenseFailedTitle": "防御失败——生产储备遭掠夺！",
+    "defenseFailed": "国家防御未能抵挡{attacker}的军事侵略。虽避免了全面吞并（存活概率 80%），但所有生产储备均被掠夺至 0。人口影响：{lostPopulation} 人（占人口的 {lossPercent}%）。装备损失详见下方。",
+    "defenseSucceededTitle": "防御成功！",
+    "defenseMinistrySender": "国防部",
+    "defenseSucceeded": "国家防卫部队成功击退{attacker}的军事侵略！防卫舰队战斗损失（25%）：{losses}。"
   },
   "annexedModal": {
     "defaultAttacker": "侵略国",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "明白",
   "calendar": {
     "simulationCalendar": "模拟日历",
+    "resumeSimulation": "继续模拟",
+    "pauseSimulation": "暂停模拟",
+    "changeSpeed": "将速度更改为 {speed} 倍",
     "holidayTitle": "国家假日",
     "militaryTitle": "军事与国家安全",
     "holidayActivated": "总统假期模式已启动！民众正在享受休息时光。",

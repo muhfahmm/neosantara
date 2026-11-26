@@ -1765,6 +1765,61 @@ function getAchievementRoute(achievement: Pick<AchievementItem, 'id' | 'category
 
 export function PencapaianContent({ countryDetail, setCountryDetail, currentDate, onStartMission, onClose }: PencapaianModalsProps) {
   const { t } = useLanguage();
+  const translateBadgeLabel = (label: string) => {
+    const badge = (key: string, params: Record<string, string | number> = {}) =>
+      t(`side_pencapaian.dynamicBadges.${key}`, params);
+    let match: RegExpMatchArray | null;
+
+    if ((match = label.match(/^Target Kesejahteraan: (.+)\/100$/))) return badge("welfareTarget", { target: match[1] });
+    if ((match = label.match(/^Target Kepuasan: (.+)%$/))) return badge("satisfactionTarget", { target: match[1] });
+    if ((match = label.match(/^Mortalitas Penyakit: (.+)%$/))) return badge("diseaseMortality", { rate: match[1] });
+    if ((match = label.match(/^Estimasi Jiwa Terancam: (.+) jiwa$/))) return badge("estimatedLivesAtRisk", { count: match[1] });
+    if ((match = label.match(/^Surplus Berjalan: (.+) \/ 6 Bulan$/))) return badge("currentSurplusMonths", { current: match[1] });
+    if ((match = label.match(/^Durasi Target: 1 Tahun \(hingga (.+)\)$/))) return badge("targetDuration", { date: match[1] });
+    if ((match = label.match(/^Surplus Tercatat: (.+) \/ 12 Bulan$/))) return badge("recordedSurplusMonths", { current: match[1] });
+    if (label === "Transaksi Pasar Global: Selesai") return badge("marketComplete");
+    if (label === "Belum Ada Transaksi Global") return badge("marketPending");
+    if ((match = label.match(/^Target Tahap (\d+): (.+)\/100$/))) return badge("priceTierTarget", { stage: match[1], target: match[2] });
+    if ((match = label.match(/^Indeks Kepuasan Harga Pokok: (.+)\/100$/))) return badge("priceSatisfactionIndex", { value: match[1] });
+    if (label === "Pembangunan Selesai (+5.000 Bangunan)") return t("side_pencapaian.building_achievements.finished_badge");
+    if ((match = label.match(/^Target Tahap (\d+): \+(.+) Bangunan Baru$/))) {
+      return t("side_pencapaian.building_achievements.badge_template", { stage: match[1], target: match[2] });
+    }
+    if ((match = label.match(/^Bangunan Baru: (.+) \/ (.+)$/))) {
+      return t("side_pencapaian.building_achievements.progress_badge", { current: match[1], target: match[2] });
+    }
+    if ((match = label.match(/^Total Fasilitas: (.+)$/))) return badge("totalFacilities", { count: match[1] });
+    if ((match = label.match(/^Sektor Selesai \((\d+)\/(\d+)\)$/))) return badge("researchComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Target: Selesaikan (\d+) Riset$/))) return badge("researchTarget", { target: match[1] });
+    if ((match = label.match(/^Progres Riset: (\d+) \/ (\d+) Selesai$/))) return badge("researchProgress", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Seluruh 20 Kotak Terisi \((\d+)\/(\d+)\)$/))) return badge("allSlotsComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Target: (\d+) (Kementerian|Keamanan|Layanan) Level 20\/20$/))) {
+      const units: Record<string, string> = {
+        Kementerian: t("side_pencapaian.dynamicBadges.managementUnits.ministries"),
+        Keamanan: t("side_pencapaian.dynamicBadges.managementUnits.security"),
+        Layanan: t("side_pencapaian.dynamicBadges.managementUnits.services"),
+      };
+      return badge("managementTarget", { count: match[1], unit: units[match[2]] });
+    }
+    if ((match = label.match(/^Maksimal 20\/20: (.+) \/ (.+) Departemen$/))) return badge("departmentsMaxed", { current: match[1], total: match[2] });
+    if ((match = label.match(/^(?:.+) Lengkap \((.+)\/(.+)\)$/))) return badge("goalComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Transfer Selesai \((.+)\/(.+)\)$/))) return badge("transferComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Target: (.+) Negara$/))) return badge("targetCountries", { target: match[1] });
+    if ((match = label.match(/^Progres: (.+) \/ (.+) Negara$/))) return badge("countryProgress", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Agama: (.+)$/))) return badge("religion", { name: match[1] });
+    if ((match = label.match(/^Seagama: (.+) \/ (.+) Negara$/))) return badge("sameReligion", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Ideologi: (.+)$/))) return badge("ideology", { name: match[1] });
+    if ((match = label.match(/^Seideologi: (.+) \/ (.+) Negara$/))) return badge("sameIdeology", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Bencana Teratasi \((.+)\/(.+)\)$/))) return badge("disasterComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Target: (.+) Bencana$/))) return badge("disasterTarget", { target: match[1] });
+    if ((match = label.match(/^Pandemi Teratasi \((.+)\/(.+)\)$/))) return badge("pandemicComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Target: (.+) Pandemi$/))) return badge("pandemicTarget", { target: match[1] });
+    if ((match = label.match(/^Epidemi Teratasi \((.+)\/(.+)\)$/))) return badge("epidemicComplete", { current: match[1], target: match[2] });
+    if ((match = label.match(/^Target: (.+) Epidemi$/))) return badge("epidemicTarget", { target: match[1] });
+    if ((match = label.match(/^Progres: (.+) \/ (.+)$/))) return badge("progress", { current: match[1], target: match[2] });
+
+    return label;
+  };
   const [filterStatus, setFilterStatus] = useState<'all' | 'locked' | 'unlocked'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -2205,7 +2260,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
                             className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[9px] font-bold shrink-0 ${badge.colorClass}`}
                           >
                             {BadgeIcon && <BadgeIcon className="h-2.5 w-2.5" />}
-                            {badge.label}
+                            {translateBadgeLabel(badge.label)}
                           </span>
                         );
                       })}

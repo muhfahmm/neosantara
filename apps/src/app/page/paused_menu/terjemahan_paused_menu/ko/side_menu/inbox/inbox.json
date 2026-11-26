@@ -110,6 +110,15 @@
   "nonAggressionMessage": "{user} 대통령 각하, {partner} 정부에서 양자 불가침 조약 체결을 공식 제안했습니다. 양국은 무력 행사를 금지하고 국경 안정을 유지할 것을 서약합니다. 조약을 비준하시겠습니까?",
   "diplomacyPeaceBadge": "외교 및 평화 유지",
   "senderPrefix": "발신처: {sender} | 일자: {date}",
+  "economicChangeLabels": {
+    "taxIncrease": "세금 인상",
+    "taxDecrease": "세금 인하",
+    "priceIncrease": "가격 상승",
+    "priceDecrease": "가격 하락",
+    "taxLabel": "세금 종류",
+    "commodityLabel": "상품",
+    "changeLabel": "변경"
+  },
   "relation": "관계 점수",
   "rejectPact": "조약 거부",
   "acceptPact": "불가침 조약 비준",

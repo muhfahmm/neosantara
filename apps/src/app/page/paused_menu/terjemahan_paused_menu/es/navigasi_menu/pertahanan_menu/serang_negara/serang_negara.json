@@ -45,6 +45,14 @@
     "militaryAidSender": "Fuerzas remitentes",
     "militaryAidTarget": "Fuerzas aliadas"
   },
+  "mandate": {
+    "activeTitle": "Mandato activo de operación militar de la ONU",
+    "activeMessage": "El ataque contra {target} está respaldado por una resolución del Consejo de Seguridad de la ONU. No recibirás sanciones por agresión unilateral.",
+    "missingTitle": "Advertencia: sin mandato oficial de la ONU",
+    "missingMessage": "Este ataque es una acción unilateral sin resolución del Consejo de Seguridad de la ONU. Puede provocar sanciones diplomáticas y un embargo multilateral contra tu país.",
+    "embargoTitle": "Objetivo bajo embargo de la ONU",
+    "embargoMessage": "{target} está sujeto actualmente a una sanción de resolución de la ONU ({resolution}). Sus suministros militares están debilitados."
+  },
   "groups": {
     "darat": "Tierra",
     "laut": "Marina",

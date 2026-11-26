@@ -214,10 +214,10 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
           </div>
           <div>
             <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-root-accent flex items-center gap-2">
-              Sistem & Manajemen Pajak Negara
+              {t("detail_negara_ai.building.pajak.title")}
             </h4>
             <p className="text-[10px] sm:text-xs text-root-subtle font-semibold">
-              Tarif penerimaan fiskal dan estimasi kas pajak nasional
+              {t("detail_negara_ai.building.pajak.desc")}
             </p>
           </div>
         </div>

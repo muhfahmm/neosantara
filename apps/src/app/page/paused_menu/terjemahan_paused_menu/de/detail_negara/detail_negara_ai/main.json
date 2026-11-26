@@ -275,6 +275,7 @@
     "giftBelowThreshold": "Der aktuelle Rohstoffwert ({value}) liegt unter dem Mindestwert von {threshold}, der für eine Beziehungsstufe erforderlich ist.",
     "globalEffectAllCountries": "Globale Wirkung auf alle Länder:",
     "relationIncreasePerCountry": "+{levels} Beziehungsstufen pro Land",
+    "relationAmountRemainder": "Der Betrag von {amount} NEO gewährt +{levels} Stufen ({remainder} NEO Restbetrag wird nicht angerechnet).",
     "improveRelationSummary": "Eine Hilfe von {amount} NEO an {country} verbessert die Beziehungen um eine Stufe.",
     "transferSuccessToast": "{units} Militäreinheiten an {country} übertragen. Beziehungen um +{bonus} verbessert.",
     "yourStock": "Ihr Bestand",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "Bau",
+      "ariaLabel": "Kategorien der Länderübersicht"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "Erzeugung:",
       "load": "Last:",
       "totalSupply": "Gesamterzeugung aller Kraftwerke",
+      "satisfactionTitle": "Zufriedenheit der Bevölkerung (Stromsektor)",
+      "satisfactionDesc": "Verfügbarkeit der Stromversorgung für öffentliche Einrichtungen, Wohngebiete und Industrie",
       "activeUnits": "{count} aktive Einheiten",
       "operatingAtCapacity": "Kraftwerke arbeiten nach installierter Leistung",
       "totalNationalLoad": "Gesamte Verbrauchslast",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "Zivile Einrichtungen",
+      "categoryTitle": "Sektorkategorie",
       "tabMilitary": "Militär & Infrastruktur",
       "searchPlaceholder": "Bauobjekt suchen...",
       "civilianCategories": "Zivile Kategorien",

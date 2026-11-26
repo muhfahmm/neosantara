@@ -130,6 +130,7 @@ import {
     NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
+import { clearPendingGameSave, readPendingGameSave } from '@/app/logic/pendingGameSave';
 import { executeCoup } from '@/app/page/detail_negara/3_operasi_militer/5_lakukan_kudeta/logic/coupLogic';
 import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
 import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
@@ -3324,7 +3325,7 @@ export default function MapPage() {
                     ? Math.round(Number(detail.attackerLossRatio) * 100)
                     : 25;
                 const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
-                    ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
+                    ? t('side_inbox.dynamicNotifications.conquest.lossNote', { percent: lossPercent, losses: userLossText })
                     : '';
                 const titleKey = isPbbCoalition
                     ? 'side_inbox.dynamicNotifications.conquest.pbbTitle'
@@ -3486,11 +3487,11 @@ export default function MapPage() {
                 if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
                     setNotifications(prev => [{
                         id: `notif-war-losses-${Date.now()}`,
-                        title: `💥 KERUGIAN PASUKAN PERTEMPURAN (${lossPctStr})`,
-                        sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                        title: t('game.warOutcomes.armyLossTitle', { lossRate: lossPctStr }),
+                        sender: t('game.warOutcomes.armyCommandSender', { country: attackerCountry }),
                         message: isVictoryRetreat
-                            ? `Pasukan ditarik mundur setelah memenangkan pertempuran di ${targetCountry}! Kerugian tempur taktis sebesar ${lossPctStr}: ${lossSummaryText}. Data armada telah diperbarui.`
-                            : `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar ${lossPctStr} dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
+                            ? t('game.warOutcomes.armyLossVictory', { target: targetCountry, lossRate: lossPctStr, losses: lossSummaryText })
+                            : t('game.warOutcomes.armyLossDefeat', { target: targetCountry, lossRate: lossPctStr, losses: lossSummaryText }),
                         timestamp: dateStr,
                         type: 'peringkat',
                         value: Math.round(lossRate * 100),
@@ -3501,9 +3502,13 @@ export default function MapPage() {
                 const relationPenalty = applyUniformRelationPenalty(attackerCountry, 1, 5);
                 setNotifications(prev => [{
                     id: `notif-retreat-relations-${Date.now()}`,
-                    title: '📉 HUBUNGAN DIPLOMATIK MENURUN',
-                    sender: 'Kementerian Luar Negeri',
-                    message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin setelah operasi militer terhadap ${targetCountry}.`,
+                    title: t('game.warOutcomes.relationsDeclinedTitle'),
+                    sender: t('game.warOutcomes.foreignMinistrySender'),
+                    message: t('game.warOutcomes.relationsDeclined', {
+                        attacker: attackerCountry,
+                        target: targetCountry,
+                        penalty: relationPenalty,
+                    }),
                     timestamp: dateStr,
                     type: 'peringkat',
                     value: relationPenalty,
@@ -8523,7 +8528,9 @@ export default function MapPage() {
                         sessionStorage.removeItem('program_nuklir_modal_open');
                         sessionStorage.removeItem('icbm_detail_open');
                         sessionStorage.removeItem('perang_nuklir_detail_open');
-                        sessionStorage.removeItem('presiden_simulator_load_save');
+                        void clearPendingGameSave().catch(error => {
+                            console.error('Gagal membersihkan save sementara:', error);
+                        });
                     } catch (e) { }
                     clearActiveNpcCountrySimulationState();
                     (window as any).neosantara_annexed_countries = {};
@@ -8745,7 +8752,10 @@ export default function MapPage() {
             if (loadSaveStr) {
                 void (async () => {
                     try {
-                        const savedState = JSON.parse(loadSaveStr);
+                        const savedState = await readPendingGameSave<ReturnType<typeof JSON.parse>>();
+                        if (!savedState) {
+                            throw new Error('Data save yang dipilih tidak ditemukan.');
+                        }
                         const savedCountryName = String(savedState.country_name || '');
                         const chosen = COUNTRIES_DATA.find(
                             c => c.country.toLowerCase() === savedCountryName.toLowerCase()
@@ -8978,7 +8988,7 @@ export default function MapPage() {
                             }
                         }
 
-                        sessionStorage.removeItem('presiden_simulator_load_save');
+                        await clearPendingGameSave();
                     } catch (error) {
                         console.error('Gagal memulihkan data save:', error);
                     }
@@ -13078,11 +13088,22 @@ export default function MapPage() {
                                     setResultModal({
                                         isOpen: true,
                                         title: result === 'win'
-                                            ? 'Bantuan Militer Berhasil'
-                                            : 'Bantuan Militer Gagal',
+                                            ? t('game.warResultModal.militaryAidSuccessTitle')
+                                            : t('game.warResultModal.militaryAidFailureTitle'),
                                         message: result === 'win'
-                                            ? `${activeWarAnimation.target} dan pasukan bantuan ${supportCountry || playerCountryName} berhasil menahan serangan ${activeWarAnimation.attacker}. Hubungan dengan ${activeWarAnimation.target} meningkat ${relationBonus} poin. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`
-                                            : `${activeWarAnimation.target} gagal menahan serangan ${activeWarAnimation.attacker}. Hubungan dengan ${activeWarAnimation.target} meningkat ${relationBonus} poin setelah bantuan diberikan. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`,
+                                            ? t('game.warResultModal.militaryAidSuccess', {
+                                                target: activeWarAnimation.target,
+                                                supportCountry: supportCountry || playerCountryName,
+                                                attacker: activeWarAnimation.attacker,
+                                                relationBonus,
+                                                losses: lossSummaryText || t('game.warResultModal.noLosses'),
+                                            })
+                                            : t('game.warResultModal.militaryAidFailure', {
+                                                target: activeWarAnimation.target,
+                                                attacker: activeWarAnimation.attacker,
+                                                relationBonus,
+                                                losses: lossSummaryText || t('game.warResultModal.noLosses'),
+                                            }),
                                         losses,
                                         type: result === 'win' ? 'success' : 'error',
                                         persistent: true,
@@ -13158,9 +13179,16 @@ export default function MapPage() {
                                         setNotifications((prev: any[]) => [
                                             {
                                                 id: `war-loot-${Date.now()}`,
-                                                title: '⚠️ PRODUKSI DIRAMPAS & KORBAN POPULASI (80%)',
-                                                sender: `Markas Besar Angkatan Bersenjata (${countryDetail?.country || countryDetail?.nama_negara || 'Indonesia'})`,
-                                                message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Musuh merampas habis seluruh stok produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) hingga kembali 0. Korban perang: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi). Kerugian armada: ${lossSummaryText}.`,
+                                                title: t('game.warOutcomes.lootAndCasualtiesTitle'),
+                                                sender: t('game.warOutcomes.armyCommandSender', {
+                                                    country: countryDetail?.country || countryDetail?.nama_negara || t('game.warResultModal.countryFallback'),
+                                                }),
+                                                message: t('game.warOutcomes.lootAndCasualties', {
+                                                    attacker: activeWarAnimation.attacker,
+                                                    lostPopulation: lostPopulation.toLocaleString(language, { maximumFractionDigits: 2 }),
+                                                    lossPercent,
+                                                    losses: lossSummaryText,
+                                                }),
                                                 type: 'kepuasan',
                                                 value: 80,
                                                 isRead: false,
@@ -13170,8 +13198,12 @@ export default function MapPage() {
 
                                         setWarResultModal({
                                             isOpen: true,
-                                            title: 'Pertahanan Gagal — Produksi Dirampas!',
-                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi). Kerugian alutsista dirinci di bawah.`,
+                                            title: t('game.warOutcomes.defenseFailedTitle'),
+                                            message: t('game.warOutcomes.defenseFailed', {
+                                                attacker: activeWarAnimation.attacker,
+                                                lostPopulation: lostPopulation.toLocaleString(language, { maximumFractionDigits: 2 }),
+                                                lossPercent,
+                                            }),
                                             losses,
                                             type: 'error',
                                         });
@@ -13187,9 +13219,12 @@ export default function MapPage() {
                                     setNotifications((prev: any[]) => [
                                         {
                                             id: `war-win-${Date.now()}`,
-                                            title: 'Pertahanan Berhasil!',
-                                            sender: 'Kementerian Pertahanan',
-                                            message: `Pasukan pertahanan nasional berhasil memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Kerugian tempur armada pertahanan (25%): ${lossSummaryText}.`,
+                                            title: t('game.warOutcomes.defenseSucceededTitle'),
+                                            sender: t('game.warOutcomes.defenseMinistrySender'),
+                                            message: t('game.warOutcomes.defenseSucceeded', {
+                                                attacker: activeWarAnimation.attacker,
+                                                losses: lossSummaryText || t('game.warResultModal.noLosses'),
+                                            }),
                                             type: 'kepuasan',
                                             value: 0,
                                             isRead: false,
@@ -13512,7 +13547,7 @@ export default function MapPage() {
                                 }
                                 setIsPaused(nextPaused);
                             }}
-                            title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
+                            aria-label={isPaused ? t('game.calendar.resumeSimulation') : t('game.calendar.pauseSimulation')}
                             className="w-7 h-7 rounded-full bg-root-accent text-root-canvas flex items-center justify-center cursor-pointer active:scale-95 shrink-0"
                         >
                             {isPaused ? (
@@ -13532,7 +13567,7 @@ export default function MapPage() {
                                     timeManagerRef.current.setSpeed(newSpeed);
                                 }
                             }}
-                            title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
+                            aria-label={t('game.calendar.changeSpeed', { speed })}
                             className="w-6 h-6 rounded-full bg-root-canvas border border-root-accent/40 text-root-accent flex items-center justify-center cursor-pointer active:scale-95 text-[9px] font-black shrink-0"
                         >
                             {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
@@ -13602,7 +13637,7 @@ export default function MapPage() {
                                         }
                                         setIsPaused(nextPaused);
                                     }}
-                                    title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
+                                    aria-label={isPaused ? t('game.calendar.resumeSimulation') : t('game.calendar.pauseSimulation')}
                                     className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-root-accent text-root-canvas border-2 xl:border-4 border-root-canvas flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"
                                 >
                                     {isPaused ? (
@@ -13623,7 +13658,7 @@ export default function MapPage() {
                                             timeManagerRef.current.setSpeed(newSpeed);
                                         }
                                     }}
-                                    title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
+                                    aria-label={t('game.calendar.changeSpeed', { speed })}
                                     className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20 text-[9px] sm:text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
                                 >
                                     {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
@@ -13647,7 +13682,7 @@ export default function MapPage() {
                                             }, ...prev]);
                                         }
                                     }}
-                                    title={t('game.calendar.holidayTitle')}
+                                    aria-label={t('game.calendar.holidayTitle')}
                                     className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
                                 >
                                     <Palmtree className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4.5 xl:h-4.5" />
@@ -13671,7 +13706,7 @@ export default function MapPage() {
                                             }, ...prev]);
                                         }
                                     }}
-                                    title={t('game.calendar.militaryTitle')}
+                                    aria-label={t('game.calendar.militaryTitle')}
                                     className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-root-surface border border-root-accent/40 text-root-accent hover:bg-root-accent hover:text-root-canvas flex items-center justify-center cursor-pointer transition-all z-20"
                                 >
                                     <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4.5 xl:h-4.5" />

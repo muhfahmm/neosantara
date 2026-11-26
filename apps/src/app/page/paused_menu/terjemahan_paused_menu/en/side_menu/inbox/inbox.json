@@ -110,6 +110,15 @@
   "nonAggressionMessage": "President of {user}, the government of {partner} officially proposes a bilateral Non-Aggression Pact. Both nations pledge to maintain peace, refrain from military aggression, and safeguard border stability. Do you agree to ratify this treaty?",
   "diplomacyPeaceBadge": "Diplomacy & Peace",
   "senderPrefix": "Sender: {sender} | Date: {date}",
+  "economicChangeLabels": {
+    "taxIncrease": "Tax Increased",
+    "taxDecrease": "Tax Decreased",
+    "priceIncrease": "Price Increased",
+    "priceDecrease": "Price Decreased",
+    "taxLabel": "Tax Type",
+    "commodityLabel": "Commodity",
+    "changeLabel": "Change"
+  },
   "relation": "Relationship Score",
   "rejectPact": "Reject Pact",
   "acceptPact": "Ratify Non-Aggression Pact",

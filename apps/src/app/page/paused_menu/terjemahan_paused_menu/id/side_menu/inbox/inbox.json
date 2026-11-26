@@ -110,6 +110,15 @@
   "nonAggressionMessage": "Presiden {user}, pemerintah {partner} secara resmi mengajukan Pakta Non-Agresi bilateral. Kedua negara berjanji menjaga perdamaian, tidak melakukan agresi militer, serta menjaga stabilitas perbatasan. Apakah Anda bersedia menandatangani perjanjian non-agresi ini?",
   "diplomacyPeaceBadge": "Diplomasi & Perdamaian",
   "senderPrefix": "Pengirim: {sender} | Tanggal: {date}",
+  "economicChangeLabels": {
+    "taxIncrease": "Pajak Naik",
+    "taxDecrease": "Pajak Turun",
+    "priceIncrease": "Harga Naik",
+    "priceDecrease": "Harga Turun",
+    "taxLabel": "Jenis Pajak",
+    "commodityLabel": "Komoditas",
+    "changeLabel": "Perubahan"
+  },
   "relation": "Skor Hubungan",
   "rejectPact": "Tolak Pakta",
   "acceptPact": "Ratifikasi Pakta Non-Agresi",

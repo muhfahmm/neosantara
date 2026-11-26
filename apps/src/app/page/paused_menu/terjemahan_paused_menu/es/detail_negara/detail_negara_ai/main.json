@@ -275,6 +275,7 @@
     "giftBelowThreshold": "El valor actual de las materias primas ({value}) no alcanza el mínimo de {threshold} para aumentar un nivel de relación.",
     "globalEffectAllCountries": "Efecto global en todos los países:",
     "relationIncreasePerCountry": "+{levels} niveles de relación por país",
+    "relationAmountRemainder": "La cantidad de {amount} NEO otorga +{levels} niveles ({remainder} NEO restantes no cuentan).",
     "improveRelationSummary": "Entregar {amount} NEO a {country} aumenta la relación un nivel.",
     "transferSuccessToast": "Se transfirieron {units} unidades militares a {country}. La relación aumentó +{bonus}.",
     "yourStock": "Tus existencias",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "Construcción",
+      "ariaLabel": "Categorías del detalle del país"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "Producción:",
       "load": "Carga:",
       "totalSupply": "Suministro Total de Centrales",
+      "satisfactionTitle": "Satisfacción pública (sector eléctrico)",
+      "satisfactionDesc": "Disponibilidad de electricidad para servicios públicos, viviendas e industria",
       "activeUnits": "{count} Unidades Activas",
       "operatingAtCapacity": "Centrales operando a capacidad instalada",
       "totalNationalLoad": "Carga Total de Consumo",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "Instalaciones Civiles",
+      "categoryTitle": "Categoría del sector",
       "tabMilitary": "Militar e Infraestructura",
       "searchPlaceholder": "Buscar elemento de construcción...",
       "civilianCategories": "Categorías Civiles",

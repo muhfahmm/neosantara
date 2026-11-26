@@ -110,6 +110,15 @@
   "nonAggressionMessage": "Presidente de {user}, el gobierno de {partner} propone formalmente un Pacto de No Agresión bilateral. Ambas naciones se comprometen a mantener la paz y estabilidad. ¿Acepta ratificar este tratado?",
   "diplomacyPeaceBadge": "Diplomacia y Paz",
   "senderPrefix": "Remitente: {sender} | Fecha: {date}",
+  "economicChangeLabels": {
+    "taxIncrease": "Impuesto aumentado",
+    "taxDecrease": "Impuesto reducido",
+    "priceIncrease": "Precio aumentado",
+    "priceDecrease": "Precio reducido",
+    "taxLabel": "Tipo de impuesto",
+    "commodityLabel": "Producto",
+    "changeLabel": "Cambio"
+  },
   "relation": "Puntuación de relaciones",
   "rejectPact": "Rechazar Pacto",
   "acceptPact": "Ratificar Pacto de No Agresión",

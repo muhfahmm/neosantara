@@ -275,6 +275,7 @@
     "giftBelowThreshold": "当前资源价值（{value}）未达到提升1级关系所需的最低值{threshold}。",
     "globalEffectAllCountries": "对所有国家的整体影响：",
     "relationIncreasePerCountry": "每个国家关系提升 +{levels} 级",
+    "relationAmountRemainder": "{amount} NEO 可提升 +{levels} 级关系（剩余的 {remainder} NEO 不计入）。",
     "improveRelationSummary": "向{country}提供{amount} NEO可提升1级关系。",
     "transferSuccessToast": "已向{country}转移{units}个军事单位。关系提升 +{bonus}。",
     "yourStock": "你的库存",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "建设",
+      "ariaLabel": "国家详情分类"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "发电量:",
       "load": "用电负荷:",
       "totalSupply": "电网总装机出力",
+      "satisfactionTitle": "公众满意度（电力部门）",
+      "satisfactionDesc": "公共设施、住宅和工业的电力供应可用性",
       "activeUnits": "{count} 个运转机组",
       "operatingAtCapacity": "电厂按装机容量正常运转",
       "totalNationalLoad": "全社会总用电负荷",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "民用基础设施",
+      "categoryTitle": "部门类别",
       "tabMilitary": "国防与军事设施",
       "searchPlaceholder": "搜索建设项目...",
       "civilianCategories": "民用分类",

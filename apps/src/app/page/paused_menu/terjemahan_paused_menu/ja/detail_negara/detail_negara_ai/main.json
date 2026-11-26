@@ -275,6 +275,7 @@
     "giftBelowThreshold": "現在の資源価値（{value}）は、関係を1レベル上げる最低値{threshold}に達していません。",
     "globalEffectAllCountries": "すべての国への全体効果：",
     "relationIncreasePerCountry": "各国の関係レベル +{levels}",
+    "relationAmountRemainder": "{amount} NEOで関係レベルが+{levels}上がります（残りの{remainder} NEOは加算されません）。",
     "improveRelationSummary": "{country}に{amount} NEOを提供すると、関係レベルが1上昇します。",
     "transferSuccessToast": "{units}部隊を{country}に移転しました。関係が+{bonus}改善しました。",
     "yourStock": "自国の在庫",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "建設",
+      "ariaLabel": "国家詳細カテゴリー"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "発電量:",
       "load": "消費負荷:",
       "totalSupply": "総発電供給量",
+      "satisfactionTitle": "国民満足度（電力部門）",
+      "satisfactionDesc": "公共施設、住宅、産業向け電力供給の可用性",
       "activeUnits": "{count}基が稼働中",
       "operatingAtCapacity": "設備容量通りに稼働中",
       "totalNationalLoad": "全社会総消費電力負荷",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "民生施設",
+      "categoryTitle": "セクターカテゴリ",
       "tabMilitary": "軍事・防衛インフラ",
       "searchPlaceholder": "建設項目を検索...",
       "civilianCategories": "民生部門カテゴリ",

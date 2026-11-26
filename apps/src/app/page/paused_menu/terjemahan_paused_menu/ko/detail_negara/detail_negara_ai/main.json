@@ -275,6 +275,7 @@
     "giftBelowThreshold": "현재 자원 가치({value})가 관계를 1단계 높이는 최소 기준 {threshold}에 미치지 못합니다.",
     "globalEffectAllCountries": "모든 국가에 미치는 효과:",
     "relationIncreasePerCountry": "국가별 관계 +{levels}단계",
+    "relationAmountRemainder": "{amount} NEO로 관계가 +{levels}단계 상승합니다(남은 {remainder} NEO는 계산되지 않습니다).",
     "improveRelationSummary": "{country}에 {amount} NEO를 지원하면 관계가 1단계 높아집니다.",
     "transferSuccessToast": "군사 병력 {units}개를 {country}에 이전했습니다. 관계가 +{bonus} 개선되었습니다.",
     "yourStock": "보유 재고",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "건설",
+      "ariaLabel": "국가 세부 정보 카테고리"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "발전량:",
       "load": "소비 부하:",
       "totalSupply": "발전소 총 공급량",
+      "satisfactionTitle": "국민 만족도(전력 부문)",
+      "satisfactionDesc": "공공시설, 주거지 및 산업 전력 공급 가능성",
       "activeUnits": "{count}개 가동 중",
       "operatingAtCapacity": "설비 용량에 맞춰 정상 가동 중",
       "totalNationalLoad": "국가 총 소비 부하",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "민간 시설",
+      "categoryTitle": "분야 카테고리",
       "tabMilitary": "군사 및 국방 인프라",
       "searchPlaceholder": "건설 항목 검색...",
       "civilianCategories": "민간 부문 분류",

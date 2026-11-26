@@ -1,6 +1,7 @@
 'use client';
 
 import { Layers } from "lucide-react";
+import { clearPendingGameSave } from '@/app/logic/pendingGameSave';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -516,7 +517,9 @@ export default function PilihNegaraPage() {
                     window.sessionStorage.removeItem('program_nuklir_modal_open');
                     window.sessionStorage.removeItem('icbm_detail_open');
                     window.sessionStorage.removeItem('perang_nuklir_detail_open');
-                    window.sessionStorage.removeItem('presiden_simulator_load_save');
+                    void clearPendingGameSave().catch(error => {
+                      console.error('Gagal membersihkan save sementara:', error);
+                    });
                     window.localStorage.setItem('player_diamonds', '500');
                     window.localStorage.setItem('presiden_simulator_new_game', '1');
                   }
@@ -781,7 +784,9 @@ export default function PilihNegaraPage() {
                 window.sessionStorage.removeItem('program_nuklir_modal_open');
                 window.sessionStorage.removeItem('icbm_detail_open');
                 window.sessionStorage.removeItem('perang_nuklir_detail_open');
-                window.sessionStorage.removeItem('presiden_simulator_load_save');
+                void clearPendingGameSave().catch(error => {
+                  console.error('Gagal membersihkan save sementara:', error);
+                });
                 window.localStorage.setItem('player_diamonds', '500');
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }

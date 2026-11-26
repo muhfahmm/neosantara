@@ -609,7 +609,7 @@ function PembangunanSipilMiliterSectionView({
             {/* Sidebar Kategori */}
             {!categoryOnly && <div className="w-48 sm:w-56 border-r border-root-accent/20 bg-root-canvas p-2.5 flex flex-col gap-1 overflow-y-auto no-scrollbar shrink-0">
               <p className="text-[10px] font-black uppercase tracking-widest text-root-subtle px-2 py-1 mb-1">
-                Kategori Sektor
+                {t("detail_negara_ai.building.pembangunanSipilMiliter.categoryTitle")}
               </p>
               {CIVIL_CATEGORIES.map((cat) => {
                 const Icon = cat.icon;

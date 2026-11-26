@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "군사 장비 손실 내역",
     "lossesTitle": "군사 장비 손실 내역",
+    "noLosses": "기록된 군사 장비 손실이 없습니다.",
     "defeatTitle": "전투 패배 보고서",
-    "victoryTitle": "전투 및 전쟁 결과 보고서"
+    "victoryTitle": "전투 및 전쟁 결과 보고서",
+    "militaryAidSuccessTitle": "군사 지원 성공",
+    "militaryAidFailureTitle": "군사 지원 실패",
+    "militaryAidSuccess": "{target}와 {supportCountry}의 지원군이 {attacker}의 공격을 성공적으로 막았습니다. {target}와의 관계가 {relationBonus}점 개선되었습니다. 지원군 손실: {losses}.",
+    "militaryAidFailure": "{target}가 {attacker}의 공격을 막지 못했습니다. 지원 이후 {target}와의 관계가 {relationBonus}점 개선되었습니다. 지원군 손실: {losses}.",
+    "countryFallback": "국가"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 전투 병력 손실 ({lossRate})",
+    "armyCommandSender": "군 사령부 ({country})",
+    "armyLossVictory": "{target} 전투에서 승리한 뒤 병력이 철수했습니다. 전술 전투 손실은 {lossRate}: {losses}입니다. 함대 정보가 업데이트되었습니다.",
+    "armyLossDefeat": "{target}에서 병력이 후퇴했습니다. 배치 병력 손실은 {lossRate}: {losses}입니다. 국방 및 안보 함대 정보가 업데이트되었습니다.",
+    "relationsDeclinedTitle": "📉 외교 관계 하락",
+    "foreignMinistrySender": "외교부",
+    "relationsDeclined": "{target}에 대한 군사 작전 이후 {attacker}와 다른 국가 간 외교 관계가 {penalty}점 하락했습니다.",
+    "lootAndCasualtiesTitle": "⚠️ 생산 물자 약탈 및 인구 피해 (80%)",
+    "lootAndCasualties": "{attacker}의 침략을 막지 못했습니다. 국가 생산 비축분이 모두 약탈되어 0이 되었습니다. 전쟁 피해: {lostPopulation}명 (인구의 {lossPercent}%). 함대 손실: {losses}.",
+    "defenseFailedTitle": "방어 실패 — 생산 물자 약탈",
+    "defenseFailed": "{attacker}의 군사 침략을 막지 못했습니다. 국가 완전 병합은 피했지만(생존 확률 80%), 모든 생산 비축분이 약탈되어 0이 되었습니다. 인구 피해: {lostPopulation}명 (인구의 {lossPercent}%). 장비 손실 내역은 아래에 표시됩니다.",
+    "defenseSucceededTitle": "방어 성공!",
+    "defenseMinistrySender": "국방부",
+    "defenseSucceeded": "국가 방위군이 {attacker}의 군사 침략을 격퇴했습니다! 방위 함대 전투 손실(25%): {losses}."
   },
   "annexedModal": {
     "defaultAttacker": "침략국",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "확인",
   "calendar": {
     "simulationCalendar": "시뮬레이션 캘린더",
+    "resumeSimulation": "시뮬레이션 재개",
+    "pauseSimulation": "시뮬레이션 일시 정지",
+    "changeSpeed": "속도를 {speed}배로 변경",
     "holidayTitle": "국경일 휴일",
     "militaryTitle": "군사 및 국가 안보",
     "holidayActivated": "대통령 휴가 모드가 활성화되었습니다! 국민들이 휴식을 즐깁니다.",

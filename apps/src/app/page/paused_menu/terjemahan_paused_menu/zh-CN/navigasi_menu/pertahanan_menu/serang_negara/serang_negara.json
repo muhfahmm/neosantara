@@ -45,6 +45,14 @@
     "militaryAidSender": "派遣方部队",
     "militaryAidTarget": "盟军部队"
   },
+  "mandate": {
+    "activeTitle": "联合国军事行动授权已生效",
+    "activeMessage": "对{target}的攻击得到联合国安理会决议支持，不会因单方面侵略而受到制裁。",
+    "missingTitle": "警告：没有联合国正式授权",
+    "missingMessage": "此次攻击是未经安理会决议的单方面行动，可能导致对贵国实施外交制裁和多边禁运。",
+    "embargoTitle": "目标国正受到联合国禁运",
+    "embargoMessage": "{target}目前受到联合国决议制裁（{resolution}），其军事补给已被削弱。"
+  },
   "groups": {
     "darat": "陆军",
     "laut": "海军",

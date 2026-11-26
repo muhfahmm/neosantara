@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "Desglose de pérdidas militares",
     "lossesTitle": "Desglose de Pérdidas Militares",
+    "noLosses": "No se registraron pérdidas de equipo militar.",
     "defeatTitle": "Informe de Derrota en Batalla",
-    "victoryTitle": "Informe de Resultados de Batalla y Guerra"
+    "victoryTitle": "Informe de Resultados de Batalla y Guerra",
+    "militaryAidSuccessTitle": "Ayuda militar exitosa",
+    "militaryAidFailureTitle": "Ayuda militar fallida",
+    "militaryAidSuccess": "{target} y las fuerzas de apoyo de {supportCountry} repelieron el ataque de {attacker}. La relación con {target} mejoró {relationBonus} puntos. Bajas de las fuerzas de apoyo: {losses}.",
+    "militaryAidFailure": "{target} no logró detener el ataque de {attacker}. La relación con {target} mejoró {relationBonus} puntos tras recibir ayuda. Bajas de las fuerzas de apoyo: {losses}.",
+    "countryFallback": "País"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 PÉRDIDAS DE LAS FUERZAS ({lossRate})",
+    "armyCommandSender": "Cuartel General de las Fuerzas Armadas ({country})",
+    "armyLossVictory": "Las fuerzas se retiraron tras ganar la batalla en {target}. Las pérdidas tácticas fueron del {lossRate}: {losses}. Se actualizaron los datos de la flota.",
+    "armyLossDefeat": "Las fuerzas se retiraron de {target}. Las pérdidas fueron del {lossRate} de las unidades desplegadas: {losses}. Se actualizaron los datos de Defensa y Seguridad.",
+    "relationsDeclinedTitle": "📉 DISMINUYEN LAS RELACIONES DIPLOMÁTICAS",
+    "foreignMinistrySender": "Ministerio de Asuntos Exteriores",
+    "relationsDeclined": "La relación diplomática de {attacker} con otros países cayó {penalty} puntos tras la operación militar contra {target}.",
+    "lootAndCasualtiesTitle": "⚠️ PRODUCCIÓN SAQUEADA Y BAJAS DE POBLACIÓN (80%)",
+    "lootAndCasualties": "La defensa no logró detener la agresión de {attacker}. Se saquearon todas las reservas de producción nacional hasta dejarlas en 0. Víctimas de guerra: {lostPopulation} personas ({lossPercent}% de la población). Pérdidas de la flota: {losses}.",
+    "defenseFailedTitle": "Defensa fallida: producción saqueada",
+    "defenseFailed": "La defensa del país no logró detener la agresión militar de {attacker}. Se evitó la anexión total (80% de probabilidad de supervivencia), pero se saquearon todas las reservas de producción hasta dejarlas en 0. Impacto poblacional: {lostPopulation} personas ({lossPercent}% de la población). Las pérdidas de equipo se detallan a continuación.",
+    "defenseSucceededTitle": "¡Defensa exitosa!",
+    "defenseMinistrySender": "Ministerio de Defensa",
+    "defenseSucceeded": "Las fuerzas de defensa nacional repelieron la agresión militar de {attacker}. Pérdidas de combate de la flota defensiva (25%): {losses}."
   },
   "annexedModal": {
     "defaultAttacker": "Nación Agresora",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "Entendido",
   "calendar": {
     "simulationCalendar": "Calendario de Simulación",
+    "resumeSimulation": "Reanudar simulación",
+    "pauseSimulation": "Pausar simulación",
+    "changeSpeed": "Cambiar velocidad a {speed} veces",
     "holidayTitle": "Feriado Nacional",
     "militaryTitle": "Militar y Seguridad Nacional",
     "holidayActivated": "¡Modo de Vacaciones Presidenciales activado! Los ciudadanos disfrutan del descanso.",

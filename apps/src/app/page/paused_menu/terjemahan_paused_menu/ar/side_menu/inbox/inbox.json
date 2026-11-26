@@ -110,6 +110,15 @@
   "nonAggressionMessage": "فخامة رئيس {user}، تقترح حكومة {partner} رسمياً إبرام معاهدة عدم اعتداء ثنائية. يتعهد الطرفان بالحفاظ على السلام وحماية الحدود. هل توافق على التصديق؟",
   "diplomacyPeaceBadge": "دبلوماسية وسلام",
   "senderPrefix": "المرسل: {sender} | التاريخ: {date}",
+  "economicChangeLabels": {
+    "taxIncrease": "زيادة الضريبة",
+    "taxDecrease": "خفض الضريبة",
+    "priceIncrease": "ارتفاع السعر",
+    "priceDecrease": "انخفاض السعر",
+    "taxLabel": "نوع الضريبة",
+    "commodityLabel": "السلعة",
+    "changeLabel": "التغيير"
+  },
   "relation": "مستوى العلاقات",
   "rejectPact": "رفض المعاهدة",
   "acceptPact": "التصديق على معاهدة عدم الاعتداء",

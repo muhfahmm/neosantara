@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "軍事装備損失の内訳",
     "lossesTitle": "軍事装備損失の内訳",
+    "noLosses": "軍事装備の損失は記録されていません。",
     "defeatTitle": "戦闘敗北報告",
-    "victoryTitle": "戦闘・戦争結果報告"
+    "victoryTitle": "戦闘・戦争結果報告",
+    "militaryAidSuccessTitle": "軍事支援に成功",
+    "militaryAidFailureTitle": "軍事支援に失敗",
+    "militaryAidSuccess": "{target}と{supportCountry}の支援部隊が{attacker}の攻撃を撃退しました。{target}との関係が{relationBonus}ポイント向上しました。支援部隊の損失：{losses}。",
+    "militaryAidFailure": "{target}は{attacker}の攻撃を防げませんでした。支援後、{target}との関係が{relationBonus}ポイント向上しました。支援部隊の損失：{losses}。",
+    "countryFallback": "国家"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 戦闘部隊の損失（{lossRate}）",
+    "armyCommandSender": "軍司令部（{country}）",
+    "armyLossVictory": "{target}での戦闘に勝利した後、部隊は撤退しました。戦術上の損失は{lossRate}：{losses}です。艦隊データを更新しました。",
+    "armyLossDefeat": "部隊は{target}から撤退しました。投入部隊の損失は{lossRate}：{losses}です。防衛・安全保障の艦隊データを更新しました。",
+    "relationsDeclinedTitle": "📉 外交関係が悪化",
+    "foreignMinistrySender": "外務省",
+    "relationsDeclined": "{target}への軍事作戦後、{attacker}と他国との外交関係が{penalty}ポイント低下しました。",
+    "lootAndCasualtiesTitle": "⚠️ 生産物が略奪され、人口に被害（80%）",
+    "lootAndCasualties": "{attacker}の侵略を防げませんでした。国内の生産備蓄がすべて略奪され、0になりました。戦争による死傷者：{lostPopulation}人（人口の{lossPercent}%）。艦隊の損失：{losses}。",
+    "defenseFailedTitle": "防衛失敗 — 生産物が略奪されました",
+    "defenseFailed": "{attacker}の軍事侵略を防げませんでした。国家の完全併合は回避しました（生存率80%）が、生産備蓄はすべて略奪され0になりました。人口への影響：{lostPopulation}人（人口の{lossPercent}%）。装備損失の詳細は以下のとおりです。",
+    "defenseSucceededTitle": "防衛成功！",
+    "defenseMinistrySender": "国防省",
+    "defenseSucceeded": "国防軍が{attacker}の軍事侵略を撃退しました！防衛艦隊の戦闘損失（25%）：{losses}。"
   },
   "annexedModal": {
     "defaultAttacker": "侵略国",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "了解",
   "calendar": {
     "simulationCalendar": "シミュレーションカレンダー",
+    "resumeSimulation": "シミュレーションを再開",
+    "pauseSimulation": "シミュレーションを一時停止",
+    "changeSpeed": "速度を{speed}倍に変更",
     "holidayTitle": "祝日・休暇",
     "militaryTitle": "軍事および国家安全保障",
     "holidayActivated": "大統領休暇モードが有効化されました！国民は休息を楽しんでいます。",

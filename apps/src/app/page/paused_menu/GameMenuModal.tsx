@@ -19,6 +19,7 @@ import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave
 import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
 import { PausedMenuHeader } from '../root_modals_design_menu/PausedMenuHeader';
 import { soundManager } from '@/lib/soundManager';
+import { clearPendingGameSave } from '@/app/logic/pendingGameSave';
 import {
     isFirebaseConfigured,
     isPlayGamesConfigured,
@@ -234,7 +235,9 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             sessionStorage.removeItem('program_nuklir_modal_open');
             sessionStorage.removeItem('icbm_detail_open');
             sessionStorage.removeItem('perang_nuklir_detail_open');
-            sessionStorage.removeItem('presiden_simulator_load_save');
+            void clearPendingGameSave().catch(error => {
+                console.error('Gagal membersihkan save sementara:', error);
+            });
             localStorage.removeItem('programNuklirActive');
             localStorage.removeItem('icbmBuildTask');
             localStorage.removeItem('neosantara_covert_personnel');

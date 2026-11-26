@@ -45,6 +45,14 @@
     "militaryAidSender": "Sending Forces",
     "militaryAidTarget": "Allied Forces"
   },
+  "mandate": {
+    "activeTitle": "Active UN Military Operation Mandate",
+    "activeMessage": "The attack on {target} is authorized by a UN Security Council resolution. You will not be penalized for unilateral aggression.",
+    "missingTitle": "Warning: No Official UN Mandate",
+    "missingMessage": "This attack is a unilateral action without a UN Security Council resolution. It may trigger diplomatic sanctions and a multilateral embargo against your country.",
+    "embargoTitle": "Target Under UN Embargo",
+    "embargoMessage": "{target} is currently subject to a UN resolution sanction ({resolution}). The target's military supplies are weakened."
+  },
   "groups": {
     "darat": "Land",
     "laut": "Naval",

@@ -11,7 +11,7 @@ interface HargaChangeNotificationProps {
 }
 
 export default function HargaChangeNotificationCard({ notification, onAccept, onReject }: HargaChangeNotificationProps) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const isIncrease = notification.isIncrease;
 
   return (
@@ -26,7 +26,7 @@ export default function HargaChangeNotificationCard({ notification, onAccept, on
             {getInboxNotificationTitle(notification, t)}
           </h4>
           <span className={`text-[10px] font-bold ${isIncrease ? 'text-rose-300 bg-rose-900/60 border-rose-500/40' : 'text-emerald-300 bg-emerald-900/60 border-emerald-500/40'} px-2.5 py-0.5 rounded-full border uppercase tracking-wider`}>
-            {isIncrease ? 'Harga Naik' : 'Harga Turun'}
+            {isIncrease ? t('side_inbox.economicChangeLabels.priceIncrease') : t('side_inbox.economicChangeLabels.priceDecrease')}
           </span>
         </div>
 
@@ -39,9 +39,9 @@ export default function HargaChangeNotificationCard({ notification, onAccept, on
         </p>
 
         <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
-          <span>Komoditas: {notification.itemName}</span>
+          <span>{t('side_inbox.economicChangeLabels.commodityLabel')}: {notification.itemName}</span>
           <span className={isIncrease ? 'text-rose-400 font-black' : 'text-emerald-400 font-black'}>
-            Rp {notification.oldPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ➔ Rp {notification.newPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+            Rp {notification.oldPrice.toLocaleString(language, { maximumFractionDigits: 2 })} ➔ Rp {notification.newPrice.toLocaleString(language, { maximumFractionDigits: 2 })}
           </span>
         </div>
       </div>

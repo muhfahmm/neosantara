@@ -110,6 +110,15 @@
   "nonAggressionMessage": "{user} 大統領閣下、{partner} 政府より二国間不可侵条約の締結が正式に提案されました。双方は武力行使を行わず国境警備の安定を誓約します。本条約に批准しますか？",
   "diplomacyPeaceBadge": "外交と平和維持",
   "senderPrefix": "発信元：{sender} | 日時：{date}",
+  "economicChangeLabels": {
+    "taxIncrease": "税率引き上げ",
+    "taxDecrease": "税率引き下げ",
+    "priceIncrease": "価格上昇",
+    "priceDecrease": "価格下落",
+    "taxLabel": "税目",
+    "commodityLabel": "商品",
+    "changeLabel": "変更"
+  },
   "relation": "関係スコア",
   "rejectPact": "条約を拒絶",
   "acceptPact": "不可侵条約を批准",

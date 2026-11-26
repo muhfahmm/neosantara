@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "Aufschlüsselung der Ausrüstungsverluste",
     "lossesTitle": "Aufschlüsselung der Ausrüstungsverluste",
+    "noLosses": "Keine Verluste an militärischer Ausrüstung verzeichnet.",
     "defeatTitle": "Bericht über Niederlage",
-    "victoryTitle": "Kampf- und Kriegsergebnisbericht"
+    "victoryTitle": "Kampf- und Kriegsergebnisbericht",
+    "militaryAidSuccessTitle": "Militärhilfe erfolgreich",
+    "militaryAidFailureTitle": "Militärhilfe fehlgeschlagen",
+    "militaryAidSuccess": "{target} und die Unterstützungstruppen von {supportCountry} haben den Angriff von {attacker} erfolgreich abgewehrt. Die Beziehungen zu {target} verbesserten sich um {relationBonus} Punkte. Verluste der Unterstützungstruppen: {losses}.",
+    "militaryAidFailure": "{target} konnte den Angriff von {attacker} nicht abwehren. Die Beziehungen zu {target} verbesserten sich nach der Hilfe um {relationBonus} Punkte. Verluste der Unterstützungstruppen: {losses}.",
+    "countryFallback": "Land"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 VERLUSTE DER KAMPFTRUPPEN ({lossRate})",
+    "armyCommandSender": "Oberkommando der Streitkräfte ({country})",
+    "armyLossVictory": "Die Truppen zogen sich nach dem Sieg in der Schlacht bei {target} zurück. Taktische Kampfverluste: {lossRate}: {losses}. Die Flottendaten wurden aktualisiert.",
+    "armyLossDefeat": "Die Truppen zogen sich aus {target} zurück. Kampfverluste: {lossRate} der eingesetzten Einheiten: {losses}. Die Flottendaten unter Verteidigung und Sicherheit wurden aktualisiert.",
+    "relationsDeclinedTitle": "📉 DIPLOMATISCHE BEZIEHUNGEN VERSCHLECHTERT",
+    "foreignMinistrySender": "Außenministerium",
+    "relationsDeclined": "Die diplomatischen Beziehungen von {attacker} zu anderen Ländern sanken nach der Militäroperation gegen {target} um {penalty} Punkte.",
+    "lootAndCasualtiesTitle": "⚠️ PRODUKTION GEPLÜNDERT & BEVÖLKERUNGSVERLUSTE (80 %)",
+    "lootAndCasualties": "Die Verteidigung konnte {attacker}s Aggression nicht aufhalten! Sämtliche nationalen Produktionsvorräte wurden auf 0 geplündert. Kriegsopfer: {lostPopulation} Personen ({lossPercent} % der Bevölkerung). Flottenverluste: {losses}.",
+    "defenseFailedTitle": "Verteidigung gescheitert — Produktion geplündert!",
+    "defenseFailed": "Die Verteidigung Ihres Landes konnte {attacker}s militärische Aggression nicht aufhalten. Eine vollständige Annexion wurde verhindert (80 % Überlebenschance), aber alle Produktionsvorräte wurden auf 0 geplündert. Bevölkerungsfolgen: {lostPopulation} Personen ({lossPercent} % der Bevölkerung). Ausrüstungsverluste sind unten aufgeführt.",
+    "defenseSucceededTitle": "Verteidigung erfolgreich!",
+    "defenseMinistrySender": "Verteidigungsministerium",
+    "defenseSucceeded": "Die nationalen Verteidigungskräfte haben {attacker}s militärische Aggression zurückgeschlagen! Kampfverluste der Verteidigungsflotte (25 %): {losses}."
   },
   "annexedModal": {
     "defaultAttacker": "Angreiferstaat",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "Verstanden",
   "calendar": {
     "simulationCalendar": "Simulationskalender",
+    "resumeSimulation": "Simulation fortsetzen",
+    "pauseSimulation": "Simulation pausieren",
+    "changeSpeed": "Geschwindigkeit auf {speed} ändern",
     "holidayTitle": "Nationalfeiertag",
     "militaryTitle": "Militär & Nationale Sicherheit",
     "holidayActivated": "Präsidialer Urlaubsmodus aktiviert! Die Bürger genießen die Ruhezeit.",

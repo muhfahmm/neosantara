@@ -3,6 +3,7 @@
 import { cloneElement, isValidElement, type ReactNode } from "react";
 import { Info } from "lucide-react";
 import RootModalCloseButton from "./RootModalCloseButton";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 
 interface RootInfoModalHeaderProps {
   title: ReactNode;
@@ -27,8 +28,9 @@ export default function RootInfoModalHeader({
   iconClassName = "root-modal-util-d252947d10",
   size = "compact",
   titleId,
-  closeAriaLabel = "Tutup modal",
+  closeAriaLabel,
 }: RootInfoModalHeaderProps) {
+  const { t } = useLanguage();
   const isStandard = size === "standard";
   const headerIcon = icon ?? <Info aria-hidden="true" />;
   const renderedIcon =
@@ -78,7 +80,7 @@ export default function RootInfoModalHeader({
         {onClose && (
           <RootModalCloseButton
             onClick={onClose}
-            ariaLabel={closeAriaLabel}
+            ariaLabel={closeAriaLabel ?? t("common.close")}
             className="root-info-modal-close"
           />
         )}

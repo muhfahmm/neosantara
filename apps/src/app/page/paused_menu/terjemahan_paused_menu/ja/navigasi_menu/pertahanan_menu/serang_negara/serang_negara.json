@@ -45,6 +45,14 @@
     "militaryAidSender": "派遣部隊",
     "militaryAidTarget": "同盟国部隊"
   },
+  "mandate": {
+    "activeTitle": "国連軍事作戦の委任が有効",
+    "activeMessage": "{target}への攻撃は国連安全保障理事会の決議により承認されています。一方的な侵略による制裁は受けません。",
+    "missingTitle": "警告：国連の正式な委任なし",
+    "missingMessage": "この攻撃は安保理決議を伴わない一方的な行動です。自国に外交制裁や多国間禁輸措置が科される可能性があります。",
+    "embargoTitle": "対象国は国連禁輸措置の対象です",
+    "embargoMessage": "{target}は現在、国連決議の制裁対象です（{resolution}）。対象国の軍事物資供給は弱体化しています。"
+  },
   "groups": {
     "darat": "陸軍",
     "laut": "海軍",

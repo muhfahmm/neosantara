@@ -41,8 +41,30 @@
   "warResultModal": {
     "lossesAria": "Military equipment losses breakdown",
     "lossesTitle": "Military Equipment Losses Breakdown",
+    "noLosses": "No military equipment losses recorded.",
     "defeatTitle": "Battle Defeat Report",
-    "victoryTitle": "Battle & War Result Report"
+    "victoryTitle": "Battle & War Result Report",
+    "militaryAidSuccessTitle": "Military Aid Successful",
+    "militaryAidFailureTitle": "Military Aid Failed",
+    "militaryAidSuccess": "{target} and allied support forces from {supportCountry} successfully repelled {attacker}'s attack. Relations with {target} improved by {relationBonus} points. Support force losses: {losses}.",
+    "militaryAidFailure": "{target} failed to repel {attacker}'s attack. Relations with {target} improved by {relationBonus} points after aid was provided. Support force losses: {losses}.",
+    "countryFallback": "Country"
+  },
+  "warOutcomes": {
+    "armyLossTitle": "💥 BATTLE FORCE LOSSES ({lossRate})",
+    "armyCommandSender": "Armed Forces Headquarters ({country})",
+    "armyLossVictory": "The forces withdrew after winning the battle in {target}. Tactical combat losses were {lossRate}: {losses}. Fleet data has been updated.",
+    "armyLossDefeat": "The forces retreated from {target}. Combat losses were {lossRate} of deployed units: {losses}. Defense and Security fleet data has been updated.",
+    "relationsDeclinedTitle": "📉 DIPLOMATIC RELATIONS DECLINED",
+    "foreignMinistrySender": "Ministry of Foreign Affairs",
+    "relationsDeclined": "Diplomatic relations between {attacker} and other countries fell by {penalty} points after the military operation against {target}.",
+    "lootAndCasualtiesTitle": "⚠️ PRODUCTION LOOTED & POPULATION CASUALTIES (80%)",
+    "lootAndCasualties": "The defense failed to stop {attacker}'s aggression! All national production reserves were looted down to 0. War casualties: {lostPopulation} people ({lossPercent}% of the population). Fleet losses: {losses}.",
+    "defenseFailedTitle": "Defense Failed — Production Looted!",
+    "defenseFailed": "Your country's defense failed to stop {attacker}'s military aggression. Total annexation was avoided (80% survival chance), but all production reserves were looted to 0. Population impact: {lostPopulation} people ({lossPercent}% of the population). Equipment losses are detailed below.",
+    "defenseSucceededTitle": "Defense Successful!",
+    "defenseMinistrySender": "Ministry of Defense",
+    "defenseSucceeded": "National defense forces repelled {attacker}'s military aggression! Defensive fleet combat losses (25%): {losses}."
   },
   "annexedModal": {
     "defaultAttacker": "Aggressor Nation",
@@ -154,6 +176,9 @@
   "embargoUnderstand": "Understood",
   "calendar": {
     "simulationCalendar": "Simulation Calendar",
+    "resumeSimulation": "Resume simulation",
+    "pauseSimulation": "Pause simulation",
+    "changeSpeed": "Change speed to {speed} times",
     "holidayTitle": "National Holiday",
     "militaryTitle": "Military & National Security",
     "holidayActivated": "Presidential Holiday Mode activated! Citizens enjoy rest time.",

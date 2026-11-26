@@ -106,20 +106,6 @@ export class SimulationCalendar {
     }
 
     /**
-     * Get pause/play button title/tooltip
-     */
-    public getPauseButtonTitle(isPaused: boolean): string {
-        return isPaused ? "Mulai Waktu" : "Jeda Waktu";
-    }
-
-    /**
-     * Get speed button title/tooltip
-     */
-    public getSpeedButtonTitle(): string {
-        return `Ubah Kecepatan: ${this.getSpeedLabel(this.timeManager.getSpeed())}`;
-    }
-
-    /**
      * Format date for save name (e.g., "Simulasi Indonesia - 6 Agt, 2026")
      */
     public formatSaveName(countryName: string): string {
@@ -189,22 +175,6 @@ export class CalendarControlsHandler {
         // TODO: Implement military info display
     }
 
-    /**
-     * Get all button titles for accessibility
-     */
-    public getButtonTitles(): {
-        playPause: string;
-        speed: string;
-        holiday: string;
-        military: string;
-    } {
-        return {
-            playPause: this.calendar.getPauseButtonTitle(this.calendar.isPaused()),
-            speed: this.calendar.getSpeedButtonTitle(),
-            holiday: "Liburan Negara",
-            military: "Militer & Keamanan Negara"
-        };
-    }
 }
 
 /**

@@ -375,16 +375,16 @@ export default function SerangModals({
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
                     <Shield className="w-5 h-5 shrink-0 text-emerald-400" />
                     <div>
-                      <span className="font-black uppercase tracking-wider block">Mandat Operasi Militer PBB Aktif</span>
-                      <span>Serangan terhadap {targetName} didukung oleh Resolusi Dewan Keamanan PBB. Anda tidak akan dikenakan sanksi agresi sepihak.</span>
+                      <span className="font-black uppercase tracking-wider block">{t("navigation_defense_attack.mandate.activeTitle")}</span>
+                      <span>{t("navigation_defense_attack.mandate.activeMessage", { target: targetName })}</span>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
                     <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400" />
                     <div>
-                      <span className="font-black uppercase tracking-wider block">Peringatan: Tanpa Mandat Resmi PBB</span>
-                      <span>Serangan ini merupakan inisiatif sepihak tanpa resolusi DK PBB. Berisiko memicu sanksi diplomatik dan embargo multilateral terhadap negara Anda.</span>
+                      <span className="font-black uppercase tracking-wider block">{t("navigation_defense_attack.mandate.missingTitle")}</span>
+                      <span>{t("navigation_defense_attack.mandate.missingMessage")}</span>
                     </div>
                   </div>
                 )}
@@ -393,8 +393,11 @@ export default function SerangModals({
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs">
                     <ShieldAlert className="w-5 h-5 shrink-0 text-sky-400" />
                     <div>
-                      <span className="font-black uppercase tracking-wider block">Target Sedang Dalam Embargo PBB</span>
-                      <span>{targetName} saat ini dikenakan sanksi resolusi PBB ({targetEmbargoResolution.label || targetEmbargoResolution.desc}). Pasokan militer target melemah.</span>
+                      <span className="font-black uppercase tracking-wider block">{t("navigation_defense_attack.mandate.embargoTitle")}</span>
+                      <span>{t("navigation_defense_attack.mandate.embargoMessage", {
+                        target: targetName,
+                        resolution: targetEmbargoResolution.label || targetEmbargoResolution.desc,
+                      })}</span>
                     </div>
                   </div>
                 )}

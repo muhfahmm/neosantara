@@ -111,7 +111,7 @@ export default function ResultModal({
                 <div className="flex flex-col items-center justify-center py-10 text-center">
                     <ShieldAlert className="mb-2 h-10 w-10 text-slate-500/70" />
                     <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-400">
-                        Tidak Ada Kerugian Alutsista Tercatat
+                        {t('game.warResultModal.noLosses')}
                     </p>
                 </div>
             );

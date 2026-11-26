@@ -6,7 +6,7 @@ import { FlaskConical, X, Banknote, Shield, Globe2, Info } from 'lucide-react';
 import NotebookModalWrapper from '@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import RootModalCloseButton from '@/app/page/root_modals_design_menu/RootModalCloseButton';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
-import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { formatLocaleDate, useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/bonus_logic/agama_bonus_logic/ateisme';
 import {
   calculateEducationPoints,
@@ -33,7 +33,7 @@ export default function PenelitianSelectionModal({
   religion,
   countryDetail,
 }: PenelitianSelectionModalProps) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
   const countryName = countryDetail?.country || '';
@@ -45,7 +45,15 @@ export default function PenelitianSelectionModal({
   const educationModifier = getEducationResearchModifier(educationPoints);
   const researchContracts = Array.isArray(countryDetail?.researchContracts) ? countryDetail.researchContracts : [];
   const contractBonus = getResearchContractDurationReduction(researchContracts);
-  const contractBonusLabel = `KONTRAK PENELITIAN (${contractBonus.count} NEGARA): -${contractBonus.percentage.toFixed(1)}% DURASI`;
+  const contractBonusLabel = t('side_penelitian.bonusInfo.contractLabel', {
+    count: contractBonus.count,
+    percentage: contractBonus.percentage.toFixed(1),
+  });
+  const educationModifierLabel = educationModifier.percentageChange > 0
+    ? t('side_penelitian.bonusInfo.educationPenalty', { percentage: educationModifier.percentageChange })
+    : educationModifier.percentageChange < 0
+      ? t('side_penelitian.bonusInfo.educationBonus', { percentage: Math.abs(educationModifier.percentageChange) })
+      : t('side_penelitian.bonusInfo.educationNeutral');
   const renderResearchContractBonus = () => (
     <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30 mb-1.5">
       {contractBonusLabel}
@@ -82,8 +90,8 @@ export default function PenelitianSelectionModal({
             <button
               type="button"
               onClick={() => setShowBonusModal(true)}
-              title="Informasi bonus & modifier riset"
-              aria-label="Informasi bonus & modifier riset"
+              title={t('side_penelitian.bonusInfo.title')}
+              aria-label={t('side_penelitian.bonusInfo.ariaLabel')}
               className={"root-modal-info-button root-modal-util-1697100c43"}
             >
               <Info aria-hidden="true" />
@@ -109,61 +117,72 @@ export default function PenelitianSelectionModal({
                   <Info className="w-4 h-4 text-root-accent" />
                 </div>
                 <h3 className="text-sm sm:text-base font-black text-root-accent uppercase tracking-wider">
-                  Daftar Bonus & Modifier Riset
+                  {t('side_penelitian.bonusInfo.title')}
                 </h3>
               </div>
 
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Keanggotaan UNESCO:</span>
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">{t('side_penelitian.bonusInfo.unescoMembership')}</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${isUNESCOMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
-                    {isUNESCOMember ? 'Aktif (+5% Riset Sains)' : 'Tidak Aktif'}
+                    {isUNESCOMember
+                      ? t('side_penelitian.bonusInfo.activeBonus', { effect: t('side_penelitian.bonusInfo.unescoBonus') })
+                      : t('side_penelitian.bonusInfo.inactive')}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Keanggotaan ITU:</span>
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">{t('side_penelitian.bonusInfo.ituMembership')}</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${isITUMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
-                    {isITUMember ? 'Aktif (+5% Kecepatan Riset)' : 'Tidak Aktif'}
+                    {isITUMember
+                      ? t('side_penelitian.bonusInfo.activeBonus', { effect: t('side_penelitian.bonusInfo.ituBonus') })
+                      : t('side_penelitian.bonusInfo.inactive')}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Efek Pendidikan ({educationPoints} Poin):</span>
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">
+                    {t('side_penelitian.bonusInfo.educationEffect', { points: educationPoints })}
+                  </span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${educationModifier.isPenalty
                     ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
                     : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
                     }`}>
-                    {educationModifier.label.toUpperCase()}
+                    {educationModifierLabel}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Agama Ateisme:</span>
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">{t('side_penelitian.bonusInfo.atheismReligion')}</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${hasAtheismResearchBonus ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-gray-800 text-gray-400'
                     }`}>
-                    {hasAtheismResearchBonus ? 'Aktif (Durasi -15%)' : 'Tidak Aktif'}
+                    {hasAtheismResearchBonus
+                      ? t('side_penelitian.bonusInfo.activeBonus', { effect: t('side_penelitian.bonusInfo.atheismBonus') })
+                      : t('side_penelitian.bonusInfo.inactive')}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Kontrak Penelitian:</span>
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">{t('side_penelitian.bonusInfo.researchContracts')}</span>
                   <span className="font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] bg-sky-500/10 text-sky-300 border border-sky-500/30 shrink-0">
-                    {contractBonus.count} Negara (-{contractBonus.percentage.toFixed(1)}%)
+                    {t('side_penelitian.bonusInfo.contractCount', {
+                      count: contractBonus.count,
+                      percentage: contractBonus.percentage.toFixed(1),
+                    })}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 p-2 sm:p-2.5 rounded-xl bg-root-canvas border border-root-accent/20">
-                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">Sains & Penelitian:</span>
+                  <span className="font-semibold text-gray-300 text-[11px] sm:text-xs">{t('side_penelitian.bonusInfo.scienceResearch')}</span>
                   <span className={`font-bold uppercase px-2 py-0.5 rounded text-[9px] sm:text-[10px] shrink-0 ${sainsPenelitianBonus > 0
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                     : 'bg-gray-800 text-gray-400'
                     }`}>
                     {sainsPenelitianBonus > 0
-                      ? `Aktif (-${sainsPenelitianBonus.toFixed(1)}% Waktu Riset)`
-                      : 'Tidak Aktif'}
+                      ? t('side_penelitian.bonusInfo.scienceBonus', { percentage: sainsPenelitianBonus.toFixed(1) })
+                      : t('side_penelitian.bonusInfo.inactive')}
                   </span>
                 </div>
               </div>
@@ -172,7 +191,7 @@ export default function PenelitianSelectionModal({
                 onClick={() => setShowBonusModal(false)}
                 className="w-full mt-4 py-2 sm:py-2.5 rounded-xl bg-root-accent text-root-canvas font-black text-xs uppercase tracking-wider hover:bg-root-accent/80 transition-all cursor-pointer shadow-md"
               >
-                Mengerti
+                {t('common.understand')}
               </button>
             </div>
           </div>
@@ -194,8 +213,7 @@ export default function PenelitianSelectionModal({
               const [y, m, d] = String(endDateStr).split('-').map(Number);
               const date = new Date(y, m - 1, d);
               if (isNaN(date.getTime())) return endDateStr;
-              const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-              return `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+              return formatLocaleDate(date, language, { day: 'numeric', month: 'short', year: 'numeric' });
             })();
 
             return (
@@ -207,7 +225,7 @@ export default function PenelitianSelectionModal({
                   <div className="flex flex-col items-center w-full">
                     {formattedDate && (
                       <div className="mb-2 bg-root-surface text-root-accent text-[8px] sm:text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded shadow-sm tracking-wider whitespace-nowrap">
-                        Selesai: {formattedDate}
+                        {t('side_penelitian.bonusInfo.completed', { date: formattedDate })}
                       </div>
                     )}
                     <div className="p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-2.5 shadow-sm">
@@ -236,8 +254,7 @@ export default function PenelitianSelectionModal({
               const [y, m, d] = String(endDateStr).split('-').map(Number);
               const date = new Date(y, m - 1, d);
               if (isNaN(date.getTime())) return endDateStr;
-              const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-              return `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+              return formatLocaleDate(date, language, { day: 'numeric', month: 'short', year: 'numeric' });
             })();
 
             return (
@@ -249,7 +266,7 @@ export default function PenelitianSelectionModal({
                   <div className="flex flex-col items-center w-full">
                     {formattedDate && (
                       <div className="mb-2 bg-root-surface text-root-accent text-[8px] sm:text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded shadow-sm tracking-wider whitespace-nowrap">
-                        Selesai: {formattedDate}
+                        {t('side_penelitian.bonusInfo.completed', { date: formattedDate })}
                       </div>
                     )}
                     <div className="p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-2.5 shadow-sm">
@@ -278,8 +295,7 @@ export default function PenelitianSelectionModal({
               const [y, m, d] = String(endDateStr).split('-').map(Number);
               const date = new Date(y, m - 1, d);
               if (isNaN(date.getTime())) return endDateStr;
-              const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-              return `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+              return formatLocaleDate(date, language, { day: 'numeric', month: 'short', year: 'numeric' });
             })();
 
             return (
@@ -291,7 +307,7 @@ export default function PenelitianSelectionModal({
                   <div className="flex flex-col items-center w-full">
                     {formattedDate && (
                       <div className="mb-2 bg-root-surface text-root-accent text-[8px] sm:text-[9px] font-bold px-2 py-0.5 border border-root-accent/30 rounded shadow-sm tracking-wider whitespace-nowrap">
-                        Selesai: {formattedDate}
+                        {t('side_penelitian.bonusInfo.completed', { date: formattedDate })}
                       </div>
                     )}
                     <div className="p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl bg-root-surface border border-root-accent/40 text-root-accent group-hover:bg-root-accent group-hover:text-root-canvas transition-all shrink-0 mb-2 sm:mb-2.5 shadow-sm">

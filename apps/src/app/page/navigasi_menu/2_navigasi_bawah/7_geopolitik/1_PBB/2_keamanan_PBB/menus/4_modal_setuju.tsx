@@ -126,17 +126,17 @@ export default function ModalSetuju({
                             </h4>
                             {country.isProposer && (
                               <span className="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
-                                Pengusul
+                                {pbb("common.proposer")}
                               </span>
                             )}
                             {country.isTarget && (
                               <span className="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-400/40">
-                                Target
+                                {pbb("common.target")}
                               </span>
                             )}
                             {country.isUser && (
                               <span className="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">
-                                👤 Suara Anda
+                                👤 {pbb("resolution.yourVote")}
                               </span>
                             )}
                           </div>

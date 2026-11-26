@@ -112,14 +112,6 @@ const computeInitialRates = (cd: any): Record<string, number> => ({
   ),
 });
 
-const TAX_NAME_LABEL: Record<string, string> = {
-  vat: "Pajak Pertambahan Nilai (PPN)",
-  corporate_tax: "Pajak Korporasi",
-  income_tax: "Pajak Penghasilan Pribadi",
-  cigarette_tax: "Cukai",
-  environment_tax: "Pajak Lingkungan",
-};
-
 // ─────────────────────────────────────────────────────────────────────────
 // Wrapper: memindahkan early-return `if (!isOpen) return null` KE LUAR
 // komponen yang memiliki hooks. Ini memperbaiki pelanggaran Rules of Hooks
@@ -258,7 +250,6 @@ function PajakModalContent({
       committedRatesRef.current = nextCommitted;
       setCommittedRateSnapshot(nextCommitted);
 
-      const taxLabel = TAX_NAME_LABEL[taxId] || taxId;
       const dateStr =
         countryDetail?.current_date || new Date().toISOString().split("T")[0];
 
@@ -271,7 +262,7 @@ function PajakModalContent({
           : [];
 
         const notif = generatePajakChangeNotification(
-          taxLabel,
+          taxId,
           oldVal,
           nextVal,
           dateStr
@@ -283,7 +274,7 @@ function PajakModalContent({
         if (diff >= 10 && Math.random() < 0.8) {
           const countryPop = Number(current?.jumlah_penduduk || current?.populasi || 50000000);
           const demoNotif = generateDemonstrasiPajakNotification(
-            taxLabel,
+            taxId,
             oldVal,
             nextVal,
             diff,
@@ -363,7 +354,7 @@ function PajakModalContent({
     });
     setIsConfirmDialogOpen(false);
     onConfirmChanges?.(pendingTaxChanges.map(([taxId, value]) =>
-      `${taxLabels[taxId] ?? TAX_NAME_LABEL[taxId] ?? taxId}: ${value}%`
+      `${taxLabels[taxId] ?? taxId}: ${value}%`
     ));
     onClose();
   };
@@ -841,7 +832,7 @@ function PajakModalContent({
           {pendingTaxChanges.length > 0 && (
             <ul className="mt-3 space-y-1 text-sm text-root-accent">
               {pendingTaxChanges.map(([taxId, value]) => (
-                <li key={taxId}>{taxLabels[taxId] ?? TAX_NAME_LABEL[taxId] ?? taxId}: {value}%</li>
+                <li key={taxId}>{taxLabels[taxId] ?? taxId}: {value}%</li>
               ))}
             </ul>
           )}

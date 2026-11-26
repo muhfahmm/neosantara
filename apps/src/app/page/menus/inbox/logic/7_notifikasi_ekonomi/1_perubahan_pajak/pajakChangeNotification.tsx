@@ -2,7 +2,7 @@ import React from 'react';
 import { FileText, TrendingUp, TrendingDown, Check, AlertTriangle } from 'lucide-react';
 import { PajakChangeNotification } from './pajakChangeLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
-import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle } from '@/app/page/menus/inbox/logic/notificationMessage';
+import { getInboxNotificationMessage, getInboxNotificationSender, getInboxNotificationTitle, getLocalizedTaxName } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface PajakChangeNotificationProps {
   notification: PajakChangeNotification;
@@ -26,7 +26,7 @@ export default function PajakChangeNotificationCard({ notification, onAccept, on
             {getInboxNotificationTitle(notification, t)}
           </h4>
           <span className={`text-[10px] font-bold ${isIncrease ? 'text-amber-300 bg-amber-900/60 border-amber-500/40' : 'text-emerald-300 bg-emerald-900/60 border-emerald-500/40'} px-2.5 py-0.5 rounded-full border uppercase tracking-wider`}>
-            {isIncrease ? 'Pajak Naik' : 'Pajak Turun'}
+            {isIncrease ? t('side_inbox.economicChangeLabels.taxIncrease') : t('side_inbox.economicChangeLabels.taxDecrease')}
           </span>
         </div>
 
@@ -39,9 +39,9 @@ export default function PajakChangeNotificationCard({ notification, onAccept, on
         </p>
 
         <div className="bg-root-canvas border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
-          <span>Komoditas: {notification.taxName}</span>
+          <span>{t('side_inbox.economicChangeLabels.taxLabel')}: {getLocalizedTaxName(notification.taxName, t)}</span>
           <span className={isIncrease ? 'text-amber-400 font-black' : 'text-emerald-400 font-black'}>
-            Perubahan: {notification.oldRate}% ➔ {notification.newRate}%
+            {t('side_inbox.economicChangeLabels.changeLabel')}: {notification.oldRate}% ➔ {notification.newRate}%
           </span>
         </div>
       </div>

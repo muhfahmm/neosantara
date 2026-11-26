@@ -275,6 +275,7 @@
     "giftBelowThreshold": "Current commodity value ({value}) is below the minimum of {threshold} required to increase relations by one level.",
     "globalEffectAllCountries": "Global effect on all countries:",
     "relationIncreasePerCountry": "+{levels} relation levels for each country",
+    "relationAmountRemainder": "An amount of {amount} NEO grants +{levels} levels ({remainder} NEO remaining is not counted).",
     "improveRelationSummary": "Providing {amount} NEO to {country} increases relations by +1 level.",
     "transferSuccessToast": "Transferred {units} military units to {country}. Relations increased by +{bonus}.",
     "yourStock": "Your stock",
@@ -353,7 +354,8 @@
       "prices": "Basic Commodity Prices",
       "economy": "Economic Policy & System",
       "subsidy": "Subsidies",
-      "construction": "Construction"
+      "construction": "Construction",
+      "ariaLabel": "Country detail categories"
     },
     "subtabs": {
       "militaryFacilities": "Facilities & Military",
@@ -588,6 +590,8 @@
       "production": "Production:",
       "load": "Load:",
       "totalSupply": "Total Power Plant Supply",
+      "satisfactionTitle": "Public Satisfaction (Electricity Sector)",
+      "satisfactionDesc": "Electricity supply availability for public facilities, housing, and industry",
       "activeUnits": "{count} Active Units",
       "operatingAtCapacity": "Plants operating according to installed capacity",
       "totalNationalLoad": "Total Consumption Load",
@@ -709,6 +713,7 @@
     },
     "pembangunanSipilMiliter": {
       "tabCivil": "Civilian Facilities",
+      "categoryTitle": "Sector Category",
       "tabMilitary": "Military & Infrastructure",
       "searchPlaceholder": "Search construction item...",
       "civilianCategories": "Civilian Categories",
