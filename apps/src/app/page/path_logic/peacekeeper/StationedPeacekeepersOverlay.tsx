@@ -94,12 +94,7 @@ export default function StationedPeacekeepersOverlay() {
                 }
               }}
               transform={`translate(${screenPos?.x ?? 0} ${screenPos?.y ?? 0})`}
-              className="pointer-events-auto cursor-help"
             >
-              <title>
-                {`Pasukan Penjaga Perdamaian (PBB / Sekutu)\nLokasi: ${pk.capital}, ${pk.allyCountry}\nKekuatan Tempur: ${new Intl.NumberFormat().format(pk.power)}`}
-              </title>
-
               {/* Aura Penjaga Perdamaian (Biru Muda PBB) */}
               <circle r={36} fill="#38BDF8" opacity={0.12} />
               <circle r={22} fill="#38BDF8" opacity={0.22} filter="url(#un-blue-glow)" />
