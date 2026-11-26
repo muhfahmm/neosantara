@@ -771,6 +771,11 @@
       "unknownAlly": "un país aliado",
       "message": "La ayuda militar no llegó antes de que comenzara la batalla en {allyCountry}. Las tropas fueron devueltas y no participaron en el combate."
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ Tropas de mantenimiento de la paz desplegadas",
+      "sender": "Cuartel General de las Fuerzas de Paz de la ONU",
+      "message": "El convoy de mantenimiento de la paz se dirige a la capital de {target}. Llegada estimada: {arrivalDate} ({arrivalDays} días de viaje)."
+    },
     "npcWar": {
       "title": "⚔️ GUERRA ENTRE NACIONES",
       "sender": "Ministerio de Asuntos Exteriores — {attacker}",

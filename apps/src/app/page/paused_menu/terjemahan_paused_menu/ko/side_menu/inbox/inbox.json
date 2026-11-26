@@ -771,6 +771,11 @@
       "unknownAlly": "동맹국",
       "message": "{allyCountry}에서 전투가 시작되기 전에 군사 지원이 도착하지 못했습니다. 병력은 귀환했으며 전투에 참여하지 않았습니다."
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ 평화유지군 파견",
+      "sender": "유엔 평화유지군 사령부",
+      "message": "평화유지군 수송대가 {target}의 수도로 이동 중입니다. 도착 예정일: {arrivalDate} (이동 {arrivalDays}일)."
+    },
     "npcWar": {
       "title": "⚔️ 국가 간 전쟁",
       "sender": "외교부 — {attacker}",

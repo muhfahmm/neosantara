@@ -65,6 +65,7 @@ import {
 } from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/travelFuelLogic";
 import { useTravelFuelQuote } from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
+import { getDefaultInboxText } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 interface InformasiUmumProps {
   countryName: string;
@@ -215,7 +216,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       senderParams?: Record<string, string | number>;
       messageKey: string;
       messageParams?: Record<string, string | number>;
-    }
+    },
+    arrival?: { date: string; days: number }
   ) => ({
     ...detail,
     pending_notifications: [{
@@ -236,6 +238,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         messageParams: translation.messageParams,
       } : {}),
       timestamp: getCurrentDateString(),
+      ...(arrival ? {
+        diplomacyArrivalDate: arrival.date,
+        diplomacyArrivalDays: arrival.days,
+      } : {}),
       type: 'peringkat' as const,
       value,
       isRead: false,
@@ -276,7 +282,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     return tripId;
   };
   const getDiplomacyTravelArrival = (
-    kind?: 'defense-alliance' | 'trade-agreement' | 'research-contract' | 'non-aggression-pact',
+    kind?: 'defense-alliance' | 'trade-agreement' | 'research-contract' | 'non-aggression-pact' | 'serang-negara',
   ) => {
     const senderCountry = playerCountryName || 'Indonesia';
     const travelEstimate = estimateTravelTime(senderCountry, countryName, {
@@ -1068,8 +1074,26 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         playerCountryDetail={playerCountryDetail}
         targetCountryDetail={provinceData}
         onClose={() => setIsKirimPasukanModalOpen(false)}
-        onConfirm={(deploymentConfig) => {
-          if (blockDiplomaticAction()) return;
+        onConfirm={(deploymentConfig, fuelCost) => {
+          if (blockDiplomaticAction()) return false;
+          const arrival = getDiplomacyTravelArrival('serang-negara');
+          if (!arrival) return false;
+          if (!setPlayerCountryDetail || !playerCountryDetail || !getTravelFuelStatus(playerCountryDetail, fuelCost).ok) {
+            console.error('Pengiriman pasukan perdamaian dibatalkan karena bahan bakar tidak mencukupi atau data negara tidak tersedia.');
+            return false;
+          }
+          const fuelTripId = `peacekeeper-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+          const fuelUpdatedDetail = consumeTravelFuel(playerCountryDetail, fuelCost, {
+            id: fuelTripId,
+            date: getCurrentDateString(),
+            targetCountry: countryName,
+            travelType: 'military-attack',
+            amount: fuelCost,
+          });
+          if (fuelUpdatedDetail === playerCountryDetail) {
+            console.error('Pengiriman pasukan perdamaian dibatalkan karena konsumsi bahan bakar gagal.');
+            return false;
+          }
           const playerName = String(
             playerCountryDetail?.country ||
             playerCountryDetail?.nama_negara ||
@@ -1080,19 +1104,39 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
           // Potong armada user yang dikerahkan sebagai penjaga perdamaian
           const { updatedDetail, losses } = applyWarLossesToUserArmada(
-            playerCountryDetail,
+            fuelUpdatedDetail,
             1,
             false,
             deploymentConfig
           );
-
-          if (setPlayerCountryDetail && losses.length > 0) {
-            setPlayerCountryDetail(withDiplomacyNotification(
-              updatedDetail,
-              'Pasukan Perdamaian Diberangkatkan',
-              `Konvoi pasukan penjaga perdamaian sedang bergerak menuju ibukota ${countryName}.`
-            ));
+          if (losses.length === 0) {
+            console.error('Pengiriman pasukan perdamaian dibatalkan karena tidak ada unit yang dapat dikerahkan.');
+            return false;
           }
+          const titleKey = 'side_inbox.dynamicNotifications.peacekeeperDeparture.title';
+          const senderKey = 'side_inbox.dynamicNotifications.peacekeeperDeparture.sender';
+          const messageKey = 'side_inbox.dynamicNotifications.peacekeeperDeparture.message';
+          const titleParams = { target: countryName };
+          const messageParams = {
+            target: countryName,
+            arrivalDate: arrival.date,
+            arrivalDays: arrival.days,
+          };
+          setPlayerCountryDetail(withDiplomacyNotification(
+            updatedDetail,
+            getDefaultInboxText(titleKey, titleParams),
+            getDefaultInboxText(messageKey, messageParams),
+            0,
+            {
+              titleKey,
+              titleParams,
+              senderKey,
+              senderParams: {},
+              messageKey,
+              messageParams,
+            },
+            arrival,
+          ));
 
           // Hitung kekuatan pasukan yang dikerahkan
           let peacekeeperPower = 0;
@@ -1114,6 +1158,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                   isPeacekeeperDeploy: true,
                   playerPower: peacekeeperPower,
                   targetPower: 0,
+                  travelDurationDays: arrival.days,
                   deployedUnitsConfig: deploymentConfig,
                   allyCountry: countryName,
                   allyIso: undefined,
@@ -1124,6 +1169,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             );
           }
           console.log(`Perintah kirim pasukan penjaga perdamaian ke ${countryName} dikonfirmasi.`, deploymentConfig);
+          return true;
         }}
       />
 

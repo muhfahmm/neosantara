@@ -15,7 +15,7 @@ interface KirimPasukanModalProps {
 	playerCountryDetail?: any;
 	targetCountryDetail?: any;
 	onClose: () => void;
-	onConfirm: (deploymentConfig: Record<string, number>) => void;
+	onConfirm: (deploymentConfig: Record<string, number>, fuelCost: number) => boolean;
 }
 
 export default function KirimPasukanModal({
@@ -60,8 +60,12 @@ export default function KirimPasukanModal({
 	};
 
 	const handleTroopSelectionConfirm = (deploymentConfig: Record<string, number>) => {
+		if (!travelFuelStatus.ok || fuelQuote.cost === null) {
+			console.error("Pengiriman pasukan perdamaian dibatalkan karena bahan bakar tidak mencukupi.");
+			return;
+		}
+		if (!onConfirm(deploymentConfig, fuelQuote.cost)) return;
 		setShowTroopSelection(false);
-		onConfirm(deploymentConfig);
 		onClose();
 	};
 
@@ -87,6 +91,7 @@ export default function KirimPasukanModal({
 				onAttackBlocked={() => {}}
 				travelFuelStatus={travelFuelStatus}
 				mode="bantuan_militer"
+				requiresTravelFuel
 				customTitle="KONFIRMASI PENGIRIMAN PASUKAN PERDAMAIAN"
 				customConfirmLabel="KIRIM PASUKAN PERDAMAIAN"
 			/>

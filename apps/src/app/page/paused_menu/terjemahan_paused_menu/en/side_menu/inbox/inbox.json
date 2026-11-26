@@ -771,6 +771,11 @@
       "unknownAlly": "an allied country",
       "message": "Military aid did not arrive before the battle in {allyCountry} began. The troops were returned and did not take part in the battle."
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ Peacekeeping Troops Dispatched",
+      "sender": "UN Peacekeeping Headquarters",
+      "message": "The peacekeeping convoy is en route to the capital of {target}. Estimated arrival: {arrivalDate} ({arrivalDays} travel days)."
+    },
     "npcWar": {
       "title": "⚔️ WAR BETWEEN NATIONS",
       "sender": "Ministry of Foreign Affairs — {attacker}",

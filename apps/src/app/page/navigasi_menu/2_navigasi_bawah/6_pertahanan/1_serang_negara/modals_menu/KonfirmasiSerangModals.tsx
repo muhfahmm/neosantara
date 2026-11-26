@@ -23,6 +23,7 @@ interface SerangModalsProps {
   onAttackBlocked: (status: PlayerAttackStatus, requestedTarget: string) => void;
   travelFuelStatus: TravelFuelStatus;
   mode?: "serang" | "bantuan_militer";
+  requiresTravelFuel?: boolean;
   customTitle?: string;
   customConfirmLabel?: string;
 }
@@ -135,6 +136,7 @@ export default function SerangModals({
   onAttackBlocked,
   travelFuelStatus,
   mode = "serang",
+  requiresTravelFuel = false,
   customTitle,
   customConfirmLabel,
 }: SerangModalsProps) {
@@ -144,6 +146,7 @@ export default function SerangModals({
   const isMilitaryAid = mode === "bantuan_militer";
   const displayTitle = customTitle || (isMilitaryAid ? (tr("deployment.militaryAidTitle") || "KONFIRMASI BANTUAN MILITER") : tr("deployment.title"));
   const displayConfirmLabel = customConfirmLabel || (isMilitaryAid ? (tr("deployment.militaryAidConfirm") || "KIRIM BANTUAN MILITER") : tr("deployment.confirm"));
+  const fuelRequirementSatisfied = (isMilitaryAid && !requiresTravelFuel) || travelFuelStatus.ok;
   const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
   const [asyncTargetData, setAsyncTargetData] = useState<any>(null);
 
@@ -215,6 +218,7 @@ export default function SerangModals({
   const targetSource = asyncTargetData || initialTargetSource;
   const attackerName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || tr("fallback.yourCountry");
   const handleConfirm = () => {
+    if (!fuelRequirementSatisfied) return;
     const activeAttack = getActivePlayerAttack();
     if (activeAttack) {
       onAttackBlocked(activeAttack, targetName);
@@ -561,9 +565,9 @@ export default function SerangModals({
           </button>
           <button 
             onClick={handleConfirm}
-            disabled={!hasDeployedUnits || (!travelFuelStatus.ok && !isMilitaryAid)}
+            disabled={!hasDeployedUnits || !fuelRequirementSatisfied}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
-              hasDeployedUnits && (travelFuelStatus.ok || isMilitaryAid)
+              hasDeployedUnits && fuelRequirementSatisfied
                 ? isMilitaryAid
                   ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-500 active:scale-95 cursor-pointer"
                   : "bg-rose-600 text-white shadow-lg shadow-rose-900/30 hover:bg-rose-500 active:scale-95 cursor-pointer"

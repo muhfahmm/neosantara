@@ -771,6 +771,11 @@
       "unknownAlly": "einem verbündeten Land",
       "message": "Die militärische Unterstützung traf nicht vor Beginn der Schlacht in {allyCountry} ein. Die Truppen wurden zurückgeschickt und nahmen nicht an der Schlacht teil."
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ Friedenssicherungstruppen entsandt",
+      "sender": "Hauptquartier der UN-Friedensmission",
+      "message": "Der Friedenskonvoi ist auf dem Weg in die Hauptstadt von {target}. Voraussichtliche Ankunft: {arrivalDate} ({arrivalDays} Reisetage)."
+    },
     "npcWar": {
       "title": "⚔️ KRIEG ZWISCHEN NATIONEN",
       "sender": "Außenministerium — {attacker}",

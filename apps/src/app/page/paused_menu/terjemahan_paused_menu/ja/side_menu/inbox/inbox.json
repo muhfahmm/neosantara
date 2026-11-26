@@ -771,6 +771,11 @@
       "unknownAlly": "同盟国",
       "message": "{allyCountry}での戦闘開始前に軍事支援が到着しませんでした。部隊は帰還し、戦闘には参加しませんでした。"
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ 平和維持部隊を派遣しました",
+      "sender": "国連平和維持軍司令部",
+      "message": "平和維持部隊の車列は{target}の首都へ向かっています。到着予定日：{arrivalDate}（移動日数：{arrivalDays}日）。"
+    },
     "npcWar": {
       "title": "⚔️ 国家間戦争",
       "sender": "外務省 — {attacker}",

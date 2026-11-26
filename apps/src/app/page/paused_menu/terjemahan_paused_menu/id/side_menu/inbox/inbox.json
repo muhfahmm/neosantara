@@ -771,6 +771,11 @@
       "unknownAlly": "negara sekutu",
       "message": "Pasukan bantuan tidak tiba sebelum pertempuran di {allyCountry} dimulai. Pasukan dikembalikan dan tidak ikut dalam pertempuran."
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ Pasukan Perdamaian Diberangkatkan",
+      "sender": "Markas Pasukan Perdamaian PBB",
+      "message": "Konvoi pasukan penjaga perdamaian sedang bergerak menuju ibu kota {target}. Diperkirakan tiba pada {arrivalDate} ({arrivalDays} hari perjalanan)."
+    },
     "npcWar": {
       "title": "⚔️ PERANG ANTARNEGARA",
       "sender": "Kementerian Luar Negeri — {attacker}",

@@ -771,6 +771,11 @@
       "unknownAlly": "盟国",
       "message": "军事援军未能在{allyCountry}的战斗开始前抵达。部队已返回，未参加战斗。"
     },
+    "peacekeeperDeparture": {
+      "title": "🕊️ 维和部队已出发",
+      "sender": "联合国维和部队总部",
+      "message": "维和部队车队正前往{target}首都。预计抵达日期：{arrivalDate}（行程{arrivalDays}天）。"
+    },
     "npcWar": {
       "title": "⚔️ 国家间战争",
       "sender": "外交部 — {attacker}",

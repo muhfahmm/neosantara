@@ -4703,6 +4703,7 @@ export default function MapPage() {
                 })));
             const resolutionViolationAuthorized = detail.resolutionViolationAuthorized === true;
             if (
+                detail.isPeacekeeperDeploy !== true &&
                 !detail.isPbbCoalition &&
                 !isPlayerAttacker &&
                 !hasApprovedInvasionMandate &&
@@ -5004,6 +5005,14 @@ export default function MapPage() {
                         (participant: { name: string }) => participant.name
                     ),
                 };
+            }
+
+            if (detail.isPeacekeeperDeploy === true) {
+                setCountryDetailModalOpen(false);
+                setCountryDetailModalName(null);
+                setCountryDetailModalCity(null);
+                setCountryDetailModalCityId(null);
+                setPlayerDetailModalOpen(false);
             }
 
             if (showBattleAnalysis) {
