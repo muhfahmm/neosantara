@@ -166,7 +166,7 @@ import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_ke
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/6_database_kedutaan_besar/embassyRegistry';
-import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceValue, setSimulationDate } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceModifier, setRelationSourceValue, setSimulationDate } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import type { NonAggressionPactPeriod } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
@@ -4300,16 +4300,18 @@ export default function MapPage() {
                 playerCountry: playerCountryIdentity,
                 source,
             });
-            let isPlayerAttacker = Boolean(playerCountryName) && (
-                detail.troopsCommitted === true ||
-                sameCountrySlug(detail.attackerCountryDetail?.country_slug, countryDetail?.country_slug) ||
-                areSameWarCountry(
-                    detail.attacker,
-                    playerCountryName || '',
-                    detail.attackerCountryDetail?.iso,
-                    selectedCountry?.iso || countryDetail?.iso
-                )
-            ) || isPlayerCoalitionAttacker;
+            let isPlayerAttacker = detail.isMilitaryAid === true
+                ? false
+                : Boolean(playerCountryName) && (
+                    detail.troopsCommitted === true ||
+                    sameCountrySlug(detail.attackerCountryDetail?.country_slug, countryDetail?.country_slug) ||
+                    areSameWarCountry(
+                        detail.attacker,
+                        playerCountryName || '',
+                        detail.attackerCountryDetail?.iso,
+                        selectedCountry?.iso || countryDetail?.iso
+                    )
+                ) || isPlayerCoalitionAttacker;
             let isPlayerDefender = (Boolean(playerCountryName) && areSameWarCountry(
                 detail.target,
                 playerCountryName || '',
@@ -4618,6 +4620,7 @@ export default function MapPage() {
 
             if (
                 detail.isPeacekeeperDeploy !== true &&
+                detail.isMilitaryAid !== true &&
                 playerCountryName &&
                 areSameWarCountry(
                     detail.attacker,
@@ -12797,6 +12800,32 @@ export default function MapPage() {
                                 applyNpcWarLosses(defenderCountryDetail, targetLossRatio);
                             }
                             if (isMilitaryAidBattle) {
+                                const supportCountry = String(
+                                    activeWarAnimation.militaryAidSupportCountry ||
+                                    getPlayerCountryIdentity(countryDetail) ||
+                                    '',
+                                ).trim();
+                                const allyCountry = String(activeWarAnimation.target || '').trim();
+                                const relationBonusConfig = BANTUAN_SEKUTU_CONFIG.relationBonusOnAidCompletion;
+                                const relationBonus = Math.floor(
+                                    Math.random() *
+                                        (relationBonusConfig.maximum - relationBonusConfig.minimum + 1),
+                                ) + relationBonusConfig.minimum;
+                                if (supportCountry && allyCountry) {
+                                    setRelationSourceModifier(
+                                        supportCountry,
+                                        allyCountry,
+                                        'military-attack',
+                                        0,
+                                    );
+                                    setRelationModifier(supportCountry, allyCountry, relationBonus);
+                                    window.dispatchEvent(new CustomEvent('country_relations_updated'));
+                                } else {
+                                    console.error('[WarAnimation] Military aid relation reward could not be applied.', {
+                                        supportCountry,
+                                        allyCountry,
+                                    });
+                                }
                                 const aidArmySnapshot =
                                     activeWarAnimation.militaryAidArmySnapshot ||
                                     activeWarAnimation.committedArmySnapshot ||
@@ -12825,8 +12854,8 @@ export default function MapPage() {
                                             ? 'Bantuan Militer Berhasil'
                                             : 'Bantuan Militer Gagal',
                                         message: result === 'win'
-                                            ? `${activeWarAnimation.target} dan pasukan bantuan ${activeWarAnimation.militaryAidSupportCountry || playerCountryName} berhasil menahan serangan ${activeWarAnimation.attacker}. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`
-                                            : `${activeWarAnimation.target} gagal menahan serangan ${activeWarAnimation.attacker}. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`,
+                                            ? `${activeWarAnimation.target} dan pasukan bantuan ${supportCountry || playerCountryName} berhasil menahan serangan ${activeWarAnimation.attacker}. Hubungan dengan ${activeWarAnimation.target} meningkat ${relationBonus} poin. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`
+                                            : `${activeWarAnimation.target} gagal menahan serangan ${activeWarAnimation.attacker}. Hubungan dengan ${activeWarAnimation.target} meningkat ${relationBonus} poin setelah bantuan diberikan. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`,
                                         losses,
                                         type: result === 'win' ? 'success' : 'error',
                                         persistent: true,

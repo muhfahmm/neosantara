@@ -20,6 +20,8 @@ export const BANTUAN_SEKUTU_CONFIG = {
   relationPenaltyReject: -3,
   // Penurunan hubungan dengan agresor bila pemain menerima bantuan sekutu
   relationPenaltyWithAttackerOnAccept: -15,
+  // Bonus hubungan dengan sekutu setelah pasukan bantuan menyelesaikan operasi
+  relationBonusOnAidCompletion: { minimum: 10, maximum: 15 },
 };
 
 export type BantuanSekutuStatus = 'pending' | 'accepted' | 'rejected' | 'expired';
