@@ -30,11 +30,9 @@ export default function ShopModal({
   onClose,
   onClick,
   isMenuButtonHidden = false,
-  playerDiamonds = 500,
-  countryDetail,
   initialTab = "neo",
 }: ShopModalProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<ShopTabType>(initialTab);
   const [mounted, setMounted] = useState(false);
 
@@ -47,8 +45,6 @@ export default function ShopModal({
       setActiveTab(initialTab);
     }
   }, [isOpen, initialTab]);
-
-  const playerKas = Number(countryDetail?.anggaran ?? 0);
 
   return (
     <>
@@ -85,20 +81,6 @@ export default function ShopModal({
               onClose={onClose}
               icon={<ShoppingBag />}
               size="standard"
-              actions={
-                <div className="flex flex-wrap items-center justify-end gap-2 text-xs font-bold">
-                  {/* Saldo NEO */}
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-root-accent/30 bg-root-canvas px-2.5 py-1 text-root-accent">
-                    <Coins size={14} className="text-amber-400" />
-                    <span>{playerKas.toLocaleString(language, { maximumFractionDigits: 0 })} NEO</span>
-                  </span>
-                  {/* Saldo GEMS */}
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-root-canvas px-2.5 py-1 text-cyan-300">
-                    <Gem size={14} className="text-cyan-400" />
-                    <span>{playerDiamonds.toLocaleString(language)} {t("side_shop.gemUnit")}</span>
-                  </span>
-                </div>
-              }
             />
 
             {/* Container Body */}
