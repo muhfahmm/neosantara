@@ -26,6 +26,7 @@ import TradeRelationNotification from './logic/3_notifikasi_perdagangan/3_hubung
 import SpionaseNotificationCard from './logic/2_notifikasi_pertahanan/1_spionase/spionaseNotification';
 import SabotaseNotificationCard from './logic/2_notifikasi_pertahanan/2_sabotase/sabotaseNotification';
 import DiserangNotificationCard from './logic/2_notifikasi_pertahanan/3_diserang/diserangNotification';
+import { getEligibleDefenseAllies } from './logic/18_notifikasi_serangan_dan_minta_bantuan/allyDefenseRequestLogic';
 import PemberontakanNotificationCard from './logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanNotification';
 import ICBMNotificationCard from './logic/2_notifikasi_pertahanan/5_icbm/icbmNotification';
 import PajakChangeNotificationCard from './logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeNotification';
@@ -222,7 +223,9 @@ interface TopLeftIconProps {
   onActionClick?: (notification: NotificationMessage, actionType?: string) => void;
   onCrackdownClick?: (notification: NotificationMessage) => void;
   onRedirectClick?: (notification: NotificationMessage) => void;
+  onRequestAllyHelpClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
+  defenseAlliances?: string[];
   isWarAnalysisActive?: boolean;
   isMenuButtonHidden?: boolean;
 }
@@ -236,7 +239,9 @@ export default function TopLeftIcon({
   onActionClick,
   onCrackdownClick,
   onRedirectClick,
+  onRequestAllyHelpClick,
   userCountryName,
+  defenseAlliances = [],
   isWarAnalysisActive = false,
   isMenuButtonHidden = false,
 }: TopLeftIconProps) {
@@ -327,6 +332,9 @@ export default function TopLeftIcon({
     const handleAction = onActionClick ? () => onActionClick(notification) : undefined;
     const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notification) : undefined;
     const handleRedirect = onRedirectClick ? () => onRedirectClick(notification) : undefined;
+    const handleRequestAllyHelp = onRequestAllyHelpClick
+      ? () => onRequestAllyHelpClick(notification)
+      : undefined;
     const notif = {
       ...notification,
       title: getInboxNotificationTitle(notification, t),
@@ -449,9 +457,12 @@ export default function TopLeftIcon({
         <DiserangNotificationCard
           key={notif.id}
           notification={notif as any}
-          userCountryName={userCountryName}
-          onAccept={handleAction}
-          onReject={handleRedirect}
+          availableAllyCount={getEligibleDefenseAllies(
+            defenseAlliances,
+            userCountryName || '',
+            String((notif as any).enemyCountry || ''),
+          ).length}
+          onRequestAllyHelp={handleRequestAllyHelp}
         />
       );
     }

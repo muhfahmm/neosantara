@@ -10,6 +10,7 @@ export interface DiserangNotification extends NotificationMessage {
   costEM?: number;
   effectText?: string;
   isHandled?: boolean;
+  allyHelpRequested?: boolean;
 }
 
 const ATTACK_POOL = [

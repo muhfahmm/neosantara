@@ -312,7 +312,17 @@
     "defenseDeployed": "DEFENSA MILITAR DESPLEGADA",
     "impact": "Impacto",
     "mobilizationCost": "Coste de Movilización",
-    "estimatedImpact": "Impacto Estimado: Devastación Total"
+    "estimatedImpact": "Impacto Estimado: Devastación Total",
+    "allyAid": {
+      "requestHelp": "Solicitar apoyo aliado",
+      "requested": "LAS TROPAS ALIADAS ESTÁN EN CAMINO",
+      "noAllies": "No hay aliados de defensa activos",
+      "sender": "Cuartel General de las Fuerzas Armadas",
+      "requestSentTitle": "🛡️ APOYO ALIADO SOLICITADO",
+      "requestSentMessage": "Se envió a {count} aliados una solicitud de apoyo defensivo para {target}, atacado por {attacker}. Sus tropas se dirigen a la capital.",
+      "arrivalTitle": "🛡️ LLEGARON LAS TROPAS ALIADAS",
+      "arrivalMessage": "Las tropas de {ally} han llegado a {target} para ayudar a defenderse de {attacker}."
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 DESASTRE NATURAL: {name} EN {province}",

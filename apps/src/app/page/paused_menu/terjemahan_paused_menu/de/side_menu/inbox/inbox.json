@@ -312,7 +312,17 @@
     "defenseDeployed": "MILITÄRISCHE VERTEIDIGUNG EINGELEITET",
     "impact": "Auswirkungen",
     "mobilizationCost": "Mobilisierungskosten",
-    "estimatedImpact": "Geschätzte Zerstörung: Totale Zerstörung"
+    "estimatedImpact": "Geschätzte Zerstörung: Totale Zerstörung",
+    "allyAid": {
+      "requestHelp": "Verbündete um Hilfe bitten",
+      "requested": "VERBÜNDETE TRUPPEN SIND UNTERWEGS",
+      "noAllies": "Keine aktiven Verteidigungsbündnisse",
+      "sender": "Oberkommando der Streitkräfte",
+      "requestSentTitle": "🛡️ VERBÜNDETENHILFE ANGEFORDERT",
+      "requestSentMessage": "Eine Verteidigungsanfrage für {target}, angegriffen von {attacker}, wurde an {count} Verbündete gesendet. Ihre Truppen rücken zur Hauptstadt vor.",
+      "arrivalTitle": "🛡️ VERBÜNDETE TRUPPEN EINGETROFFEN",
+      "arrivalMessage": "Truppen aus {ally} sind in {target} eingetroffen, um bei der Verteidigung gegen {attacker} zu helfen."
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 NATURKATASTROPHE: {name} IN {province}",

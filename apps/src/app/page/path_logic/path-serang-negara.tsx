@@ -99,6 +99,7 @@ export default function SerangNegaraPath({
   onProgress,
   onArrive,
   isPlayerAttacker,
+  isMapHidden,
 }: SerangNegaraPathProps) {
   return (
     <DiplomacyPathAnimation
@@ -112,6 +113,7 @@ export default function SerangNegaraPath({
       onProgress={onProgress}
       onArrive={onArrive}
       isPlayerAttacker={isPlayerAttacker}
+      isMapHidden={isMapHidden}
     />
   );
 }

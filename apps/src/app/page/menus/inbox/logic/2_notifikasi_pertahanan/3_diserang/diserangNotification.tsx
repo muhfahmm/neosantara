@@ -1,17 +1,20 @@
 import React from 'react';
-import { ShieldAlert, Check, Swords, Shield } from 'lucide-react';
+import { ShieldAlert, Check, Handshake } from 'lucide-react';
 import { DiserangNotification } from './diserangLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { getInboxNotificationMessage, getInboxNotificationSender } from '@/app/page/menus/inbox/logic/notificationMessage';
 
 export interface DiserangNotificationProps {
   notification: DiserangNotification;
-  userCountryName?: string;
-  onAccept?: () => void;
-  onReject?: () => void;
+  availableAllyCount?: number;
+  onRequestAllyHelp?: () => void;
 }
 
-export default function DiserangNotificationCard({ notification, userCountryName, onAccept, onReject }: DiserangNotificationProps) {
+export default function DiserangNotificationCard({
+  notification,
+  availableAllyCount = 0,
+  onRequestAllyHelp,
+}: DiserangNotificationProps) {
   const { t } = useLanguage();
   const isHandled = notification.isHandled;
 
@@ -44,25 +47,32 @@ export default function DiserangNotificationCard({ notification, userCountryName
           <span className="text-rose-400 font-black">{t('side_inbox.defense.mobilizationCost')}: {notification.costEM} NEO</span>
         </div>
 
-        <div className="pt-2 flex items-center justify-end gap-2.5">
-          {isHandled ? (
+        <div className="pt-2 flex flex-wrap items-center justify-end gap-2.5">
+          {isHandled && (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
               <span>{t('side_inbox.defense.defenseDeployed')}</span>
             </div>
-          ) : (
-            <>
-              {onAccept && (
-                <button
-                  onClick={onAccept}
-                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(244,63,94,0.4)] flex items-center gap-1.5"
-                >
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>{t('side_inbox.defense.deployDefense')}</span>
-                </button>
-              )}
-            </>
           )}
+          {notification.allyHelpRequested ? (
+            <div className="text-[11px] font-bold text-sky-300 bg-sky-950/60 px-3 py-1.5 rounded-xl border border-sky-500/40 flex items-center gap-1.5">
+              <Handshake className="w-3.5 h-3.5" />
+              <span>{t('side_inbox.defense.allyAid.requested')}</span>
+            </div>
+          ) : onRequestAllyHelp ? (
+            <button
+              type="button"
+              onClick={onRequestAllyHelp}
+              disabled={availableAllyCount === 0}
+              title={availableAllyCount === 0 ? t('side_inbox.defense.allyAid.noAllies') : undefined}
+              className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-sky-700 hover:bg-sky-600 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700 border border-sky-400/60 text-white rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed shadow-sm flex items-center gap-1.5"
+            >
+              <Handshake className="w-3.5 h-3.5" />
+              <span>{availableAllyCount === 0
+                ? t('side_inbox.defense.allyAid.noAllies')
+                : t('side_inbox.defense.allyAid.requestHelp')}</span>
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

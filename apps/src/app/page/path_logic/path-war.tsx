@@ -975,9 +975,7 @@ export default function WarMap({
   const routePathRef = useRef<SVGPathElement>(null);
   const progressPathRef = useRef<SVGPathElement>(null);
   const startMarkerRef = useRef<SVGCircleElement>(null);
-  const startHaloRef = useRef<SVGCircleElement>(null);
   const endMarkerRef = useRef<SVGCircleElement>(null);
-  const endHaloRef = useRef<SVGCircleElement>(null);
   const impactBurstRef = useRef<SVGCircleElement>(null);
   const tankRef = useRef<SVGGElement>(null);
   const tankRotationRef = useRef<SVGGElement>(null);
@@ -1044,9 +1042,7 @@ export default function WarMap({
   const primaryRoutePathRef = useRef<SVGPathElement>(null);
   const primaryProgressPathRef = useRef<SVGPathElement>(null);
   const primaryStartMarkerRef = useRef<SVGCircleElement>(null);
-  const primaryStartHaloRef = useRef<SVGCircleElement>(null);
   const primaryEndMarkerRef = useRef<SVGCircleElement>(null);
-  const primaryEndHaloRef = useRef<SVGCircleElement>(null);
   const primaryTankRef = useRef<SVGGElement>(null);
   const primaryTankRotationRef = useRef<SVGGElement>(null);
 
@@ -1248,12 +1244,8 @@ export default function WarMap({
       progressPathRef.current?.setAttribute('d', geo.path);
       startMarkerRef.current?.setAttribute('cx', String(geo.start.x));
       startMarkerRef.current?.setAttribute('cy', String(geo.start.y));
-      startHaloRef.current?.setAttribute('cx', String(geo.start.x));
-      startHaloRef.current?.setAttribute('cy', String(geo.start.y));
       endMarkerRef.current?.setAttribute('cx', String(geo.end.x));
       endMarkerRef.current?.setAttribute('cy', String(geo.end.y));
-      endHaloRef.current?.setAttribute('cx', String(geo.end.x));
-      endHaloRef.current?.setAttribute('cy', String(geo.end.y));
       impactBurstRef.current?.setAttribute('cx', String(geo.end.x));
       impactBurstRef.current?.setAttribute('cy', String(geo.end.y));
 
@@ -1270,12 +1262,8 @@ export default function WarMap({
       primaryProgressPathRef.current?.setAttribute('d', geo.path);
       primaryStartMarkerRef.current?.setAttribute('cx', String(geo.start.x));
       primaryStartMarkerRef.current?.setAttribute('cy', String(geo.start.y));
-      primaryStartHaloRef.current?.setAttribute('cx', String(geo.start.x));
-      primaryStartHaloRef.current?.setAttribute('cy', String(geo.start.y));
       primaryEndMarkerRef.current?.setAttribute('cx', String(geo.end.x));
       primaryEndMarkerRef.current?.setAttribute('cy', String(geo.end.y));
-      primaryEndHaloRef.current?.setAttribute('cx', String(geo.end.x));
-      primaryEndHaloRef.current?.setAttribute('cy', String(geo.end.y));
 
       if (primaryTankRef.current && primaryTankRotationRef.current) {
         const currentProgress = progressRef.current;
@@ -1585,13 +1573,7 @@ export default function WarMap({
             />
 
             <circle ref={startMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
-            <circle ref={startHaloRef} cx={0} cy={0} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
-
             <circle ref={endMarkerRef} cx={0} cy={0} r={8} fill={warTheme.main} opacity={0.8} />
-            <circle ref={endHaloRef} cx={0} cy={0} r={20} fill="none" stroke={warTheme.main} strokeWidth={2}>
-              <animate attributeName="r" values="16;30;16" dur="1.6s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
-            </circle>
 
             {phase === 'travel' && (
               <g
@@ -1781,12 +1763,7 @@ export default function WarMap({
                   strokeDasharray="0 100"
                 />
                 <circle ref={primaryStartMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
-                <circle ref={primaryStartHaloRef} cx={0} cy={0} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
                 <circle ref={primaryEndMarkerRef} cx={0} cy={0} r={8} fill="#FF2D55" opacity={0.8} />
-                <circle ref={primaryEndHaloRef} cx={0} cy={0} r={20} fill="none" stroke="#FF2D55" strokeWidth={2}>
-                  <animate attributeName="r" values="16;30;16" dur="1.6s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
-                </circle>
 
                 {phase === 'travel' && (
                   <g

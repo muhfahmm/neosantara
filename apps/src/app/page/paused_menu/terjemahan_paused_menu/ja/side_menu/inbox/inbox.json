@@ -312,7 +312,17 @@
     "defenseDeployed": "軍事防衛部隊配備完了",
     "impact": "影響度",
     "mobilizationCost": "防衛動員費用",
-    "estimatedImpact": "推定被害規模: 全域壊滅"
+    "estimatedImpact": "推定被害規模: 全域壊滅",
+    "allyAid": {
+      "requestHelp": "同盟国に支援を要請",
+      "requested": "同盟軍が派遣中",
+      "noAllies": "有効な防衛同盟がありません",
+      "sender": "国軍司令部",
+      "requestSentTitle": "🛡️ 同盟国に支援を要請しました",
+      "requestSentMessage": "{attacker}に攻撃された{target}への防衛支援を、{count}か国の同盟国に要請しました。各国の部隊が首都へ向かっています。",
+      "arrivalTitle": "🛡️ 同盟軍が到着しました",
+      "arrivalMessage": "{ally}の部隊が{attacker}への防衛を支援するため、{target}に到着しました。"
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 自然災害：{province} の {name}",

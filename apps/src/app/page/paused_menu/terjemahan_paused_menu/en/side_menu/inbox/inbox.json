@@ -312,7 +312,17 @@
     "defenseDeployed": "MILITARY DEFENSE FORCES DEPLOYED",
     "impact": "Impact",
     "mobilizationCost": "Defense Mobilization Cost",
-    "estimatedImpact": "Estimated Impact: Full-Scale Devastation"
+    "estimatedImpact": "Estimated Impact: Full-Scale Devastation",
+    "allyAid": {
+      "requestHelp": "Request Ally Support",
+      "requested": "ALLIED TROOPS ARE EN ROUTE",
+      "noAllies": "No active defense allies",
+      "sender": "Armed Forces Headquarters",
+      "requestSentTitle": "🛡️ ALLIED SUPPORT REQUESTED",
+      "requestSentMessage": "A defense support request for {target}, attacked by {attacker}, was sent to {count} allies. Their troops are moving toward the capital.",
+      "arrivalTitle": "🛡️ ALLIED TROOPS ARRIVED",
+      "arrivalMessage": "Troops from {ally} have arrived in {target} to help defend against {attacker}."
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 NATURAL DISASTER: {name} IN {province}",

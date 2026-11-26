@@ -151,6 +151,13 @@ const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModa
 const BottomLeftShopIcon = dynamic(() => import('../menus/shop/shopModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { createInboxNotificationText, getDefaultInboxText } from '../menus/inbox/logic/notificationMessage';
+import {
+    createAllyDefenseArrivalNotification,
+    createAllyDefenseDeployments,
+    createAllyDefenseRequestNotification,
+    getEligibleDefenseAllies,
+    type AllyDefenseDeployment,
+} from '../menus/inbox/logic/18_notifikasi_serangan_dan_minta_bantuan/allyDefenseRequestLogic';
 import { isNonActionableUpdateNotification } from '../menus/inbox/logic/automaticChangeNotification';
 import { generateReligionChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/1_notifikasi_agama/religionChangeLogic';
 import { generateIdeologyChangeNotification } from '../menus/inbox/logic/10_sosial_budaya/2_notifikasi_ideologi/ideologyChangeLogic';
@@ -1370,7 +1377,17 @@ export default function MapPage() {
 
     useEffect(() => {
         const handleAidArrival = (event: Event) => {
-            const detail = (event as CustomEvent<{ id?: string; resourceKey?: string; amount?: number; senderCountry?: string }>).detail;
+            const detail = (event as CustomEvent<{
+                id?: string;
+                resourceKey?: string;
+                amount?: number;
+                senderCountry?: string;
+                aidType?: string;
+            }>).detail;
+            if (detail?.aidType === 'military') {
+                window.dispatchEvent(new CustomEvent('neosantara_military_aid_arrived', { detail }));
+                return;
+            }
             const resourceKey = String(detail?.resourceKey || '');
             const amount = Number(detail?.amount) || 0;
             if (!detail?.id || !resourceKey || amount < 5000) return;
@@ -4265,6 +4282,23 @@ export default function MapPage() {
                 selectedCountry?.iso || countryDetail?.iso
             )) || sameCountrySlug(detail.targetCountryDetail?.country_slug, countryDetail?.country_slug)
                || Boolean(getStationedPeacekeeper(detail.target));
+            const notifyPlayerOfIncomingAttack = () => {
+                if (!isPlayerDefender) return;
+                const incomingAttack = generateDiserangNotification(
+                    detail.attacker,
+                    currentDate.toISOString().slice(0, 10),
+                    hasAnnexedTerritories(playerCountryName || ''),
+                    'invasi'
+                );
+                setNotifications(previous => {
+                    const hasExistingAlert = previous.some(notification =>
+                        (notification as any).tradeType === 'diserang' &&
+                        areSameWarCountry((notification as any).enemyCountry, detail.attacker) &&
+                        notification.timestamp === incomingAttack.timestamp
+                    );
+                    return hasExistingAlert ? previous : [incomingAttack, ...previous];
+                });
+            };
             if (getStationedPeacekeeper(detail.target)) {
                 showBattleAnalysis = true;
             }
@@ -4330,6 +4364,7 @@ export default function MapPage() {
                 }
 
                 // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
+                notifyPlayerOfIncomingAttack();
                 setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
                 reportDebugStatus('queued');
                 return;
@@ -4452,20 +4487,7 @@ export default function MapPage() {
                 return;
             }
             if (isPlayerDefender) {
-                const incomingAttack = generateDiserangNotification(
-                    detail.attacker,
-                    currentDate.toISOString().slice(0, 10),
-                    hasAnnexedTerritories(playerCountryName || ''),
-                    'invasi'
-                );
-                setNotifications(previous => {
-                    const hasExistingAlert = previous.some(notification =>
-                        (notification as any).tradeType === 'diserang' &&
-                        areSameWarCountry((notification as any).enemyCountry, detail.attacker) &&
-                        notification.timestamp === incomingAttack.timestamp
-                    );
-                    return hasExistingAlert ? previous : [incomingAttack, ...previous];
-                });
+                notifyPlayerOfIncomingAttack();
             }
             if (
                 unauthorizedAttackSanctionsApplied &&
@@ -4943,6 +4965,22 @@ export default function MapPage() {
 
             const effectiveTargetPower = targetPowerSummary.totals.totalPower + stationedPower;
 
+            if (
+                !isPlayerAttacker &&
+                detail.isMilitaryAid !== true &&
+                detail.isPeacekeeperDeploy !== true
+            ) {
+                window.dispatchEvent(new CustomEvent('neosantara_serang_negara_path', {
+                    detail: {
+                        pathId: `war-movement-${detail.attackId}`,
+                        senderCountry: detail.attacker,
+                        targetCountry: detail.target,
+                        isPlayerAttacker: false,
+                        trackOnly: true,
+                    },
+                }));
+            }
+
             setActiveWarAnimation({
                 ...detail,
                 isNpcWar,
@@ -5107,6 +5145,7 @@ export default function MapPage() {
         countryIdentity: '',
         ids: new Set<string>(),
     });
+    const processedAllyDefenseRequestsRef = useRef(new Set<string>());
     notificationDateRef.current = simulationDateString;
     // Gerbang pusat semua notifikasi inbox:
     // - 30% hari kosong (0 notif), 50% dapat 1 notif, 20% dapat 2 notif per hari simulasi
@@ -5175,6 +5214,145 @@ export default function MapPage() {
             return result.length === next.length ? next : result;
         }));
     }, []);
+    const handleRequestAllyDefense = useCallback((notification: NotificationMessage) => {
+        const attackNotification = notification as NotificationMessage & {
+            tradeType?: string;
+            enemyCountry?: string;
+            allyHelpRequested?: boolean;
+        };
+        if (
+            attackNotification.tradeType !== 'diserang' ||
+            attackNotification.allyHelpRequested ||
+            processedAllyDefenseRequestsRef.current.has(notification.id)
+        ) return;
+
+        const playerCountry = getPlayerCountryIdentity(countryDetail) ||
+            selectedCountry?.country ||
+            'Indonesia';
+        const attackerCountry = String(attackNotification.enemyCountry || '').trim();
+        if (!playerCountry.trim() || !attackerCountry) return;
+        const allies = getEligibleDefenseAllies(
+            countryDetail?.defenseAlliances,
+            playerCountry,
+            attackerCountry,
+        );
+        const timestamp = simulationDateString || new Date().toISOString().slice(0, 10);
+        const deployments = createAllyDefenseDeployments(
+            allies,
+            playerCountry,
+            attackerCountry,
+            notification.id,
+        );
+        const routableDeployments = deployments.filter(deployment => {
+            const route = estimateTravelTime(deployment.senderCountry, deployment.targetCountry, {
+                diplomacyKind: 'aid-delivery',
+            });
+            if (route) return true;
+            console.error('[AllyDefense] Cannot create a troop route for ally.', deployment);
+            return false;
+        });
+        if (routableDeployments.length === 0) return;
+
+        processedAllyDefenseRequestsRef.current.add(notification.id);
+        setNotifications(previous => [
+            createAllyDefenseRequestNotification(
+                notification.id,
+                playerCountry,
+                attackerCountry,
+                routableDeployments.length,
+                timestamp,
+            ),
+            ...previous.map(item => item.id === notification.id
+                ? { ...item, allyHelpRequested: true }
+                : item),
+        ]);
+        setCountryDetail((previous: Record<string, unknown> | null) => {
+            if (!previous) return previous;
+            const ongoing = Array.isArray(previous.ongoingMilitaryAidDeployments)
+                ? previous.ongoingMilitaryAidDeployments
+                : [];
+            const knownIds = new Set(ongoing
+                .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === 'object'))
+                .map(item => item.id)
+                .filter((id): id is string => typeof id === 'string'));
+            return {
+                ...previous,
+                ongoingMilitaryAidDeployments: [
+                    ...ongoing,
+                    ...routableDeployments
+                        .filter(deployment => !knownIds.has(deployment.id))
+                        .map(deployment => ({ ...deployment, startDate: timestamp, status: 'in_transit' })),
+                ],
+            };
+        });
+
+        routableDeployments.forEach(deployment => {
+            window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
+                detail: {
+                    pathId: deployment.id,
+                    kind: 'aid-delivery',
+                    aidType: 'military',
+                    senderCountry: deployment.senderCountry,
+                    targetCountry: deployment.targetCountry,
+                    attackerCountry: deployment.attackerCountry,
+                },
+            }));
+        });
+    }, [countryDetail, selectedCountry?.country, setCountryDetail, setNotifications, simulationDateString]);
+
+    useEffect(() => {
+        const handleMilitaryAidArrival = (event: Event) => {
+            const detail = (event as CustomEvent<
+                Pick<AllyDefenseDeployment, 'id' | 'senderCountry' | 'targetCountry' | 'attackerCountry'> & { aidType?: string }
+            >).detail;
+            if (
+                detail?.aidType !== 'military' ||
+                !detail.id ||
+                !detail.senderCountry ||
+                !detail.targetCountry ||
+                !detail.attackerCountry
+            ) return;
+
+            const arrival = createAllyDefenseArrivalNotification(
+                detail,
+                simulationDateString || new Date().toISOString().slice(0, 10),
+            );
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const receivedIds = Array.isArray(previous.receivedMilitaryAidIds)
+                    ? previous.receivedMilitaryAidIds.filter((id): id is string => typeof id === 'string')
+                    : [];
+                if (receivedIds.includes(detail.id)) return previous;
+                const ongoing = Array.isArray(previous.ongoingMilitaryAidDeployments)
+                    ? previous.ongoingMilitaryAidDeployments
+                    : [];
+                return {
+                    ...previous,
+                    receivedMilitaryAidIds: [...receivedIds, detail.id],
+                    ongoingMilitaryAidDeployments: ongoing.filter(item =>
+                        !item || typeof item !== 'object' ||
+                        (item as Record<string, unknown>).id !== detail.id
+                    ),
+                    alliedMilitarySupport: [
+                        ...(Array.isArray(previous.alliedMilitarySupport) ? previous.alliedMilitarySupport : []),
+                        {
+                            id: detail.id,
+                            allyCountry: detail.senderCountry,
+                            attackerCountry: detail.attackerCountry,
+                            arrivedAt: simulationDateString,
+                        },
+                    ],
+                };
+            });
+            setNotifications(previous => previous.some(item => item.id === arrival.id)
+                ? previous
+                : [arrival, ...previous]);
+        };
+
+        window.addEventListener('neosantara_military_aid_arrived', handleMilitaryAidArrival);
+        return () => window.removeEventListener('neosantara_military_aid_arrived', handleMilitaryAidArrival);
+    }, [setCountryDetail, setNotifications, simulationDateString]);
+
     useEffect(() => {
         const handleCovertOperationArrival = async (event: Event) => {
             const detail = (event as CustomEvent<{
@@ -10583,6 +10761,10 @@ export default function MapPage() {
                             selectedCountry?.country ||
                             'Indonesia'
                         )}
+                defenseAlliances={Array.isArray(countryDetail?.defenseAlliances)
+                    ? countryDetail.defenseAlliances
+                    : []}
+                onRequestAllyHelpClick={handleRequestAllyDefense}
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     closeTrackingMenu();

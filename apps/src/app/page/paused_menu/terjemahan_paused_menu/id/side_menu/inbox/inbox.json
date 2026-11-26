@@ -312,7 +312,17 @@
     "defenseDeployed": "PERTAHANAN MILITER TELAH DIKERAHKAN",
     "impact": "Dampak",
     "mobilizationCost": "Biaya Mobilisasi Pertahanan",
-    "estimatedImpact": "Estimasi Dampak: Kehancuran Skala Penuh"
+    "estimatedImpact": "Estimasi Dampak: Kehancuran Skala Penuh",
+    "allyAid": {
+      "requestHelp": "Minta Bantuan Sekutu",
+      "requested": "PASUKAN SEKUTU SEDANG BERGERAK",
+      "noAllies": "Tidak ada sekutu pertahanan aktif",
+      "sender": "Markas Besar Angkatan Bersenjata",
+      "requestSentTitle": "🛡️ BANTUAN SEKUTU DIMINTA",
+      "requestSentMessage": "Permintaan bantuan pertahanan untuk {target} saat diserang oleh {attacker} telah diteruskan ke {count} sekutu. Pasukan mereka sedang bergerak menuju ibu kota.",
+      "arrivalTitle": "🛡️ PASUKAN SEKUTU TIBA",
+      "arrivalMessage": "Pasukan dari {ally} telah tiba di {target} untuk membantu pertahanan terhadap {attacker}."
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 BENCANA ALAM: {name} DI {province}",

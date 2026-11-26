@@ -312,7 +312,17 @@
     "defenseDeployed": "تم نشر قوات الدفاع العسكري",
     "impact": "التأثير",
     "mobilizationCost": "تكلفة التعبئة الدفاعية",
-    "estimatedImpact": "التأثير المتوقع: دمار شامل"
+    "estimatedImpact": "التأثير المتوقع: دمار شامل",
+    "allyAid": {
+      "requestHelp": "طلب دعم الحلفاء",
+      "requested": "قوات الحلفاء في الطريق",
+      "noAllies": "لا توجد تحالفات دفاعية نشطة",
+      "sender": "القيادة العامة للقوات المسلحة",
+      "requestSentTitle": "🛡️ تم طلب دعم الحلفاء",
+      "requestSentMessage": "أُرسل طلب دعم دفاعي لـ{target}، التي هاجمتها {attacker}، إلى {count} من الحلفاء. قواتهم تتجه إلى العاصمة.",
+      "arrivalTitle": "🛡️ وصلت قوات الحلفاء",
+      "arrivalMessage": "وصلت قوات {ally} إلى {target} للمساعدة في الدفاع ضد {attacker}."
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 كارثة طبيعية: {name} في {province}",

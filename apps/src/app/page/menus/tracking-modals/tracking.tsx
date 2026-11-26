@@ -56,6 +56,9 @@ interface ActiveDiplomacyPath {
   progress: number;
   resourceKey?: string;
   amount?: number;
+  aidType?: string;
+  attackerCountry?: string;
+  trackOnly?: boolean;
   isPlayerAttacker?: boolean;
   operationTarget?: string;
   operationSucceeded?: boolean;
@@ -113,6 +116,9 @@ export default function DiplomacyTracking({
       targetCountrySlug?: unknown,
       targetCountryDetail?: unknown,
       relationValue?: unknown,
+      aidType?: unknown,
+      attackerCountry?: unknown,
+      trackOnly?: unknown,
     ) => {
       const kind = String(kindValue || '') as DiplomacyPathKind;
       const senderCountry = String(senderValue || '').trim();
@@ -139,6 +145,9 @@ export default function DiplomacyTracking({
               ? targetCountryDetail as Record<string, unknown>
               : undefined,
             relationValue: typeof relationValue === 'number' && Number.isFinite(relationValue) ? relationValue : undefined,
+            aidType: typeof aidType === 'string' ? aidType : undefined,
+            attackerCountry: typeof attackerCountry === 'string' ? attackerCountry : undefined,
+            trackOnly: trackOnly === true,
           }]);
     };
 
@@ -156,6 +165,9 @@ export default function DiplomacyTracking({
         targetCountrySlug?: unknown;
         targetCountryDetail?: unknown;
         relationValue?: unknown;
+        aidType?: unknown;
+        attackerCountry?: unknown;
+        trackOnly?: unknown;
       }>).detail;
       addPath(
         detail?.kind,
@@ -170,6 +182,9 @@ export default function DiplomacyTracking({
         detail?.targetCountrySlug,
         detail?.targetCountryDetail,
         detail?.relationValue,
+        detail?.aidType,
+        detail?.attackerCountry,
+        detail?.trackOnly,
       );
     };
 
@@ -197,8 +212,25 @@ export default function DiplomacyTracking({
         senderCountry?: unknown;
         targetCountry?: unknown;
         isPlayerAttacker?: boolean;
+        trackOnly?: boolean;
       }>).detail;
-      addPath('serang-negara', detail?.pathId, detail?.senderCountry, detail?.targetCountry, undefined, undefined, detail?.isPlayerAttacker);
+      addPath(
+        'serang-negara',
+        detail?.pathId,
+        detail?.senderCountry,
+        detail?.targetCountry,
+        undefined,
+        undefined,
+        detail?.isPlayerAttacker,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        detail?.trackOnly,
+      );
     };
 
     window.addEventListener('neosantara_diplomacy_path', handleDiplomacyPath);
@@ -230,6 +262,7 @@ export default function DiplomacyTracking({
             key={path.id}
             senderCountry={path.senderCountry}
             targetCountry={path.targetCountry}
+            isMapHidden={path.trackOnly || path.kind === 'serang-negara'}
             laneIndex={laneIndex}
             laneCount={sameRoute.length}
             isPlayerAttacker={path.isPlayerAttacker}

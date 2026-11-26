@@ -312,7 +312,17 @@
     "defenseDeployed": "군사 방위 태세 배치 완료",
     "impact": "영향",
     "mobilizationCost": "방위 동원 비용",
-    "estimatedImpact": "예상 파괴력: 전면적 초토화"
+    "estimatedImpact": "예상 파괴력: 전면적 초토화",
+    "allyAid": {
+      "requestHelp": "동맹국 지원 요청",
+      "requested": "동맹군이 이동 중입니다",
+      "noAllies": "활성화된 방위 동맹이 없습니다",
+      "sender": "국군 사령부",
+      "requestSentTitle": "🛡️ 동맹국 지원 요청",
+      "requestSentMessage": "{attacker}의 공격을 받은 {target}의 방어 지원을 {count}개 동맹국에 요청했습니다. 동맹군이 수도로 이동 중입니다.",
+      "arrivalTitle": "🛡️ 동맹군 도착",
+      "arrivalMessage": "{ally}의 병력이 {attacker}에 맞서 방어를 지원하기 위해 {target}에 도착했습니다."
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 자연재해: {province}의 {name}",

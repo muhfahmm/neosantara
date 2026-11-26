@@ -312,7 +312,17 @@
     "defenseDeployed": "国防驻军部队已完成全面部署",
     "impact": "战略影响",
     "mobilizationCost": "战备动员与部署预算",
-    "estimatedImpact": "预计毁灭烈度：全域毁灭性破坏"
+    "estimatedImpact": "预计毁灭烈度：全域毁灭性破坏",
+    "allyAid": {
+      "requestHelp": "请求盟友支援",
+      "requested": "盟军正在前往",
+      "noAllies": "没有生效的防御盟友",
+      "sender": "武装部队司令部",
+      "requestSentTitle": "🛡️ 已请求盟友支援",
+      "requestSentMessage": "{target}遭到{attacker}攻击，已向{count}个盟友发出防御支援请求。盟军正前往首都。",
+      "arrivalTitle": "🛡️ 盟军已抵达",
+      "arrivalMessage": "来自{ally}的部队已抵达{target}，协助防御{attacker}的进攻。"
+    }
   },
   "disaster": {
     "naturalTitle": "🚨 突发自然灾害：{province} 发生 {name}",

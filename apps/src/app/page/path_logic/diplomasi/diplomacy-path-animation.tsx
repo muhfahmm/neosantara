@@ -36,6 +36,7 @@ export interface DiplomacyPathProps {
   onArrive: () => void;
   onProgress?: (progress: number) => void;
   isPlayerAttacker?: boolean;
+  isMapHidden?: boolean;
 }
 
 export interface DiplomacyPathMetadata {
@@ -69,6 +70,7 @@ export default function DiplomacyPathAnimation({
   laneCount = 1,
   onArrive,
   onProgress,
+  isMapHidden = false,
 }: DiplomacyPathAnimationProps) {
   const onArriveRef = useRef(onArrive);
   const onProgressRef = useRef(onProgress);
@@ -76,7 +78,6 @@ export default function DiplomacyPathAnimation({
   const glowRouteRef = useRef<SVGPathElement>(null);
   const startRef = useRef<SVGCircleElement>(null);
   const endRef = useRef<SVGCircleElement>(null);
-  const pulseRef = useRef<SVGCircleElement>(null);
   const vehicleRef = useRef<SVGGElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const geometryRef = useRef<ReturnType<typeof getMapRouteGeometry> | null>(null);
@@ -164,8 +165,6 @@ export default function DiplomacyPathAnimation({
         startRef.current?.setAttribute('cy', String(start.y));
         endRef.current?.setAttribute('cx', String(end.x));
         endRef.current?.setAttribute('cy', String(end.y));
-        pulseRef.current?.setAttribute('cx', String(end.x));
-        pulseRef.current?.setAttribute('cy', String(end.y));
       }
       vehicleRef.current?.setAttribute(
         'transform',
@@ -204,7 +203,7 @@ export default function DiplomacyPathAnimation({
   const zIndexClass = isAttackRoute ? 'z-[100000020]' : isCoupRoute ? 'z-20' : 'z-10';
   const overlay = (
     <div
-      className={`fixed inset-0 ${zIndexClass} pointer-events-none overflow-hidden select-none`}
+      className={`fixed inset-0 ${zIndexClass} pointer-events-none overflow-hidden select-none ${isMapHidden ? 'invisible' : ''}`}
       style={shouldPortalToDocument ? { zIndex } : undefined}
     >
       <svg ref={svgRef} className="absolute inset-0 h-full w-full" viewBox="0 0 1 1">
@@ -237,15 +236,7 @@ export default function DiplomacyPathAnimation({
           style={{ filter: `drop-shadow(0 0 6px ${accent})` }}
         />
 
-        {/* Marker target + pulse */}
-        <circle
-          ref={pulseRef}
-          r="26"
-          fill="none"
-          stroke={accent}
-          strokeWidth="1.5"
-          className="diplomacy-target-pulse"
-        />
+        {/* Marker target */}
         <circle
           ref={endRef}
           r="8"
@@ -263,11 +254,6 @@ export default function DiplomacyPathAnimation({
         .diplomacy-route-dash {
           animation: diplomacyRouteDash 900ms linear infinite;
         }
-        .diplomacy-target-pulse {
-          animation: diplomacyTargetPulse 1.5s ease-out infinite;
-          transform-box: fill-box;
-          transform-origin: center;
-        }
         .diplomacy-glyph-glow {
           animation: diplomacyGlyphGlow 2.6s ease-in-out infinite;
           transform-box: fill-box;
@@ -275,10 +261,6 @@ export default function DiplomacyPathAnimation({
         }
         @keyframes diplomacyRouteDash {
           to { stroke-dashoffset: -24; }
-        }
-        @keyframes diplomacyTargetPulse {
-          0%   { opacity: .7; transform: scale(.45); }
-          100% { opacity: 0;  transform: scale(1.7); }
         }
         @keyframes diplomacyGlyphGlow {
           0%, 100% { opacity: .12; }
