@@ -214,7 +214,11 @@ import {
 } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 import { getDaysDifference } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/outbreakManagement';
 import { publishDebugNotificationState, publishDebugWarStatus } from '@/app/debug/attackDebugLogic';
-import { shouldShowBattleAnalysis, type WarPartyIdentity } from '../path_logic/warAnalysisLogic';
+import {
+    combineMilitaryAidWithDefender,
+    shouldShowBattleAnalysis,
+    type WarPartyIdentity,
+} from '../path_logic/warAnalysisLogic';
 import {
     cancelOrphanedRequestedAttackRequests,
     createRequestedAttackRequest,
@@ -4160,6 +4164,35 @@ export default function MapPage() {
                     ...(reason ? { reason } : {}),
                 });
             };
+            const isStandaloneMilitaryAid =
+                detail?.isMilitaryAid === true &&
+                detail?.isPeacekeeperDeploy !== true &&
+                !activeWarAnimationRef.current;
+            if (isStandaloneMilitaryAid) {
+                const supportCountry = String(detail.attacker || '').trim();
+                const aggressorCountry = String(detail.aggressorCountry || '').trim();
+                const allyCountry = String(detail.allyCountry || detail.target || '').trim();
+                if (!supportCountry || !aggressorCountry || !allyCountry) {
+                    console.error('[WarAnimation] Military aid is missing its support, aggressor, or ally country.', {
+                        supportCountry,
+                        aggressorCountry,
+                        allyCountry,
+                    });
+                    reportDebugStatus('cancelled', 'Data negara bantuan militer tidak lengkap.');
+                    return;
+                }
+                detail = {
+                    ...detail,
+                    attacker: aggressorCountry,
+                    target: allyCountry,
+                    attackerCountryDetail: detail.aggressorCountryDetail,
+                    playerPower: undefined,
+                    targetPower: undefined,
+                    militaryAidSupportCountry: supportCountry,
+                    militaryAidCountryDetail: detail.attackerCountryDetail,
+                    troopsCommitted: false,
+                };
+            }
             if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
                 console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
                 reportDebugStatus('cancelled', 'Dibatalkan karena larangan perang global aktif.');
@@ -4334,30 +4367,69 @@ export default function MapPage() {
                 // gabungkan menjadi konvoi simultan (dua jalur bersamaan: merah dan biru)
                 if (detail.isMilitaryAid === true || activeWarAnimationRef.current.isMilitaryAid === true) {
                     const currentActive = activeWarAnimationRef.current;
-                    const primaryAttackerCountry = detail.isMilitaryAid ? currentActive.attacker : (detail.aggressorCountry || detail.attacker);
-                    const primaryTargetCountry = detail.isMilitaryAid ? currentActive.target : (detail.allyCountry || detail.target);
-                    const fallbackAttackerCoord = getCapitalCoord(primaryAttackerCountry);
-                    const fallbackTargetCoord = getCapitalCoord(primaryTargetCountry);
-                    const primaryAttacker = buildCapitalPoint(primaryAttackerCountry) || {
-                        country: primaryAttackerCountry,
-                        capital: primaryAttackerCountry,
-                        lat: fallbackAttackerCoord?.lat ?? 0,
-                        lng: fallbackAttackerCoord?.lng ?? 0,
+                    const aidDetail = detail.isMilitaryAid === true ? detail : currentActive;
+                    const battleDetail = detail.isMilitaryAid === true ? currentActive : detail;
+                    const aidAttackerCountry = String(aidDetail.attacker || '').trim();
+                    const aidTargetCountry = String(aidDetail.allyCountry || aidDetail.target || '').trim();
+                    if (!areSameWarCountry(aidTargetCountry, String(battleDetail.target || ''))) {
+                        notifyPlayerOfIncomingAttack();
+                        setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
+                        reportDebugStatus('queued');
+                        return;
+                    }
+                    const fallbackAidAttackerCoord = getCapitalCoord(aidAttackerCountry);
+                    const fallbackAidTargetCoord = getCapitalCoord(aidTargetCountry);
+                    const aidAttacker = buildCapitalPoint(aidAttackerCountry) || {
+                        country: aidAttackerCountry,
+                        capital: aidAttackerCountry,
+                        lat: fallbackAidAttackerCoord?.lat ?? 0,
+                        lng: fallbackAidAttackerCoord?.lng ?? 0,
                     };
-                    const primaryTarget = buildCapitalPoint(primaryTargetCountry) || {
-                        country: primaryTargetCountry,
-                        capital: primaryTargetCountry,
-                        lat: fallbackTargetCoord?.lat ?? 0,
-                        lng: fallbackTargetCoord?.lng ?? 0,
+                    const aidTarget = buildCapitalPoint(aidTargetCountry) || {
+                        country: aidTargetCountry,
+                        capital: aidTargetCountry,
+                        lat: fallbackAidTargetCoord?.lat ?? 0,
+                        lng: fallbackAidTargetCoord?.lng ?? 0,
                     };
+                    const aidCountryDetail = aidDetail.attackerCountryDetail;
+                    const aidArmadaBreakdown = aidCountryDetail
+                        ? getArmadaPowerSummary(aidCountryDetail).breakdown
+                        : [];
+                    const defenderBreakdown = battleDetail.targetCountryDetail
+                        ? getArmadaPowerSummary(battleDetail.targetCountryDetail).breakdown
+                        : [];
+                    const combinedDefender = combineMilitaryAidWithDefender({
+                        defenderDetail: battleDetail.targetCountryDetail,
+                        defenderBreakdown,
+                        aidBreakdown: aidArmadaBreakdown,
+                        deploymentConfig: aidDetail.deployedUnitsConfig || {},
+                        supportCountry: aidAttackerCountry,
+                    });
+                    const baseTargetPower = Number(battleDetail.targetPower);
 
                     setActiveWarAnimation((prev: any) => ({
                         ...prev,
-                        ...detail,
+                        ...aidDetail,
+                        ...battleDetail,
+                        attacker: battleDetail.attacker,
+                        target: battleDetail.target,
+                        attackerPower: battleDetail.attackerPower,
+                        targetPower: (Number.isFinite(baseTargetPower) ? baseTargetPower : 0) +
+                            combinedDefender.addedPower,
+                        attackerCountryDetail: battleDetail.attackerCountryDetail,
+                        targetCountryDetail: combinedDefender.detail,
+                        isNpcWar: battleDetail.isNpcWar ?? isNpcWar,
+                        isUserDefender: battleDetail.isUserDefender ?? isPlayerDefender,
+                        isPlayerAttacker: battleDetail.isPlayerAttacker ?? isPlayerAttack,
                         isMilitaryAid: true,
+                        shouldShowBattleAnalysis:
+                            battleDetail.shouldShowBattleAnalysis === true ||
+                            aidDetail.shouldShowBattleAnalysis === true ||
+                            showBattleAnalysis,
                         primaryWar: {
-                            attacker: primaryAttacker,
-                            target: primaryTarget,
+                            attacker: aidAttacker,
+                            target: aidTarget,
+                            isMilitaryAid: true,
                         },
                     }));
                     return;
@@ -4963,7 +5035,54 @@ export default function MapPage() {
                 };
             }
 
-            const effectiveTargetPower = targetPowerSummary.totals.totalPower + stationedPower;
+            let militaryAidPower = 0;
+            if (isStandaloneMilitaryAid) {
+                const supportCountry = String(detail.militaryAidSupportCountry || '');
+                const supportDetail = resolveCountryDetail(
+                    supportCountry,
+                    detail.militaryAidCountryDetail,
+                );
+                const aidBreakdown = supportDetail
+                    ? getArmadaPowerSummary(supportDetail).breakdown
+                    : [];
+                const defenderBreakdown = getArmadaPowerSummary(targetDetailData).breakdown;
+                const combinedDefender = combineMilitaryAidWithDefender({
+                    defenderDetail: targetDetailData,
+                    defenderBreakdown,
+                    aidBreakdown,
+                    deploymentConfig: detail.deployedUnitsConfig || {},
+                    supportCountry,
+                });
+                if (combinedDefender.detail) {
+                    targetDetailData = combinedDefender.detail;
+                }
+                militaryAidPower = combinedDefender.addedPower;
+                showBattleAnalysis = true;
+                isPlayerAttacker = false;
+                isPlayerAttack = false;
+                isNpcWar = true;
+
+                const aidAttackerCoord = getCapitalCoord(supportCountry);
+                const aidTargetCoord = getCapitalCoord(detail.target);
+                detail.primaryWar = {
+                    attacker: buildCapitalPoint(supportCountry) || {
+                        country: supportCountry,
+                        capital: supportCountry,
+                        lat: aidAttackerCoord?.lat ?? 0,
+                        lng: aidAttackerCoord?.lng ?? 0,
+                    },
+                    target: buildCapitalPoint(detail.target) || {
+                        country: detail.target,
+                        capital: detail.target,
+                        lat: aidTargetCoord?.lat ?? 0,
+                        lng: aidTargetCoord?.lng ?? 0,
+                    },
+                    isMilitaryAid: true,
+                };
+            }
+
+            const effectiveTargetPower =
+                targetPowerSummary.totals.totalPower + stationedPower + militaryAidPower;
 
             if (
                 !isPlayerAttacker &&

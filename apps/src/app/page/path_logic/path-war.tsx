@@ -825,6 +825,7 @@ interface WarMapProps {
   primaryWar?: {
     attacker: CapitalPoint;
     target: CapitalPoint;
+    isMilitaryAid?: boolean;
   };
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
@@ -1371,7 +1372,15 @@ export default function WarMap({
       window.removeEventListener('neosantara_map_camera', refreshCameraGeometry);
       window.removeEventListener('neosantara:simulation-clock-state', handleClockState);
     };
-  }, [isOpen, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
+  }, [
+    isOpen,
+    warPath,
+    primaryWarPath,
+    resolvedAttacker.lat,
+    resolvedAttacker.lng,
+    resolvedTarget.lat,
+    resolvedTarget.lng,
+  ]);
 
   useEffect(() => {
     if (phase !== 'impact') return;
@@ -1493,7 +1502,7 @@ export default function WarMap({
 
   // Warna tema animasi: Merah agresor reguler (#FF2D55) vs Biru Muda PBB bantuan militer (#38BDF8)
   const warTheme = useMemo(() => {
-    if (isMilitaryAid) {
+    if (isMilitaryAid && !primaryWar?.isMilitaryAid) {
       return {
         main: '#38BDF8', // Biru muda PBB / Sky 400
         dark: '#0284C7', // Sky 600
@@ -1517,7 +1526,8 @@ export default function WarMap({
       glow: '#FF7096',
       burstEnd: '#FF2D55',
     };
-  }, [isMilitaryAid]);
+  }, [isMilitaryAid, primaryWar?.isMilitaryAid]);
+  const primaryWarAccent = primaryWar?.isMilitaryAid ? '#38BDF8' : '#FF2D55';
 
   return (
     <>
@@ -1736,7 +1746,7 @@ export default function WarMap({
                   ref={primaryRoutePathRef}
                   d="M 0 0"
                   fill="none"
-                  stroke="#FF2D55"
+                  stroke={primaryWarAccent}
                   strokeWidth={4}
                   strokeDasharray="14 10"
                   opacity={phase === 'travel' ? 0.85 : 0.4}
@@ -1746,14 +1756,14 @@ export default function WarMap({
                   ref={primaryProgressPathRef}
                   d="M 0 0"
                   fill="none"
-                  stroke="#FF2D55"
+                  stroke={primaryWarAccent}
                   strokeWidth={6}
                   strokeLinecap="round"
                   pathLength={100}
                   strokeDasharray="0 100"
                 />
                 <circle ref={primaryStartMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
-                <circle ref={primaryEndMarkerRef} cx={0} cy={0} r={8} fill="#FF2D55" opacity={0.8} />
+                <circle ref={primaryEndMarkerRef} cx={0} cy={0} r={8} fill={primaryWarAccent} opacity={0.8} />
 
                 {phase === 'travel' && (
                   <g
@@ -1764,15 +1774,15 @@ export default function WarMap({
                     tabIndex={0}
                     aria-label={`Konvoi ${primaryWar?.attacker?.country || 'Agresor'}`}
                   >
-                    <circle r={36} fill="#FF2D55" opacity={0.10} />
-                    <circle r={24} fill="#FF2D55" opacity={0.18} />
+                    <circle r={36} fill={primaryWarAccent} opacity={0.10} />
+                    <circle r={24} fill={primaryWarAccent} opacity={0.18} />
                     <g ref={primaryTankRotationRef} transform="rotate(0)">
                       <ellipse cx={1} cy={3} rx={27} ry={15} fill="#000000" opacity={0.45} />
                       <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill="#3A0714" />
                       <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill="#8B1030" />
                       <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill="#3A0714" />
                       <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill="#8B1030" />
-                      <path d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z" fill="#FF2D55" stroke="#6B1020" strokeWidth={0.9} />
+                      <path d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z" fill={primaryWarAccent} stroke="#6B1020" strokeWidth={0.9} />
                       <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill="#B71C3A" />
                       <path d="M-10,-4 L6,-4.5 L9,-2 L9,2 L6,4.5 L-10,4 L-12,2 L-12,-2 Z" fill="#FF2D55" stroke="#6B1020" strokeWidth={0.7} />
                       <rect x={8} y={-2.5} width={4} height={5} rx={1} fill="#B71C3A" stroke="#6B1020" strokeWidth={0.5} />

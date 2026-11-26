@@ -256,9 +256,16 @@ export default function PerbandinganPasukan({
   const hasPeacekeeperSupport = Boolean((targetDetail as any)?.hasPeacekeeperSupport);
   const peacekeeperCountryName = (targetDetail as any)?.peacekeeperCountry || "PBB";
   const localizedPeacekeeperCountry = getLocalizedCountryName(peacekeeperCountryName, language);
-  const targetDisplayName = hasPeacekeeperSupport
-    ? `${localizedPeacekeeperCountry} + ${localizedTargetName}`
-    : localizedTargetName;
+  const militarySupportCountries = Array.isArray((targetDetail as any)?.militarySupportCountries)
+    ? (targetDetail as any).militarySupportCountries
+      .filter((country: unknown): country is string => typeof country === 'string')
+      .map((country: string) => getLocalizedCountryName(country, language))
+    : [];
+  const targetDisplayName = [
+    ...(hasPeacekeeperSupport ? [localizedPeacekeeperCountry] : []),
+    localizedTargetName,
+    ...militarySupportCountries,
+  ].join(' + ');
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
