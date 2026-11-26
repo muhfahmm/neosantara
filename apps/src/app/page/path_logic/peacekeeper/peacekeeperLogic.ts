@@ -11,6 +11,7 @@ export interface StationedPeacekeeper {
   lng: number;
   power: number;
   deployedUnits: Record<string, number>;
+  deployedUnitQuantities?: Record<string, number>;
   userArmadaSnapshot?: any;
   deployedAt: string;
 }
@@ -59,10 +60,15 @@ export function addStationedPeacekeeper(pk: Omit<StationedPeacekeeper, "id">): S
     for (const [key, qty] of Object.entries(pk.deployedUnits)) {
       combinedUnits[key] = (combinedUnits[key] || 0) + qty;
     }
+    const combinedUnitQuantities = { ...existing.deployedUnitQuantities };
+    for (const [key, qty] of Object.entries(pk.deployedUnitQuantities || {})) {
+      combinedUnitQuantities[key] = (combinedUnitQuantities[key] || 0) + qty;
+    }
     savedEntry = {
       ...existing,
       power: existing.power + pk.power,
       deployedUnits: combinedUnits,
+      deployedUnitQuantities: combinedUnitQuantities,
       userArmadaSnapshot: pk.userArmadaSnapshot || existing.userArmadaSnapshot,
       lat: targetLat,
       lng: targetLng,

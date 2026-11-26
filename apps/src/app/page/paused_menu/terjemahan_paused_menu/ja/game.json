@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "シミュレーション開始"
   },
+  "peacekeeperForces": {
+    "title": "{country}の平和維持部隊",
+    "ariaLabel": "{country}に駐留する平和維持部隊を表示",
+    "combatPower": "戦闘力",
+    "deployedAt": "派遣日：{date}",
+    "noData": "この部隊のユニット情報はありません。",
+    "close": "平和維持部隊のモーダルを閉じる"
+  },
   "attackerForces": {
     "movementInfo": "軍事移動情報",
     "unitsBrought": "この攻撃に投入された部隊数",

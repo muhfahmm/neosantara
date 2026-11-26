@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "시뮬레이션 시작"
   },
+  "peacekeeperForces": {
+    "title": "{country} 주둔 평화유지군",
+    "ariaLabel": "{country}에 주둔 중인 평화유지군 보기",
+    "combatPower": "전투력",
+    "deployedAt": "파견일: {date}",
+    "noData": "이 부대의 유닛 정보를 사용할 수 없습니다.",
+    "close": "평화유지군 모달 닫기"
+  },
   "attackerForces": {
     "movementInfo": "군사 이동 정보",
     "unitsBrought": "이번 공격에 동원된 부대 수",

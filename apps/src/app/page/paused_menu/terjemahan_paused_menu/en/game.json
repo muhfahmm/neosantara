@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "START SIMULATION"
   },
+  "peacekeeperForces": {
+    "title": "Peacekeeping Forces in {country}",
+    "ariaLabel": "View peacekeeping forces in {country}",
+    "combatPower": "Combat power",
+    "deployedAt": "Stationed since {date}",
+    "noData": "Unit details are unavailable for this contingent.",
+    "close": "Close peacekeeping forces modal"
+  },
   "attackerForces": {
     "movementInfo": "Military Movement Information",
     "unitsBrought": "Number of units deployed in this assault",

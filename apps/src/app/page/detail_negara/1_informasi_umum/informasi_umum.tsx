@@ -1113,6 +1113,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             console.error('Pengiriman pasukan perdamaian dibatalkan karena tidak ada unit yang dapat dikerahkan.');
             return false;
           }
+          const deployedUnitQuantities = Object.fromEntries(
+            losses.map(({ unitKey, quantity }) => [unitKey, quantity])
+          );
           const titleKey = 'side_inbox.dynamicNotifications.peacekeeperDeparture.title';
           const senderKey = 'side_inbox.dynamicNotifications.peacekeeperDeparture.sender';
           const messageKey = 'side_inbox.dynamicNotifications.peacekeeperDeparture.message';
@@ -1160,6 +1163,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                   targetPower: 0,
                   travelDurationDays: arrival.days,
                   deployedUnitsConfig: deploymentConfig,
+                  deployedUnitQuantities,
                   allyCountry: countryName,
                   allyIso: undefined,
                   attackerCountryDetail: playerCountryDetail,

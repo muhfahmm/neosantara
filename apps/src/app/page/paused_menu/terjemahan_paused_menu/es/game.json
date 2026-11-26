@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "INICIAR SIMULACIÓN"
   },
+  "peacekeeperForces": {
+    "title": "Fuerzas de paz en {country}",
+    "ariaLabel": "Ver las fuerzas de paz en {country}",
+    "combatPower": "Poder de combate",
+    "deployedAt": "Desplegadas desde {date}",
+    "noData": "No hay detalles de unidades disponibles para este contingente.",
+    "close": "Cerrar el modal de fuerzas de paz"
+  },
   "attackerForces": {
     "movementInfo": "Información de Movimiento Militar",
     "unitsBrought": "Número de unidades desplegadas en este ataque",

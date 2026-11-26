@@ -30,6 +30,7 @@ export type WarUnitGroup = "darat" | "laut" | "udara";
 export interface WarUnit {
   kind: UnitKind;
   group: WarUnitGroup;
+  catalogKey?: string;
   label: string;
   displayName?: string;
   quantity: number;
@@ -132,7 +133,7 @@ export function getWarUnitComposition(
         ? Math.round((rawQuantity * (typeof deployedPercent === "number" ? deployedPercent : 0)) / 100)
         : rawQuantity;
 
-      return quantity > 0 ? [{ kind, group, label, displayName, quantity }] : [];
+      return quantity > 0 ? [{ kind, group, catalogKey: key, label, displayName, quantity }] : [];
     }));
 }
 

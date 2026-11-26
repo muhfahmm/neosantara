@@ -12924,6 +12924,7 @@ export default function MapPage() {
                                     lng: targetCapital?.lng || 0,
                                     power: activeWarAnimation.playerPower || 100,
                                     deployedUnits: activeWarAnimation.deployedUnitsConfig || {},
+                                    deployedUnitQuantities: activeWarAnimation.deployedUnitQuantities || {},
                                     userArmadaSnapshot: activeWarAnimation.attackerCountryDetail?.armada || countryDetail?.armada,
                                     deployedAt: currentDate.toISOString().slice(0, 10),
                                 });

@@ -1,17 +1,22 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
+import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
 import { getMapScreenPos } from "../path-war";
 import {
   loadStationedPeacekeepers,
   PEACEKEEPER_UPDATED_EVENT,
   type StationedPeacekeeper,
 } from "./peacekeeperLogic";
+import StationedPeacekeepersModal from "./StationedPeacekeepersModal";
 
 export default function StationedPeacekeepersOverlay() {
   const [peacekeepers, setPeacekeepers] = useState<StationedPeacekeeper[]>([]);
+  const [selectedPeacekeeper, setSelectedPeacekeeper] = useState<StationedPeacekeeper | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tankGroupsRef = useRef<Map<string, SVGGElement>>(new Map());
+  const { t, language } = useLanguage();
 
   // Muat data awal dan dengarkan pembaruan
   useEffect(() => {
@@ -82,6 +87,7 @@ export default function StationedPeacekeepersOverlay() {
 
         {peacekeepers.map((pk) => {
           const screenPos = getMapScreenPos(pk.lat, pk.lng);
+          const allyName = getLocalizedCountryName(pk.allyIso || pk.allyCountry, language);
 
           return (
             <g
@@ -94,6 +100,19 @@ export default function StationedPeacekeepersOverlay() {
                 }
               }}
               transform={`translate(${screenPos?.x ?? 0} ${screenPos?.y ?? 0})`}
+              className="pointer-events-auto cursor-pointer focus:outline-none"
+              role="button"
+              tabIndex={0}
+              aria-label={t("game.peacekeeperForces.ariaLabel", { country: allyName })}
+              onClick={(event) => {
+                event.stopPropagation();
+                setSelectedPeacekeeper(pk);
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                setSelectedPeacekeeper(pk);
+              }}
             >
               {/* Aura Penjaga Perdamaian (Biru Muda PBB) */}
               <circle r={36} fill="#38BDF8" opacity={0.12} />
@@ -171,6 +190,10 @@ export default function StationedPeacekeepersOverlay() {
           );
         })}
       </svg>
+      <StationedPeacekeepersModal
+        peacekeeper={selectedPeacekeeper}
+        onClose={() => setSelectedPeacekeeper(null)}
+      />
     </div>
   );
 }

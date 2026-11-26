@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "MULAI SIMULASI"
   },
+  "peacekeeperForces": {
+    "title": "Pasukan Penjaga Perdamaian di {country}",
+    "ariaLabel": "Lihat pasukan penjaga perdamaian di {country}",
+    "combatPower": "Kekuatan tempur",
+    "deployedAt": "Ditempatkan sejak {date}",
+    "noData": "Rincian unit untuk pasukan ini tidak tersedia.",
+    "close": "Tutup modal pasukan penjaga perdamaian"
+  },
   "attackerForces": {
     "movementInfo": "Informasi Pergerakan Militer",
     "unitsBrought": "Jumlah unit yang dibawa dalam serangan ini",

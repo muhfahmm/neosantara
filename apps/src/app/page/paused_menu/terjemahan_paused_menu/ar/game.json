@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "بدء المحاكاة"
   },
+  "peacekeeperForces": {
+    "title": "قوات حفظ السلام في {country}",
+    "ariaLabel": "عرض قوات حفظ السلام في {country}",
+    "combatPower": "القوة القتالية",
+    "deployedAt": "متمركزة منذ {date}",
+    "noData": "تفاصيل الوحدات غير متاحة لهذه الكتيبة.",
+    "close": "إغلاق نافذة قوات حفظ السلام"
+  },
   "attackerForces": {
     "movementInfo": "معلومات التحركات العسكرية",
     "unitsBrought": "عدد الوحدات المشاركة في هذا الهجوم",

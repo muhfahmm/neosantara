@@ -124,6 +124,14 @@
   "selectCountry": {
     "startSimulation": "开始模拟"
   },
+  "peacekeeperForces": {
+    "title": "{country}的维和部队",
+    "ariaLabel": "查看驻扎在{country}的维和部队",
+    "combatPower": "战斗力",
+    "deployedAt": "派驻日期：{date}",
+    "noData": "暂无该分队的单位详情。",
+    "close": "关闭维和部队窗口"
+  },
   "attackerForces": {
     "movementInfo": "军事调动信息",
     "unitsBrought": "本次进攻调动的单位数量",
