@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { ShieldCheck } from "lucide-react";
 import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
@@ -10,11 +11,16 @@ import {
   getWarUnitComposition,
   type WarUnitGroup,
 } from "../../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition";
-import type { StationedPeacekeeper } from "./peacekeeperLogic";
+import {
+  getStationedPeacekeeperUnitQuantities,
+  type StationedPeacekeeper,
+} from "./peacekeeperLogic";
+import TarikPasukanModal from "./TarikPasukanModal";
 
 interface StationedPeacekeepersModalProps {
   peacekeeper: StationedPeacekeeper | null;
   onClose: () => void;
+  onWithdraw: (peacekeeper: StationedPeacekeeper) => void;
 }
 
 const GROUPS: WarUnitGroup[] = ["darat", "laut", "udara"];
@@ -22,26 +28,30 @@ const GROUPS: WarUnitGroup[] = ["darat", "laut", "udara"];
 export default function StationedPeacekeepersModal({
   peacekeeper,
   onClose,
+  onWithdraw,
 }: StationedPeacekeepersModalProps) {
   const { t, language } = useLanguage();
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
   if (!peacekeeper || typeof document === "undefined") return null;
 
   const countryName = getLocalizedCountryName(peacekeeper.allyIso || peacekeeper.allyCountry, language);
-  const units = peacekeeper.deployedUnitQuantities
-    ? getWarUnitComposition(peacekeeper.deployedUnitQuantities, {}, false)
-    : getWarUnitComposition(
-        peacekeeper.userArmadaSnapshot || {},
-        peacekeeper.deployedUnits || {},
-        true,
-      );
+  const units = getWarUnitComposition(
+    getStationedPeacekeeperUnitQuantities(peacekeeper),
+    {},
+    false,
+  );
   const deployedDate = new Date(`${peacekeeper.deployedAt}T12:00:00`);
   const formattedDate = Number.isFinite(deployedDate.getTime())
     ? formatLocaleDate(deployedDate, language)
     : peacekeeper.deployedAt;
 
   return createPortal(
-    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[100000001]">
+    <NotebookModalWrapper
+      onClose={onClose}
+      isHidden={isWithdrawModalOpen}
+      zIndexClass="z-[100000001]"
+    >
       <section
         role="dialog"
         aria-modal="true"
@@ -115,7 +125,23 @@ export default function StationedPeacekeepersModal({
             </p>
           )}
         </div>
+        <footer className="flex shrink-0 justify-end border-t border-root-accent/20 p-3 sm:p-4">
+          <button
+            type="button"
+            onClick={() => setIsWithdrawModalOpen(true)}
+            className="min-h-[44px] rounded-xl border border-sky-300/50 bg-sky-400/15 px-5 py-2 text-xs font-black uppercase tracking-wider text-sky-200 transition-colors hover:border-sky-200 hover:bg-sky-400/25"
+          >
+            {t("game.peacekeeperForces.withdrawButton")}
+          </button>
+        </footer>
       </section>
+      <TarikPasukanModal
+        isOpen={isWithdrawModalOpen}
+        countryName={peacekeeper.allyCountry}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        onConfirm={() => onWithdraw(peacekeeper)}
+        confirmDisabled={units.length === 0}
+      />
     </NotebookModalWrapper>,
     document.body,
   );

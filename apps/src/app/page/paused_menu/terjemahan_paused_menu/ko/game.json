@@ -130,7 +130,12 @@
     "combatPower": "전투력",
     "deployedAt": "파견일: {date}",
     "noData": "이 부대의 유닛 정보를 사용할 수 없습니다.",
-    "close": "평화유지군 모달 닫기"
+    "close": "평화유지군 모달 닫기",
+    "withdrawButton": "병력 철수",
+    "withdrawTitle": "평화유지군을 철수할까요?",
+    "withdrawMessage": "{country}에 주둔 중인 평화유지군이 본국으로 돌아갑니다. 계속할까요?",
+    "withdrawConfirm": "병력 철수",
+    "withdrawCancel": "취소"
   },
   "attackerForces": {
     "movementInfo": "군사 이동 정보",

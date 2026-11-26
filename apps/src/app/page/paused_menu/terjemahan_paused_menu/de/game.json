@@ -130,7 +130,12 @@
     "combatPower": "Kampfkraft",
     "deployedAt": "Stationiert seit {date}",
     "noData": "Für dieses Kontingent sind keine Einheitsdetails verfügbar.",
-    "close": "Modal der Friedenstruppen schließen"
+    "close": "Modal der Friedenstruppen schließen",
+    "withdrawButton": "Truppen abziehen",
+    "withdrawTitle": "Friedenstruppen abziehen?",
+    "withdrawMessage": "Die in {country} stationierten Friedenstruppen kehren in Ihr Land zurück. Fortfahren?",
+    "withdrawConfirm": "Truppen abziehen",
+    "withdrawCancel": "Abbrechen"
   },
   "attackerForces": {
     "movementInfo": "Militärische Bewegungsdaten",

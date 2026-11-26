@@ -130,7 +130,12 @@
     "combatPower": "战斗力",
     "deployedAt": "派驻日期：{date}",
     "noData": "暂无该分队的单位详情。",
-    "close": "关闭维和部队窗口"
+    "close": "关闭维和部队窗口",
+    "withdrawButton": "撤回部队",
+    "withdrawTitle": "要撤回维和部队吗？",
+    "withdrawMessage": "驻扎在{country}的维和部队将返回本国。是否继续？",
+    "withdrawConfirm": "撤回部队",
+    "withdrawCancel": "取消"
   },
   "attackerForces": {
     "movementInfo": "军事调动信息",

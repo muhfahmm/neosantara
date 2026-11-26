@@ -130,7 +130,12 @@
     "combatPower": "Combat power",
     "deployedAt": "Stationed since {date}",
     "noData": "Unit details are unavailable for this contingent.",
-    "close": "Close peacekeeping forces modal"
+    "close": "Close peacekeeping forces modal",
+    "withdrawButton": "Withdraw Troops",
+    "withdrawTitle": "Withdraw peacekeeping troops?",
+    "withdrawMessage": "The peacekeeping troops stationed in {country} will return to your country. Continue?",
+    "withdrawConfirm": "Withdraw Troops",
+    "withdrawCancel": "Cancel"
   },
   "attackerForces": {
     "movementInfo": "Military Movement Information",

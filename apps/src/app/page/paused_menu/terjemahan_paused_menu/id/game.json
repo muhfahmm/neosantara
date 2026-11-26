@@ -130,7 +130,12 @@
     "combatPower": "Kekuatan tempur",
     "deployedAt": "Ditempatkan sejak {date}",
     "noData": "Rincian unit untuk pasukan ini tidak tersedia.",
-    "close": "Tutup modal pasukan penjaga perdamaian"
+    "close": "Tutup modal pasukan penjaga perdamaian",
+    "withdrawButton": "Tarik Pasukan",
+    "withdrawTitle": "Tarik pasukan penjaga perdamaian?",
+    "withdrawMessage": "Pasukan penjaga perdamaian di {country} akan dipulangkan ke negara Anda. Lanjutkan?",
+    "withdrawConfirm": "Tarik Pasukan",
+    "withdrawCancel": "Batal"
   },
   "attackerForces": {
     "movementInfo": "Informasi Pergerakan Militer",

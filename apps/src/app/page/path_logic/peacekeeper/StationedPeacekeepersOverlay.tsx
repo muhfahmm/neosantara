@@ -11,7 +11,13 @@ import {
 } from "./peacekeeperLogic";
 import StationedPeacekeepersModal from "./StationedPeacekeepersModal";
 
-export default function StationedPeacekeepersOverlay() {
+interface StationedPeacekeepersOverlayProps {
+  onWithdraw: (peacekeeper: StationedPeacekeeper) => void;
+}
+
+export default function StationedPeacekeepersOverlay({
+  onWithdraw,
+}: StationedPeacekeepersOverlayProps) {
   const [peacekeepers, setPeacekeepers] = useState<StationedPeacekeeper[]>([]);
   const [selectedPeacekeeper, setSelectedPeacekeeper] = useState<StationedPeacekeeper | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -193,6 +199,10 @@ export default function StationedPeacekeepersOverlay() {
       <StationedPeacekeepersModal
         peacekeeper={selectedPeacekeeper}
         onClose={() => setSelectedPeacekeeper(null)}
+        onWithdraw={(peacekeeper) => {
+          onWithdraw(peacekeeper);
+          setSelectedPeacekeeper(null);
+        }}
       />
     </div>
   );

@@ -130,7 +130,12 @@
     "combatPower": "القوة القتالية",
     "deployedAt": "متمركزة منذ {date}",
     "noData": "تفاصيل الوحدات غير متاحة لهذه الكتيبة.",
-    "close": "إغلاق نافذة قوات حفظ السلام"
+    "close": "إغلاق نافذة قوات حفظ السلام",
+    "withdrawButton": "سحب القوات",
+    "withdrawTitle": "هل تريد سحب قوات حفظ السلام؟",
+    "withdrawMessage": "ستعود قوات حفظ السلام المتمركزة في {country} إلى بلدك. هل تريد المتابعة؟",
+    "withdrawConfirm": "سحب القوات",
+    "withdrawCancel": "إلغاء"
   },
   "attackerForces": {
     "movementInfo": "معلومات التحركات العسكرية",

@@ -66,6 +66,15 @@ import {
 import { useTravelFuelQuote } from "../../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/fuelLogic/useTravelFuelQuote";
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { getDefaultInboxText } from '@/app/page/menus/inbox/logic/notificationMessage';
+import TarikPasukanModal from '../../path_logic/peacekeeper/TarikPasukanModal';
+import {
+  getStationedPeacekeeper,
+  getStationedPeacekeeperUnitQuantities,
+  PEACEKEEPER_UPDATED_EVENT,
+  removeStationedPeacekeeper,
+  restoreStationedPeacekeeperUnits,
+  type StationedPeacekeeper,
+} from '../../path_logic/peacekeeper/peacekeeperLogic';
 
 interface InformasiUmumProps {
   countryName: string;
@@ -140,6 +149,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const [isDestroyAliansiOpen, setIsDestroyAliansiOpen] = useState(false);
   const [isDestroyKontrakOpen, setIsDestroyKontrakOpen] = useState(false);
   const [isKirimPasukanModalOpen, setIsKirimPasukanModalOpen] = useState(false);
+  const [isWithdrawPeacekeeperModalOpen, setIsWithdrawPeacekeeperModalOpen] = useState(false);
+  const [stationedPeacekeeper, setStationedPeacekeeper] = useState<StationedPeacekeeper | null>(null);
   const [isPanggilSekutuModalOpen, setIsPanggilSekutuModalOpen] = useState(false);
   const [isBerikanSanksiModalOpen, setIsBerikanSanksiModalOpen] = useState(false);
   const travelFuelModalOpen = isPaktaModalOpen || isAliansiModalOpen || isKontrakModalOpen || isBuildTradeModalOpen;
@@ -167,6 +178,15 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const wasTravelFuelModalOpenRef = useRef(false);
 
   useEffect(() => {
+    const refreshStationedPeacekeeper = () => {
+      setStationedPeacekeeper(getStationedPeacekeeper(countryName));
+    };
+    refreshStationedPeacekeeper();
+    window.addEventListener(PEACEKEEPER_UPDATED_EVENT, refreshStationedPeacekeeper);
+    return () => window.removeEventListener(PEACEKEEPER_UPDATED_EVENT, refreshStationedPeacekeeper);
+  }, [countryName]);
+
+  useEffect(() => {
     if (travelFuelModalOpen && !wasTravelFuelModalOpenRef.current) {
       travelFuelTripIdRef.current = `travel-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     } else if (!travelFuelModalOpen) {
@@ -177,7 +197,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
   const isAnyModalActive = isDestroyModalOpen || isBuildEmbassyModalOpen || isEmbassyRelationRequirementModalOpen ||
     isDestroyTradeModalOpen || isBuildTradeModalOpen || isPaktaModalOpen || isAliansiModalOpen || isKontrakModalOpen ||
-    isDestroyPaktaOpen || isDestroyAliansiOpen || isDestroyKontrakOpen || isKirimPasukanModalOpen || isPanggilSekutuModalOpen || isBerikanSanksiModalOpen;
+    isDestroyPaktaOpen || isDestroyAliansiOpen || isDestroyKontrakOpen || isKirimPasukanModalOpen ||
+    isWithdrawPeacekeeperModalOpen || isPanggilSekutuModalOpen || isBerikanSanksiModalOpen;
 
   useLayoutEffect(() => {
     if (onActionModalStateChange) {
@@ -649,7 +670,23 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-root-canvas text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
           <ActionButton icon={FlaskConical} label={isResearchRatifying ? t('detail_negara_ai.actions.ratifying') : kontrakIsActive ? t('detail_negara_ai.actions.endResearchContract') : t('detail_negara_ai.actions.researchContract')} onClick={() => { kontrakIsActive ? openActionModal(setIsDestroyKontrakOpen) : openActionModal(setIsKontrakModalOpen); }} disabled={!hasUsableEmbassy || isResearchRatifying || isDiplomacyBlocked} keepOpacity={isResearchRatifying} title={isDiplomacyBlocked ? t('detail_negara_ai.tooltips.diplomacyBlocked') : undefined} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-root-accent' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-root-accent' : undefined} />
         </div>
-        <ActionButton icon={Sword} label={t('detail_negara_ai.actions.sendTroops')} onClick={() => { openActionModal(setIsKirimPasukanModalOpen); }} disabled={!aliansiIsActive} />
+        <ActionButton
+          icon={Sword}
+          label={t('detail_negara_ai.actions.sendTroops')}
+          onClick={() => {
+            if (stationedPeacekeeper) {
+              openActionModal(setIsWithdrawPeacekeeperModalOpen);
+              return;
+            }
+            openActionModal(setIsKirimPasukanModalOpen);
+          }}
+          disabled={!stationedPeacekeeper && !aliansiIsActive}
+          className={stationedPeacekeeper
+            ? 'bg-sky-500/10 border-2 !border-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.2)]'
+            : undefined}
+          iconClass={stationedPeacekeeper ? 'text-sky-300' : undefined}
+          labelClass={stationedPeacekeeper ? 'text-sky-200' : undefined}
+        />
         <ActionButton icon={Phone} label={t('detail_negara_ai.actions.callAlly')} onClick={() => { openActionModal(setIsPanggilSekutuModalOpen); }} disabled={!aliansiIsActive} />
         <ActionButton
           icon={Ban}
@@ -1174,6 +1211,24 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           }
           console.log(`Perintah kirim pasukan penjaga perdamaian ke ${countryName} dikonfirmasi.`, deploymentConfig);
           return true;
+        }}
+      />
+
+      <TarikPasukanModal
+        isOpen={isWithdrawPeacekeeperModalOpen}
+        countryName={countryName}
+        onClose={() => setIsWithdrawPeacekeeperModalOpen(false)}
+        confirmDisabled={
+          !setPlayerCountryDetail ||
+          !stationedPeacekeeper ||
+          Object.keys(getStationedPeacekeeperUnitQuantities(stationedPeacekeeper)).length === 0
+        }
+        onConfirm={() => {
+          if (!stationedPeacekeeper || !setPlayerCountryDetail) return;
+          setPlayerCountryDetail((previous: Record<string, unknown> | null) =>
+            restoreStationedPeacekeeperUnits(previous, stationedPeacekeeper)
+          );
+          removeStationedPeacekeeper(stationedPeacekeeper.allyCountry);
         }}
       />
 

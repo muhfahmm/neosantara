@@ -75,7 +75,13 @@ const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara'
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
 const StationedPeacekeepersOverlay = dynamic(() => import('../path_logic/peacekeeper/StationedPeacekeepersOverlay'), { ssr: false });
-import { addStationedPeacekeeper, getStationedPeacekeeperPower, getStationedPeacekeeper } from '../path_logic/peacekeeper/peacekeeperLogic';
+import {
+    addStationedPeacekeeper,
+    getStationedPeacekeeperPower,
+    getStationedPeacekeeper,
+    removeStationedPeacekeeper,
+    restoreStationedPeacekeeperUnits,
+} from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint, getCapitalCoord } from '../path_logic/path-war';
 import {
@@ -13307,7 +13313,15 @@ export default function MapPage() {
             })()}
 
             {/* Overlay Tank Penjaga Perdamaian PBB yang Berjaga di Ibukota Sekutu */}
-            <StationedPeacekeepersOverlay />
+            <StationedPeacekeepersOverlay
+                onWithdraw={(peacekeeper) => {
+                    if (!countryDetail) return;
+                    setCountryDetail((previous: Record<string, unknown> | null) =>
+                        restoreStationedPeacekeeperUnits(previous, peacekeeper)
+                    );
+                    removeStationedPeacekeeper(peacekeeper.allyCountry);
+                }}
+            />
 
             {/* Shifted Canvas Container */}
             <MapCanvasView

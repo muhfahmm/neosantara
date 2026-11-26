@@ -130,7 +130,12 @@
     "combatPower": "戦闘力",
     "deployedAt": "派遣日：{date}",
     "noData": "この部隊のユニット情報はありません。",
-    "close": "平和維持部隊のモーダルを閉じる"
+    "close": "平和維持部隊のモーダルを閉じる",
+    "withdrawButton": "部隊を撤収",
+    "withdrawTitle": "平和維持部隊を撤収しますか？",
+    "withdrawMessage": "{country}に駐留する平和維持部隊は自国へ帰還します。続行しますか？",
+    "withdrawConfirm": "部隊を撤収",
+    "withdrawCancel": "キャンセル"
   },
   "attackerForces": {
     "movementInfo": "軍事移動情報",

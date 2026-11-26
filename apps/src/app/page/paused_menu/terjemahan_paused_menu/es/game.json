@@ -130,7 +130,12 @@
     "combatPower": "Poder de combate",
     "deployedAt": "Desplegadas desde {date}",
     "noData": "No hay detalles de unidades disponibles para este contingente.",
-    "close": "Cerrar el modal de fuerzas de paz"
+    "close": "Cerrar el modal de fuerzas de paz",
+    "withdrawButton": "Retirar tropas",
+    "withdrawTitle": "¿Retirar las tropas de paz?",
+    "withdrawMessage": "Las tropas de mantenimiento de la paz desplegadas en {country} volverán a tu país. ¿Continuar?",
+    "withdrawConfirm": "Retirar tropas",
+    "withdrawCancel": "Cancelar"
   },
   "attackerForces": {
     "movementInfo": "Información de Movimiento Militar",
