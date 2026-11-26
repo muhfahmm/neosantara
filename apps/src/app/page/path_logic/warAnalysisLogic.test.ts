@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { combineMilitaryAidWithDefender } from './warAnalysisLogic.ts';
+import {
+  combineMilitaryAidWithDefender,
+  isPlayerWarWinner,
+} from './warAnalysisLogic.ts';
+
+test('military aid counts a target-side victory as the player-side victory', () => {
+  assert.equal(isPlayerWarWinner('target', false, true), true);
+  assert.equal(isPlayerWarWinner('attacker', false, true), false);
+  assert.equal(isPlayerWarWinner('attacker', false, false), true);
+});
 
 test('military aid is added to the defender side using deployed percentages', () => {
   const result = combineMilitaryAidWithDefender({

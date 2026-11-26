@@ -12,6 +12,14 @@ export interface ArmadaPowerBreakdownEntry {
   totalPower: number;
 }
 
+export function isPlayerWarWinner(
+  winner: 'attacker' | 'target' | 'draw',
+  isUserDefender: boolean,
+  isMilitaryAid: boolean,
+): boolean {
+  return winner === (isUserDefender || isMilitaryAid ? 'target' : 'attacker');
+}
+
 export function combineMilitaryAidWithDefender({
   defenderDetail,
   defenderBreakdown,

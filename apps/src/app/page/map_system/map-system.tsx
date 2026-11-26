@@ -4190,6 +4190,8 @@ export default function MapPage() {
                     targetPower: undefined,
                     militaryAidSupportCountry: supportCountry,
                     militaryAidCountryDetail: detail.attackerCountryDetail,
+                    militaryAidArmySnapshot: detail.committedArmySnapshot,
+                    militaryAidDeploymentConfig: detail.deployedUnitsConfig,
                     troopsCommitted: false,
                 };
             }
@@ -4418,6 +4420,11 @@ export default function MapPage() {
                             combinedDefender.addedPower,
                         attackerCountryDetail: battleDetail.attackerCountryDetail,
                         targetCountryDetail: combinedDefender.detail,
+                        militaryAidDefenderCountryDetail: battleDetail.targetCountryDetail,
+                        militaryAidSupportCountry: aidAttackerCountry,
+                        militaryAidCountryDetail: aidDetail.attackerCountryDetail,
+                        militaryAidArmySnapshot: aidDetail.committedArmySnapshot,
+                        militaryAidDeploymentConfig: aidDetail.deployedUnitsConfig,
                         isNpcWar: battleDetail.isNpcWar ?? isNpcWar,
                         isUserDefender: battleDetail.isUserDefender ?? isPlayerDefender,
                         isPlayerAttacker: battleDetail.isPlayerAttacker ?? isPlayerAttack,
@@ -5036,8 +5043,10 @@ export default function MapPage() {
             }
 
             let militaryAidPower = 0;
+            let militaryAidDefenderCountryDetail: unknown;
             if (isStandaloneMilitaryAid) {
                 const supportCountry = String(detail.militaryAidSupportCountry || '');
+                militaryAidDefenderCountryDetail = targetDetailData;
                 const supportDetail = resolveCountryDetail(
                     supportCountry,
                     detail.militaryAidCountryDetail,
@@ -5113,6 +5122,9 @@ export default function MapPage() {
                 targetCityIsCapital: targetCity?.isCapital,
                 attackerCountryDetail: attackerDetailData,
                 targetCountryDetail: targetDetailData,
+                ...(isStandaloneMilitaryAid
+                    ? { militaryAidDefenderCountryDetail }
+                    : {}),
                 isUserDefender: isPlayerDefender,
                 isPlayerAttacker: isPlayerAttack,
                 unauthorizedAttackSanctionsApplied,
@@ -12751,6 +12763,13 @@ export default function MapPage() {
                                 }
                                 setResultModal(modal);
                             };
+                            const isMilitaryAidBattle =
+                                activeWarAnimation.isMilitaryAid === true &&
+                                activeWarAnimation.isPeacekeeperDeploy !== true;
+                            const defenderCountryDetail = isMilitaryAidBattle
+                                ? activeWarAnimation.militaryAidDefenderCountryDetail ||
+                                    activeWarAnimation.targetCountryDetail
+                                : activeWarAnimation.targetCountryDetail;
                             if (activeWarAnimation.isUserDefender === true) {
                                 if (result !== 'lose') {
                                     submitSanctionsForWar(activeWarAnimation, 'failed');
@@ -12775,7 +12794,52 @@ export default function MapPage() {
                                 activeWarAnimation.isPlayerAttacker !== true &&
                                 !isUserDefender
                             ) {
-                                applyNpcWarLosses(activeWarAnimation.targetCountryDetail, targetLossRatio);
+                                applyNpcWarLosses(defenderCountryDetail, targetLossRatio);
+                            }
+                            if (isMilitaryAidBattle) {
+                                const aidArmySnapshot =
+                                    activeWarAnimation.militaryAidArmySnapshot ||
+                                    activeWarAnimation.committedArmySnapshot ||
+                                    activeWarAnimation.militaryAidCountryDetail;
+                                if (!aidArmySnapshot) {
+                                    console.error('[WarAnimation] Military aid result has no committed army snapshot.');
+                                } else {
+                                    const aidLossRatio =
+                                        typeof targetLossRatio === 'number' && Number.isFinite(targetLossRatio)
+                                            ? Math.min(1, Math.max(0, targetLossRatio))
+                                            : 0;
+                                    const aidDeploymentConfig =
+                                        activeWarAnimation.militaryAidDeploymentConfig ||
+                                        activeWarAnimation.deployedUnitsConfig;
+                                    const { updatedDetail: updatedAidDetail, lossSummaryText, losses } =
+                                        applyWarLossesToUserArmada(
+                                            aidArmySnapshot,
+                                            aidLossRatio,
+                                            false,
+                                            aidDeploymentConfig,
+                                        );
+                                    setCountryDetail(updatedAidDetail);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: result === 'win'
+                                            ? 'Bantuan Militer Berhasil'
+                                            : 'Bantuan Militer Gagal',
+                                        message: result === 'win'
+                                            ? `${activeWarAnimation.target} dan pasukan bantuan ${activeWarAnimation.militaryAidSupportCountry || playerCountryName} berhasil menahan serangan ${activeWarAnimation.attacker}. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`
+                                            : `${activeWarAnimation.target} gagal menahan serangan ${activeWarAnimation.attacker}. Kerugian pasukan bantuan: ${lossSummaryText || 'tidak ada'}.`,
+                                        losses,
+                                        type: result === 'win' ? 'success' : 'error',
+                                        persistent: true,
+                                    });
+                                }
+                                setIsWarAnalysisActive(false);
+                                if (activeWarAnimation?.isPlayerAttacker === true) {
+                                    setActivePlayerAttack(null);
+                                }
+                                setActiveWarAnimation(null);
+                                npcWarQueueRunningRef.current = false;
+                                resumeGameTimeAfterWar();
+                                return;
                             }
                             if (isUserDefender) {
                                 if (result === 'lose') {

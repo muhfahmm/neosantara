@@ -44,6 +44,7 @@ import {
   quadraticMotionRust,
   quadraticMotionFastRust,
 } from './routeMathRust';
+import { isPlayerWarWinner } from './warAnalysisLogic';
 
 /* ============================================================
  * TIPE & INTERFACE
@@ -602,6 +603,7 @@ export interface WarResultInput {
   attackerBonus?: number;
   defenderBonus?: number;
   isUserDefender?: boolean;
+  isMilitaryAid?: boolean;
   isNpcWar?: boolean;
   targetCityIsCapital?: boolean;
 }
@@ -681,7 +683,12 @@ function getDeployedPowerRatio(
 }
 
 export function computeWarResult(input: WarResultInput): WarResultOutput {
-  const { attackerPower, targetPower, isUserDefender = false, isNpcWar = false } = input;
+  const {
+    attackerPower,
+    targetPower,
+    isUserDefender = false,
+    isNpcWar = false,
+  } = input;
 
   let deployedPowerRatio = input.attackerDeploymentPowerRatio ?? 1.0;
   // Perang antar NPC/mandat tidak boleh dipengaruhi konfigurasi pasukan milik user.
@@ -725,9 +732,7 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
         : actualTargetPower > 0
           ? 'target'
           : 'draw';
-    const isUserWin = isUserDefender
-      ? winner === 'target'
-      : winner === 'attacker';
+    const isUserWin = isPlayerWarWinner(winner, isUserDefender, input.isMilitaryAid === true);
     return {
       result: isUserWin ? 'win' : 'lose',
       attackerScore: actualAttackerPower,
@@ -787,7 +792,9 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     : 0;
 
   return {
-    result: (isUserDefender ? winner === 'target' : winner === 'attacker') ? 'win' : 'lose',
+    result: isPlayerWarWinner(winner, isUserDefender, input.isMilitaryAid === true)
+      ? 'win'
+      : 'lose',
     attackerScore,
     targetScore,
     attackerLossRatio,
@@ -1081,6 +1088,7 @@ export default function WarMap({
       attackerBonus,
       defenderBonus,
       isUserDefender,
+      isMilitaryAid,
       isNpcWar: isNpcWar && !isPbbCoalition,
       targetCityIsCapital: target.cityIsCapital,
       requestedInvasion,
@@ -1127,6 +1135,7 @@ export default function WarMap({
     committedDeploymentConfig,
     deploymentConfig,
     isUserDefender,
+    isMilitaryAid,
     isNpcWar,
     requestedInvasion,
     attackerBonus,
@@ -1937,13 +1946,13 @@ export default function WarMap({
                 className={`text-xl font-black uppercase tracking-widest ${result === 'win' ? 'text-root-accent' : 'text-root-danger'
                   }`}
               >
-                {isUserDefender
+                {(isUserDefender || isMilitaryAid)
                   ? tr(result === 'win' ? "warResult.defenseWon" : "warResult.defenseLost")
                   : tr(result === 'win' ? "result.victory" : "warResult.attackerLost")}
               </h2>
               <p className="text-xs text-root-text mt-2 leading-relaxed">
                 {tr(
-                  isUserDefender
+                  (isUserDefender || isMilitaryAid)
                     ? result === 'win'
                       ? "warResult.defenseVictorySummary"
                       : "warResult.defenseDefeatSummary"
@@ -2047,7 +2056,7 @@ export default function WarMap({
             </div>
 
             <div className="p-5 space-y-3">
-              {isUserDefender ? (
+              {isUserDefender || isMilitaryAid ? (
                 <div className="space-y-3">
                   <div className={`flex items-start gap-3 p-3 rounded-xl ${result === 'win' ? 'bg-root-accent/10 border border-root-accent/30' : 'bg-root-danger/10 border border-root-danger/30'}`}>
                     <AlertTriangle className={`h-4 w-4 ${result === 'win' ? 'text-root-accent' : 'text-root-danger'} mt-0.5 flex-shrink-0`} />
