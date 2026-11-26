@@ -765,6 +765,12 @@
     "yearMany": "{count} years"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "Military Aid Arrived Too Late",
+      "sender": "Ministry of Defense",
+      "unknownAlly": "an allied country",
+      "message": "Military aid did not arrive before the battle in {allyCountry} began. The troops were returned and did not take part in the battle."
+    },
     "npcWar": {
       "title": "⚔️ WAR BETWEEN NATIONS",
       "sender": "Ministry of Foreign Affairs — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ MILITARY AID REQUEST: {target}",
-      "sender": "MINISTRY OF DEFENSE — {target}"
+      "sender": "MINISTRY OF DEFENSE — {target}",
+      "allyStrength": "Ally Strength",
+      "attackerStrength": "Attacker Strength"
     }
   },
   "dynamicEventTranslations": {

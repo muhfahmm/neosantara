@@ -765,6 +765,12 @@
     "yearMany": "{count}년"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "군사 지원이 제시간에 도착하지 못했습니다",
+      "sender": "국방부",
+      "unknownAlly": "동맹국",
+      "message": "{allyCountry}에서 전투가 시작되기 전에 군사 지원이 도착하지 못했습니다. 병력은 귀환했으며 전투에 참여하지 않았습니다."
+    },
     "npcWar": {
       "title": "⚔️ 국가 간 전쟁",
       "sender": "외교부 — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ 군사 지원 요청: {target}",
-      "sender": "국방부 — {target}"
+      "sender": "국방부 — {target}",
+      "allyStrength": "동맹군 전력",
+      "attackerStrength": "공격 측 전력"
     }
   },
   "dynamicEventTranslations": {

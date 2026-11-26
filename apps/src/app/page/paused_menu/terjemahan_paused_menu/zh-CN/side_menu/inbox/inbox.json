@@ -765,6 +765,12 @@
     "yearMany": "{count}年"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "军事援军未能及时抵达",
+      "sender": "国防部",
+      "unknownAlly": "盟国",
+      "message": "军事援军未能在{allyCountry}的战斗开始前抵达。部队已返回，未参加战斗。"
+    },
     "npcWar": {
       "title": "⚔️ 国家间战争",
       "sender": "外交部 — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ 军事援助请求：{target}",
-      "sender": "国防部 — {target}"
+      "sender": "国防部 — {target}",
+      "allyStrength": "盟军战力",
+      "attackerStrength": "进攻方战力"
     }
   },
   "dynamicEventTranslations": {

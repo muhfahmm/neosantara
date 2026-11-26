@@ -403,6 +403,109 @@ function sampleBinomialLoss(deployedQty: number, lossRatio: number): number {
  * Mengambil sampel jumlah unit yang hilang dengan peluang kerugian sesuai lossRatio.
  * Pengurangan ini hanya memutasi state/localStorage user aktif tanpa mengubah template default database.
  */
+const ALL_UNIT_KEYS = [
+  'barak', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
+  'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+  'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
+  'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+  'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
+  'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
+];
+
+const firstPositive = (...values: unknown[]) => values
+  .map(value => Number(value))
+  .find(value => Number.isFinite(value) && value > 0) ?? 0;
+
+type ArmyDetail = Record<string, unknown>;
+
+const asArmyDetail = (value: unknown): ArmyDetail | null =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? value as ArmyDetail
+    : null;
+
+const getArmyUnitQuantity = (detail: unknown, key: string) => {
+  const record = asArmyDetail(detail);
+  if (!record) return 0;
+  const armada = asArmyDetail(record.armada);
+  const darat = asArmyDetail(armada?.darat);
+  const laut = asArmyDetail(armada?.laut);
+  const udara = asArmyDetail(armada?.udara);
+  const armadaQuantity = firstPositive(
+    record[key],
+    armada?.[key],
+    darat?.[key],
+    laut?.[key],
+    udara?.[key],
+  );
+  return key === 'barak'
+    ? firstPositive(
+      record.pasukan_infanteri,
+      armada?.pasukan_infanteri,
+      darat?.pasukan_infanteri,
+      armadaQuantity * 800,
+    )
+    : armadaQuantity;
+};
+
+export function restoreCommittedArmyDeployment(
+  currentDetail: ArmyDetail | null,
+  armySnapshot: unknown,
+  committedDetail: unknown,
+): ArmyDetail | null {
+  if (!currentDetail || !armySnapshot || !committedDetail) return currentDetail;
+
+  const nextDetail = JSON.parse(JSON.stringify(currentDetail)) as ArmyDetail;
+  ALL_UNIT_KEYS.forEach(key => {
+    const deployedQuantity = Math.max(
+      0,
+      getArmyUnitQuantity(armySnapshot, key) - getArmyUnitQuantity(committedDetail, key),
+    );
+    if (deployedQuantity <= 0) return;
+
+    const currentQuantity = getArmyUnitQuantity(nextDetail, key);
+    if (key === 'barak') {
+      const infantry = currentQuantity + deployedQuantity;
+      nextDetail.pasukan_infanteri = infantry;
+      nextDetail.barak = Math.floor(infantry / 800);
+      const armada = asArmyDetail(nextDetail.armada);
+      if (armada) {
+        nextDetail.armada = {
+          ...armada,
+          pasukan_infanteri: infantry,
+          barak: nextDetail.barak,
+          darat: {
+            ...asArmyDetail(armada.darat),
+            pasukan_infanteri: infantry,
+            barak: nextDetail.barak,
+          },
+        };
+      }
+      return;
+    }
+
+    const restoredQuantity = currentQuantity + deployedQuantity;
+    nextDetail[key] = restoredQuantity;
+    const armada = asArmyDetail(nextDetail.armada);
+    if (!armada) return;
+
+    const group = key.startsWith('kapal_')
+      ? 'laut'
+      : /^(jet_|pesawat_|helikopter_|drone_)/.test(key)
+        ? 'udara'
+        : 'darat';
+    nextDetail.armada = {
+      ...armada,
+      [key]: restoredQuantity,
+      [group]: {
+        ...asArmyDetail(armada[group]),
+        [key]: restoredQuantity,
+      },
+    };
+  });
+
+  return nextDetail;
+}
+
 export function applyWarLossesToUserArmada(
   countryDetail: any,
   lossRatio: number = 0.75,
@@ -430,19 +533,6 @@ export function applyWarLossesToUserArmada(
   }
 
   const nextDetail = JSON.parse(JSON.stringify(countryDetail));
-  const firstPositive = (...values: unknown[]) => values
-    .map(value => Number(value))
-    .find(value => Number.isFinite(value) && value > 0) ?? 0;
-
-  const ALL_UNIT_KEYS = [
-    'barak', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
-    'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
-    'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
-    'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
-    'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
-    'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
-  ];
-
   const lostSummaryItems: string[] = [];
   const losses: Array<{ unitKey: string; quantity: number }> = [];
 

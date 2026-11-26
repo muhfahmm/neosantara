@@ -765,6 +765,12 @@
     "yearMany": "{count}年"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "軍事支援が間に合いませんでした",
+      "sender": "国防省",
+      "unknownAlly": "同盟国",
+      "message": "{allyCountry}での戦闘開始前に軍事支援が到着しませんでした。部隊は帰還し、戦闘には参加しませんでした。"
+    },
     "npcWar": {
       "title": "⚔️ 国家間戦争",
       "sender": "外務省 — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ 軍事支援要請: {target}",
-      "sender": "防衛省 — {target}"
+      "sender": "防衛省 — {target}",
+      "allyStrength": "同盟国の戦力",
+      "attackerStrength": "攻撃側の戦力"
     }
   },
   "dynamicEventTranslations": {

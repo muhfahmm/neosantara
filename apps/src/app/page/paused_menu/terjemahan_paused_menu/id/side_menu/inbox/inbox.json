@@ -765,6 +765,12 @@
     "yearMany": "{count} tahun"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "Bantuan Militer Tidak Sempat Bergabung",
+      "sender": "Kementerian Pertahanan",
+      "unknownAlly": "negara sekutu",
+      "message": "Pasukan bantuan tidak tiba sebelum pertempuran di {allyCountry} dimulai. Pasukan dikembalikan dan tidak ikut dalam pertempuran."
+    },
     "npcWar": {
       "title": "⚔️ PERANG ANTARNEGARA",
       "sender": "Kementerian Luar Negeri — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ PERMINTAAN BANTUAN MILITER: {target}",
-      "sender": "KEMENTERIAN PERTAHANAN — {target}"
+      "sender": "KEMENTERIAN PERTAHANAN — {target}",
+      "allyStrength": "Kekuatan Sekutu",
+      "attackerStrength": "Kekuatan Penyerang"
     }
   },
   "dynamicEventTranslations": {

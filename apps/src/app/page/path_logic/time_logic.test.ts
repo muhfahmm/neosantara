@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   estimateEmbassyConstructionDays,
   estimateTravelTime,
+  doesRouteArriveBefore,
   getTravelArrivalDateString,
   getEmbassyConstructionDaysFromDistance,
 } from "./time_logic.ts";
@@ -24,6 +25,12 @@ test("routes without distance-based timing keep the existing three-day duration"
   const route = estimateTravelTime("Indonesia", "Amerika Serikat");
 
   assert.equal(route?.days, 3);
+});
+
+test("route arrival ordering gives the attacker priority on a tie", () => {
+  assert.equal(doesRouteArriveBefore(2, 3, 0, 4), false);
+  assert.equal(doesRouteArriveBefore(0, 3, 0, 4), true);
+  assert.equal(doesRouteArriveBefore(0, 3, 0, 3), false);
 });
 
 test("travel arrival dates advance by whole simulation days across leap years", () => {

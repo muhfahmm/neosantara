@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   estimateBattleWinProbability,
   getMinimumLossRatioForCasualty,
+  restoreCommittedArmyDeployment,
   resolveBattleDamage,
   simulateBattleTs,
 } from './battleEngine.ts';
@@ -63,6 +64,55 @@ test('a seeded battle produces the same outcome and combat log', () => {
   };
 
   assert.deepEqual(simulateBattleTs(input), simulateBattleTs(input));
+});
+
+test('returning an unengaged deployment restores units without reverting fuel or other updates', () => {
+  const armySnapshot = {
+    pasukan_infanteri: 8000,
+    barak: 10,
+    tank_tempur_utama: 4,
+    armada: {
+      pasukan_infanteri: 8000,
+      barak: 10,
+      tank_tempur_utama: 4,
+      darat: {
+        pasukan_infanteri: 8000,
+        barak: 10,
+        tank_tempur_utama: 4,
+      },
+    },
+  };
+  const committedDetail = {
+    pasukan_infanteri: 4000,
+    barak: 5,
+    tank_tempur_utama: 2,
+    armada: {
+      pasukan_infanteri: 4000,
+      barak: 5,
+      tank_tempur_utama: 2,
+      darat: {
+        pasukan_infanteri: 4000,
+        barak: 5,
+        tank_tempur_utama: 2,
+      },
+    },
+  };
+  const currentDetail = {
+    ...committedDetail,
+    fuel: 35,
+    budget: 1200,
+  };
+
+  const restored = restoreCommittedArmyDeployment(
+    currentDetail,
+    armySnapshot,
+    committedDetail,
+  );
+
+  assert.equal(restored.pasukan_infanteri, 8000);
+  assert.equal(restored.armada.darat.tank_tempur_utama, 4);
+  assert.equal(restored.fuel, 35);
+  assert.equal(restored.budget, 1200);
 });
 
 test('battle win probabilities are deterministic and account for draws', () => {

@@ -78,8 +78,16 @@ const StationedPeacekeepersOverlay = dynamic(() => import('../path_logic/peaceke
 import { addStationedPeacekeeper, getStationedPeacekeeperPower, getStationedPeacekeeper } from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint, getCapitalCoord } from '../path_logic/path-war';
-import { estimateTravelTime } from '../path_logic/time_logic';
-import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import {
+    doesRouteArriveBefore,
+    estimateTravelTime,
+    getSimulationDayPosition,
+    MAX_TRAVEL_DAYS,
+} from '../path_logic/time_logic';
+import {
+    applyWarLossesToUserArmada,
+    restoreCommittedArmyDeployment,
+} from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import {
     lootUserProductionInventory,
     resolvePlayerLootOperation,
@@ -3989,6 +3997,7 @@ export default function MapPage() {
     const [isWarAnalysisActive, setIsWarAnalysisActive] = useState(false);
     const isWarAnalysisActiveRef = useRef(false);
     const [isAttackerForcesModalOpen, setIsAttackerForcesModalOpen] = useState(false);
+    const activeWarBattlePhaseRef = useRef<'travel' | 'impact' | 'comparison' | 'result'>('travel');
     const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
         const analysisIsVisible = isVisible &&
             activeWarAnimationRef.current?.shouldShowBattleAnalysis === true;
@@ -4029,6 +4038,7 @@ export default function MapPage() {
         }
     }, []);
     const handleWarBattlePhaseChange = useCallback((phase: 'travel' | 'impact' | 'comparison' | 'result') => {
+        activeWarBattlePhaseRef.current = phase;
         const runId = activeWarAnimationRef.current?.__neosantaraDebugRunId;
         if (typeof window !== 'undefined' && typeof runId === 'string') {
             window.dispatchEvent(new CustomEvent('neosantara_debug_battle_phase', {
@@ -4164,6 +4174,45 @@ export default function MapPage() {
                     ...(reason ? { reason } : {}),
                 });
             };
+            const returnUnengagedMilitaryAid = (
+                aidDetail: Record<string, unknown>,
+                reason: string,
+            ) => {
+                const armySnapshot = aidDetail.committedArmySnapshot;
+                const committedDetail = aidDetail.committedArmyDetail;
+                if (aidDetail.troopsCommitted === true && armySnapshot && committedDetail) {
+                    setCountryDetail((previous: Record<string, unknown> | null) =>
+                        restoreCommittedArmyDeployment(previous, armySnapshot, committedDetail)
+                    );
+                } else if (aidDetail.troopsCommitted === true) {
+                    console.error('[WarAnimation] Cannot return unengaged aid troops without both army snapshots.', {
+                        supportCountry: aidDetail.attacker,
+                        allyCountry: aidDetail.allyCountry || aidDetail.target,
+                    });
+                }
+                const allyCountry = String(aidDetail.allyCountry || aidDetail.target || '').trim();
+                const titleKey = 'side_inbox.dynamicNotifications.militaryAidLate.title';
+                const senderKey = 'side_inbox.dynamicNotifications.militaryAidLate.sender';
+                setNotifications(previous => [{
+                    id: `military-aid-late-${Date.now()}`,
+                    title: getDefaultInboxText(titleKey),
+                    titleKey,
+                    sender: getDefaultInboxText(senderKey),
+                    senderKey,
+                    ...createInboxNotificationText(
+                        'side_inbox.dynamicNotifications.militaryAidLate.message',
+                        { allyCountry },
+                        allyCountry
+                            ? {}
+                            : { allyCountry: 'side_inbox.dynamicNotifications.militaryAidLate.unknownAlly' },
+                    ),
+                    timestamp: currentDate.toISOString().slice(0, 10),
+                    type: 'kepuasan',
+                    value: 0,
+                    isRead: false,
+                }, ...previous]);
+                reportDebugStatus('cancelled', reason);
+            };
             const isStandaloneMilitaryAid =
                 detail?.isMilitaryAid === true &&
                 detail?.isPeacekeeperDeploy !== true &&
@@ -4178,22 +4227,14 @@ export default function MapPage() {
                         aggressorCountry,
                         allyCountry,
                     });
-                    reportDebugStatus('cancelled', 'Data negara bantuan militer tidak lengkap.');
-                    return;
+                    returnUnengagedMilitaryAid(detail, 'Data negara bantuan militer tidak lengkap.');
+                } else {
+                    returnUnengagedMilitaryAid(
+                        detail,
+                        'Tidak ada pertempuran aktif yang dapat diikuti oleh pasukan bantuan.'
+                    );
                 }
-                detail = {
-                    ...detail,
-                    attacker: aggressorCountry,
-                    target: allyCountry,
-                    attackerCountryDetail: detail.aggressorCountryDetail,
-                    playerPower: undefined,
-                    targetPower: undefined,
-                    militaryAidSupportCountry: supportCountry,
-                    militaryAidCountryDetail: detail.attackerCountryDetail,
-                    militaryAidArmySnapshot: detail.committedArmySnapshot,
-                    militaryAidDeploymentConfig: detail.deployedUnitsConfig,
-                    troopsCommitted: false,
-                };
+                return;
             }
             if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
                 console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
@@ -4231,6 +4272,23 @@ export default function MapPage() {
                 areSameWarCountry(mandate.proposerName, detail.attacker) &&
                 areSameWarCountry(mandate.targetName, detail.target)
             );
+            const currentSimulationDayPosition =
+                getSimulationDayPosition() ?? currentDate.getTime() / (24 * 60 * 60 * 1000);
+            const routeEstimate = estimateTravelTime(detail.attacker, detail.target, {
+                diplomacyKind: 'serang-negara',
+            });
+            const travelStartedAtDayPosition = detail.fromQueue === true
+                ? currentSimulationDayPosition
+                : typeof detail.travelStartedAtDayPosition === 'number' &&
+                    Number.isFinite(detail.travelStartedAtDayPosition)
+                    ? detail.travelStartedAtDayPosition
+                    : currentSimulationDayPosition;
+            const travelDurationDays = detail.fromQueue !== true &&
+                typeof detail.travelDurationDays === 'number' &&
+                Number.isFinite(detail.travelDurationDays) &&
+                detail.travelDurationDays > 0
+                ? detail.travelDurationDays
+                : routeEstimate?.days ?? MAX_TRAVEL_DAYS;
             detail = {
                 ...detail,
                 attackId: typeof detail.attackId === 'string' && detail.attackId
@@ -4239,6 +4297,8 @@ export default function MapPage() {
                 attackDateAtLaunch: typeof detail.attackDateAtLaunch === 'string'
                     ? detail.attackDateAtLaunch
                     : currentDate.toISOString().slice(0, 10),
+                travelStartedAtDayPosition,
+                travelDurationDays,
                 approvedMandatesAtLaunch,
                 invasionMandateAtLaunch: hasInvasionMandateAtLaunch,
             };
@@ -4368,19 +4428,74 @@ export default function MapPage() {
 
             if (activeWarAnimationRef.current) {
                 // Jika sedang ada perang aktif dan perang baru ini adalah bantuan militer (atau perang terhadap target yang sama),
-                // gabungkan menjadi konvoi simultan (dua jalur bersamaan: merah dan biru)
+                // gabungkan hanya jika konvoi bantuan diperkirakan tiba lebih dahulu.
                 if (detail.isMilitaryAid === true || activeWarAnimationRef.current.isMilitaryAid === true) {
                     const currentActive = activeWarAnimationRef.current;
+                    const incomingAid = detail.isMilitaryAid === true;
                     const aidDetail = detail.isMilitaryAid === true ? detail : currentActive;
                     const battleDetail = detail.isMilitaryAid === true ? currentActive : detail;
                     const aidAttackerCountry = String(aidDetail.attacker || '').trim();
                     const aidTargetCountry = String(aidDetail.allyCountry || aidDetail.target || '').trim();
                     if (!areSameWarCountry(aidTargetCountry, String(battleDetail.target || ''))) {
+                        if (incomingAid) {
+                            returnUnengagedMilitaryAid(
+                                aidDetail,
+                                'Pasukan bantuan tidak menuju negara yang sedang diserang.'
+                            );
+                            return;
+                        }
                         notifyPlayerOfIncomingAttack();
                         setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
                         reportDebugStatus('queued');
                         return;
                     }
+                    const expectedAggressorCountry = String(aidDetail.aggressorCountry || '').trim();
+                    if (expectedAggressorCountry && !areSameWarCountry(
+                        expectedAggressorCountry,
+                        String(battleDetail.attacker || ''),
+                    )) {
+                        if (incomingAid) {
+                            returnUnengagedMilitaryAid(
+                                aidDetail,
+                                'Penyerang aktif berbeda dari penyerang yang dituju bantuan.'
+                            );
+                            return;
+                        }
+                        notifyPlayerOfIncomingAttack();
+                        setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
+                        reportDebugStatus('queued');
+                        return;
+                    }
+                    const currentDayPosition =
+                        getSimulationDayPosition() ?? currentDate.getTime() / (24 * 60 * 60 * 1000);
+                    const getRouteStartDayPosition = (route: Record<string, unknown>) => {
+                        if (typeof route.travelStartedAtDayPosition === 'number' &&
+                            Number.isFinite(route.travelStartedAtDayPosition)) {
+                            return route.travelStartedAtDayPosition;
+                        }
+                        const launchDate = typeof route.attackDateAtLaunch === 'string'
+                            ? new Date(route.attackDateAtLaunch)
+                            : null;
+                        if (!launchDate || !Number.isFinite(launchDate.getTime())) {
+                            return currentDayPosition;
+                        }
+                        const today = new Date(currentDate.toISOString().slice(0, 10));
+                        const elapsedCalendarDays = Math.max(
+                            0,
+                            Math.floor((today.getTime() - launchDate.getTime()) / (24 * 60 * 60 * 1000)),
+                        );
+                        return currentDayPosition - elapsedCalendarDays;
+                    };
+                    const aidTravelDays = typeof aidDetail.travelDurationDays === 'number' &&
+                        Number.isFinite(aidDetail.travelDurationDays) &&
+                        aidDetail.travelDurationDays > 0
+                        ? aidDetail.travelDurationDays
+                        : estimateTravelTime(aidAttackerCountry, aidTargetCountry)?.days ?? MAX_TRAVEL_DAYS;
+                    const battleTravelDays = typeof battleDetail.travelDurationDays === 'number' &&
+                        Number.isFinite(battleDetail.travelDurationDays) &&
+                        battleDetail.travelDurationDays > 0
+                        ? battleDetail.travelDurationDays
+                        : estimateTravelTime(battleDetail.attacker, battleDetail.target)?.days ?? MAX_TRAVEL_DAYS;
                     const fallbackAidAttackerCoord = getCapitalCoord(aidAttackerCountry);
                     const fallbackAidTargetCoord = getCapitalCoord(aidTargetCountry);
                     const aidAttacker = buildCapitalPoint(aidAttackerCountry) || {
@@ -4395,6 +4510,54 @@ export default function MapPage() {
                         lat: fallbackAidTargetCoord?.lat ?? 0,
                         lng: fallbackAidTargetCoord?.lng ?? 0,
                     };
+                    const aidStartedAtDayPosition = getRouteStartDayPosition(aidDetail);
+                    const battleHasImpacted =
+                        activeWarBattlePhaseRef.current !== 'travel' ||
+                        getRouteStartDayPosition(battleDetail) + battleTravelDays <= currentDayPosition;
+                    if (!doesRouteArriveBefore(
+                        aidStartedAtDayPosition,
+                        aidTravelDays,
+                        getRouteStartDayPosition(battleDetail),
+                        battleTravelDays,
+                    )) {
+                        if (!incomingAid) {
+                            notifyPlayerOfIncomingAttack();
+                            setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
+                            reportDebugStatus('queued');
+                            return;
+                        }
+                        setActiveWarAnimation((previous: any) => previous ? ({
+                            ...previous,
+                            primaryWar: {
+                                attacker: aidAttacker,
+                                target: aidTarget,
+                                isMilitaryAid: true,
+                                startedAtDayPosition: aidStartedAtDayPosition,
+                                visualOnly: true,
+                            },
+                            ...(battleHasImpacted ? {} : {
+                                lateMilitaryAid: {
+                                    supportCountry: aidAttackerCountry,
+                                    allyCountry: aidTargetCountry,
+                                    troopsCommitted: aidDetail.troopsCommitted === true,
+                                    committedArmySnapshot: aidDetail.committedArmySnapshot,
+                                    committedArmyDetail: aidDetail.committedArmyDetail,
+                                },
+                            }),
+                        }) : previous);
+                        if (battleHasImpacted) {
+                            returnUnengagedMilitaryAid(
+                                aidDetail,
+                                'Bantuan tiba setelah pertempuran dimulai; konvoi tetap ditampilkan di peta.'
+                            );
+                        } else {
+                            reportDebugStatus(
+                                'cancelled',
+                                'Bantuan terlambat untuk ikut perang; konvoi tetap ditampilkan di peta.'
+                            );
+                        }
+                        return;
+                    }
                     const aidCountryDetail = aidDetail.attackerCountryDetail;
                     const aidArmadaBreakdown = aidCountryDetail
                         ? getArmadaPowerSummary(aidCountryDetail).breakdown
@@ -4439,6 +4602,7 @@ export default function MapPage() {
                             attacker: aidAttacker,
                             target: aidTarget,
                             isMilitaryAid: true,
+                            startedAtDayPosition: aidDetail.travelStartedAtDayPosition,
                         },
                     }));
                     return;
@@ -12325,6 +12489,7 @@ export default function MapPage() {
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         isMilitaryAid={activeWarAnimation.isMilitaryAid === true}
                         isPeacekeeperDeploy={activeWarAnimation.isPeacekeeperDeploy === true}
+                        travelStartedAtDayPosition={activeWarAnimation.travelStartedAtDayPosition}
                         primaryWar={activeWarAnimation.primaryWar}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
@@ -12349,6 +12514,51 @@ export default function MapPage() {
                                     activeWarAnimation.targetCountryDetail,
                                     outcome.targetLossRatio,
                                 );
+                            }
+                            const lateAid = activeWarAnimation.lateMilitaryAid;
+                            if (lateAid) {
+                                if (
+                                    lateAid.troopsCommitted === true &&
+                                    lateAid.committedArmySnapshot &&
+                                    lateAid.committedArmyDetail
+                                ) {
+                                    setCountryDetail((previous: Record<string, unknown> | null) =>
+                                        restoreCommittedArmyDeployment(
+                                            previous,
+                                            lateAid.committedArmySnapshot,
+                                            lateAid.committedArmyDetail,
+                                        )
+                                    );
+                                } else {
+                                    console.error('[WarAnimation] Late military aid could not restore committed troops.', {
+                                        supportCountry: lateAid.supportCountry,
+                                        allyCountry: lateAid.allyCountry,
+                                    });
+                                }
+                                const allyCountry = String(lateAid.allyCountry || '').trim();
+                                const titleKey = 'side_inbox.dynamicNotifications.militaryAidLate.title';
+                                const senderKey = 'side_inbox.dynamicNotifications.militaryAidLate.sender';
+                                setNotifications(previous => [{
+                                    id: `military-aid-late-${Date.now()}`,
+                                    title: getDefaultInboxText(titleKey),
+                                    titleKey,
+                                    sender: getDefaultInboxText(senderKey),
+                                    senderKey,
+                                    ...createInboxNotificationText(
+                                        'side_inbox.dynamicNotifications.militaryAidLate.message',
+                                        { allyCountry },
+                                        allyCountry
+                                            ? {}
+                                            : { allyCountry: 'side_inbox.dynamicNotifications.militaryAidLate.unknownAlly' },
+                                    ),
+                                    timestamp: currentDate.toISOString().slice(0, 10),
+                                    type: 'kepuasan',
+                                    value: 0,
+                                    isRead: false,
+                                }, ...previous]);
+                                setActiveWarAnimation((previous: any) => previous
+                                    ? { ...previous, lateMilitaryAid: undefined }
+                                    : previous);
                             }
                             const result = outcome.result;
                             const setWarResultModal = (modal: Parameters<typeof setResultModal>[0]) => {
@@ -12751,6 +12961,7 @@ export default function MapPage() {
                             if (activeWarAnimation?.isPlayerAttacker === true) {
                                 setActivePlayerAttack(null);
                             }
+                            activeWarBattlePhaseRef.current = 'travel';
                             setActiveWarAnimation(null);
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();

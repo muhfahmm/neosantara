@@ -133,8 +133,12 @@ export default function BantuanPertahananNotificationCard({
           </div>
 
           <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
-            <span className="text-emerald-400">{allyPercentage}% (Kekuatan Sekutu)</span>
-            <span className="text-rose-400">{attackerPercentage}% (Kekuatan Penyerang)</span>
+            <span className="text-emerald-400">
+              {allyPercentage}% ({t('side_inbox.dynamicNotifications.alliedAid.allyStrength')})
+            </span>
+            <span className="text-rose-400">
+              {attackerPercentage}% ({t('side_inbox.dynamicNotifications.alliedAid.attackerStrength')})
+            </span>
           </div>
         </div>
 

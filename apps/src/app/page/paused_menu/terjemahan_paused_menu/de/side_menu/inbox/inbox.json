@@ -765,6 +765,12 @@
     "yearMany": "{count} Jahre"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "Militärische Unterstützung kam zu spät",
+      "sender": "Verteidigungsministerium",
+      "unknownAlly": "einem verbündeten Land",
+      "message": "Die militärische Unterstützung traf nicht vor Beginn der Schlacht in {allyCountry} ein. Die Truppen wurden zurückgeschickt und nahmen nicht an der Schlacht teil."
+    },
     "npcWar": {
       "title": "⚔️ KRIEG ZWISCHEN NATIONEN",
       "sender": "Außenministerium — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ MILITÄRISCHE UNTERSTÜTZUNGSANFRAGE: {target}",
-      "sender": "VERTEIDIGUNGSMINISTERIUM — {target}"
+      "sender": "VERTEIDIGUNGSMINISTERIUM — {target}",
+      "allyStrength": "Stärke der Verbündeten",
+      "attackerStrength": "Stärke des Angreifers"
     }
   },
   "dynamicEventTranslations": {

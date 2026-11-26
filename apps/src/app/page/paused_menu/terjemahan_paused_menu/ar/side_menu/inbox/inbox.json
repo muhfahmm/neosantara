@@ -765,6 +765,12 @@
     "yearMany": "{count} سنوات"
   },
   "dynamicNotifications": {
+    "militaryAidLate": {
+      "title": "وصلت المساعدة العسكرية متأخرة",
+      "sender": "وزارة الدفاع",
+      "unknownAlly": "دولة حليفة",
+      "message": "لم تصل المساعدة العسكرية قبل بدء المعركة في {allyCountry}. عادت القوات ولم تشارك في المعركة."
+    },
     "npcWar": {
       "title": "⚔️ حرب بين الدول",
       "sender": "وزارة الخارجية — {attacker}",
@@ -1060,7 +1066,9 @@
     },
     "alliedAid": {
       "title": "🛡️ طلب مساعدة عسكرية: {target}",
-      "sender": "وزارة الدفاع — {target}"
+      "sender": "وزارة الدفاع — {target}",
+      "allyStrength": "قوة الحليف",
+      "attackerStrength": "قوة المهاجم"
     }
   },
   "dynamicEventTranslations": {

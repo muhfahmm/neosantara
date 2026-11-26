@@ -94,6 +94,7 @@ export interface WarPath {
   attacker: CapitalPoint;
   target: CapitalPoint;
   travelDays: number;
+  startedAtDayPosition: number | null;
   createdAt: number;
 }
 
@@ -544,6 +545,7 @@ export function buildSVGPath(
 export interface BuildWarPathInput {
   attacker: CapitalPoint;
   target: CapitalPoint;
+  startedAtDayPosition?: number | null;
 }
 
 export function buildWarPath(input: BuildWarPathInput): WarPath | null {
@@ -583,6 +585,10 @@ export function buildWarPath(input: BuildWarPathInput): WarPath | null {
     attacker,
     target,
     travelDays,
+    startedAtDayPosition:
+      typeof input.startedAtDayPosition === 'number' && Number.isFinite(input.startedAtDayPosition)
+        ? input.startedAtDayPosition
+        : getSimulationDayPosition(),
     createdAt: Date.now(),
   };
 }
@@ -829,10 +835,13 @@ interface WarMapProps {
   isNpcWar?: boolean;
   isMilitaryAid?: boolean;
   isPeacekeeperDeploy?: boolean;
+  travelStartedAtDayPosition?: number | null;
   primaryWar?: {
     attacker: CapitalPoint;
     target: CapitalPoint;
     isMilitaryAid?: boolean;
+    startedAtDayPosition?: number | null;
+    visualOnly?: boolean;
   };
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
@@ -870,6 +879,7 @@ export default function WarMap({
   isNpcWar = false,
   isMilitaryAid = false,
   isPeacekeeperDeploy = false,
+  travelStartedAtDayPosition,
   primaryWar,
   requestedInvasion = false,
   isPbbCoalition = false,
@@ -970,6 +980,9 @@ export default function WarMap({
   });
 
   const progressRef = useRef(0);
+  const primaryProgressRef = useRef(0);
+  const mainPathIdRef = useRef<string | null>(null);
+  const primaryPathIdRef = useRef<string | null>(null);
   const routeGeometryRef = useRef<MapRouteGeometry | null>(null);
   const routePathRef = useRef<SVGPathElement>(null);
   const progressPathRef = useRef<SVGPathElement>(null);
@@ -1034,8 +1047,12 @@ export default function WarMap({
 
   const primaryWarPath = useMemo<WarPath | null>(() => {
     if (!isOpen || !resolvedPrimaryAttacker || !resolvedPrimaryTarget) return null;
-    return buildWarPath({ attacker: resolvedPrimaryAttacker, target: resolvedPrimaryTarget });
-  }, [isOpen, resolvedPrimaryAttacker, resolvedPrimaryTarget]);
+    return buildWarPath({
+      attacker: resolvedPrimaryAttacker,
+      target: resolvedPrimaryTarget,
+      startedAtDayPosition: primaryWar?.startedAtDayPosition,
+    });
+  }, [isOpen, resolvedPrimaryAttacker, resolvedPrimaryTarget, primaryWar?.startedAtDayPosition]);
 
   const primaryRouteGeometryRef = useRef<MapRouteGeometry | null>(null);
   const primaryRoutePathRef = useRef<SVGPathElement>(null);
@@ -1047,10 +1064,23 @@ export default function WarMap({
 
   const warPath = useMemo<WarPath | null>(() => {
     if (!isOpen) return null;
-    const path = buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
+    const path = buildWarPath({
+      attacker: resolvedAttacker,
+      target: resolvedTarget,
+      startedAtDayPosition: travelStartedAtDayPosition,
+    });
     if (!path) return null;
     return path;
-  }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
+  }, [
+    isOpen,
+    resolvedAttacker.country,
+    resolvedTarget.country,
+    resolvedAttacker.lat,
+    resolvedAttacker.lng,
+    resolvedTarget.lat,
+    resolvedTarget.lng,
+    travelStartedAtDayPosition,
+  ]);
 
   const deploymentConfig = useMemo(() => {
     if (committedDeploymentConfig) return committedDeploymentConfig;
@@ -1216,6 +1246,9 @@ export default function WarMap({
       setPhase('travel');
       phaseRef.current = 'travel';
       progressRef.current = 0;
+      primaryProgressRef.current = 0;
+      mainPathIdRef.current = null;
+      primaryPathIdRef.current = null;
       autoResolveReportedRef.current = false;
       impactHandledRef.current = false;
       lastAnalysisVisibilityRef.current = false;
@@ -1234,8 +1267,23 @@ export default function WarMap({
     void initializeRouteMathRust();
     let raf = 0;
     let lastTime = performance.now();
-    let elapsedDays = 0;
+    if (mainPathIdRef.current !== warPath.id) {
+      mainPathIdRef.current = warPath.id;
+      progressRef.current = 0;
+    }
+    if ((primaryWarPath?.id ?? null) !== primaryPathIdRef.current) {
+      primaryPathIdRef.current = primaryWarPath?.id ?? null;
+      primaryProgressRef.current = 0;
+    }
+    let elapsedMainDays = progressRef.current * warPath.travelDays;
+    let elapsedPrimaryDays = primaryWarPath
+      ? primaryProgressRef.current * primaryWarPath.travelDays
+      : 0;
     const startingDayPosition = getSimulationDayPosition();
+    const mainStartDayPosition = warPath.startedAtDayPosition ?? startingDayPosition;
+    const primaryStartDayPosition = primaryWarPath
+      ? primaryWarPath.startedAtDayPosition ?? startingDayPosition
+      : null;
     let lastGeo: MapRouteGeometry | null = null;
     let lastPrimaryGeo: MapRouteGeometry | null = null;
 
@@ -1266,7 +1314,7 @@ export default function WarMap({
       primaryEndMarkerRef.current?.setAttribute('cy', String(geo.end.y));
 
       if (primaryTankRef.current && primaryTankRotationRef.current) {
-        const currentProgress = progressRef.current;
+        const currentProgress = primaryProgressRef.current;
         const motion = getQuadraticMotion(geo.start, geo.control, geo.end, currentProgress);
         primaryTankRef.current.setAttribute('transform', `translate(${motion.x} ${motion.y})`);
         primaryTankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
@@ -1336,20 +1384,35 @@ export default function WarMap({
       const delta = now - lastTime;
       lastTime = now;
 
-      if (phaseRef.current !== 'travel' || isGamePaused()) return;
+      const currentPhase = phaseRef.current;
+      const isLateAidVisual = primaryWar?.visualOnly === true;
+      if (
+        (currentPhase !== 'travel' && !(currentPhase === 'impact' && isLateAidVisual)) ||
+        isGamePaused()
+      ) return;
       const currentDayPosition = getSimulationDayPosition();
-      if (startingDayPosition !== null && currentDayPosition !== null) {
-        elapsedDays = Math.max(elapsedDays, currentDayPosition - startingDayPosition);
+      if (mainStartDayPosition !== null && currentDayPosition !== null) {
+        elapsedMainDays = Math.max(elapsedMainDays, currentDayPosition - mainStartDayPosition);
       } else {
         const millisecondsPerDay = getSimulationMillisecondsPerDay() ?? 2500;
-        elapsedDays += delta / millisecondsPerDay;
+        elapsedMainDays += delta / millisecondsPerDay;
       }
-      // Kecepatan dihitung seragam berdasarkan warPath.travelDays (atau primaryWarPath jika ada)
-      const maxTravelDays = primaryWarPath ? Math.max(warPath.travelDays, primaryWarPath.travelDays) : warPath.travelDays;
-      const currentProgress = Math.min(1, elapsedDays / maxTravelDays);
+      if (primaryWarPath) {
+        if (primaryStartDayPosition !== null && currentDayPosition !== null) {
+          elapsedPrimaryDays = Math.max(elapsedPrimaryDays, currentDayPosition - primaryStartDayPosition);
+        } else {
+          const millisecondsPerDay = getSimulationMillisecondsPerDay() ?? 2500;
+          elapsedPrimaryDays += delta / millisecondsPerDay;
+        }
+      }
+      const currentProgress = Math.min(1, elapsedMainDays / warPath.travelDays);
+      const primaryProgress = primaryWarPath
+        ? Math.min(1, elapsedPrimaryDays / primaryWarPath.travelDays)
+        : 0;
       progressRef.current = currentProgress;
+      primaryProgressRef.current = primaryProgress;
       progressPathRef.current?.setAttribute('stroke-dasharray', `${currentProgress * 100} 100`);
-      primaryProgressPathRef.current?.setAttribute('stroke-dasharray', `${currentProgress * 100} 100`);
+      primaryProgressPathRef.current?.setAttribute('stroke-dasharray', `${primaryProgress * 100} 100`);
 
       const geo = routeGeometryRef.current;
       if (geo && tankRef.current && tankRotationRef.current) {
@@ -1360,14 +1423,26 @@ export default function WarMap({
 
       const pGeo = primaryRouteGeometryRef.current;
       if (pGeo && primaryTankRef.current && primaryTankRotationRef.current) {
-        const pMotion = getQuadraticMotion(pGeo.start, pGeo.control, pGeo.end, currentProgress);
+        const pMotion = getQuadraticMotion(pGeo.start, pGeo.control, pGeo.end, primaryProgress);
         primaryTankRef.current.setAttribute('transform', `translate(${pMotion.x} ${pMotion.y})`);
         primaryTankRotationRef.current.setAttribute('transform', `rotate(${pMotion.angle * 180 / Math.PI})`);
       }
 
-      if (currentProgress >= 1) {
+      if (currentPhase === 'impact' && isLateAidVisual) {
+        if (primaryProgress < 1) raf = requestAnimationFrame(loop);
+        return;
+      }
+
+      if (currentProgress >= 1 && (
+        !primaryWarPath ||
+        primaryProgress >= 1 ||
+        primaryWar?.visualOnly === true
+      )) {
         phaseRef.current = 'impact';
         setPhase('impact');
+        if (isLateAidVisual && primaryProgress < 1) {
+          raf = requestAnimationFrame(loop);
+        }
         return;
       }
       raf = requestAnimationFrame(loop);
@@ -1774,7 +1849,7 @@ export default function WarMap({
                 <circle ref={primaryStartMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
                 <circle ref={primaryEndMarkerRef} cx={0} cy={0} r={8} fill={primaryWarAccent} opacity={0.8} />
 
-                {phase === 'travel' && (
+                {(phase === 'travel' || (primaryWar?.visualOnly === true && phase === 'impact')) && (
                   <g
                     ref={primaryTankRef}
                     transform="translate(0 0)"

@@ -31,6 +31,16 @@ export interface TravelTimeOptions {
   diplomacyKind?: string;
 }
 
+export function doesRouteArriveBefore(
+  firstRouteStartDay: number,
+  firstRouteTravelDays: number,
+  secondRouteStartDay: number,
+  secondRouteTravelDays: number,
+): boolean {
+  return firstRouteStartDay + firstRouteTravelDays <
+    secondRouteStartDay + secondRouteTravelDays;
+}
+
 interface CountryLocation {
   name: string;
   latitude: number;
