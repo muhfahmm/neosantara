@@ -39,7 +39,11 @@
     "cancel": "キャンセル",
     "confirm": "攻撃を確認",
     "militaryAidTitle": "軍事支援の確認",
-    "militaryAidConfirm": "軍事支援を派遣"
+    "militaryAidConfirm": "軍事支援を派遣",
+    "peacekeeperTitle": "平和維持部隊の派遣を確認",
+    "peacekeeperConfirm": "平和維持部隊を派遣",
+    "militaryAidSender": "派遣部隊",
+    "militaryAidTarget": "同盟国部隊"
   },
   "groups": {
     "darat": "陸軍",

@@ -39,7 +39,11 @@
     "cancel": "إلغاء",
     "confirm": "تأكيد الهجوم",
     "militaryAidTitle": "تأكيد المساعدة العسكرية",
-    "militaryAidConfirm": "إرسال المساعدة العسكرية"
+    "militaryAidConfirm": "إرسال المساعدة العسكرية",
+    "peacekeeperTitle": "تأكيد إرسال قوات حفظ السلام",
+    "peacekeeperConfirm": "إرسال قوات حفظ السلام",
+    "militaryAidSender": "القوات المُرسِلة",
+    "militaryAidTarget": "القوات الحليفة"
   },
   "groups": {
     "darat": "القوات البرية",

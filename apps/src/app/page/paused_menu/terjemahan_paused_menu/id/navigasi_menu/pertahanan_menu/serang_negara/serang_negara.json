@@ -39,7 +39,11 @@
     "cancel": "Batal",
     "confirm": "Konfirmasi Serangan",
     "militaryAidTitle": "KONFIRMASI BANTUAN MILITER",
-    "militaryAidConfirm": "KIRIM BANTUAN MILITER"
+    "militaryAidConfirm": "KIRIM BANTUAN MILITER",
+    "peacekeeperTitle": "KONFIRMASI PENGIRIMAN PASUKAN PERDAMAIAN",
+    "peacekeeperConfirm": "KIRIM PASUKAN PERDAMAIAN",
+    "militaryAidSender": "Pasukan Pengirim",
+    "militaryAidTarget": "Pasukan Sekutu"
   },
   "groups": {
     "darat": "Darat",

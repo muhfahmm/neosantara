@@ -39,7 +39,11 @@
     "cancel": "취소",
     "confirm": "공격 확인",
     "militaryAidTitle": "군사 지원 확인",
-    "militaryAidConfirm": "군사 지원 보내기"
+    "militaryAidConfirm": "군사 지원 보내기",
+    "peacekeeperTitle": "평화유지군 파병 확인",
+    "peacekeeperConfirm": "평화유지군 파병",
+    "militaryAidSender": "파견국 병력",
+    "militaryAidTarget": "동맹국 병력"
   },
   "groups": {
     "darat": "육군",

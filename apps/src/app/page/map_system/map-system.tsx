@@ -12933,7 +12933,7 @@ export default function MapPage() {
                                     deployedUnitQuantities: activeWarAnimation.deployedUnitQuantities || {},
                                     userArmadaSnapshot: activeWarAnimation.attackerCountryDetail?.armada || countryDetail?.armada,
                                     deployedAt: currentDate.toISOString().slice(0, 10),
-                                });
+                                }, activeWarAnimation.peacekeeperDeploymentId);
 
                                 // Tambahkan hubungan bilateral dengan sekutu sebesar 5 - 10 poin secara acak
                                 const bonusRelation = Math.floor(Math.random() * 6) + 5; // 5 sampai 10

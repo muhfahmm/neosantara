@@ -17,16 +17,26 @@ export interface StationedPeacekeeper {
   deployedAt: string;
 }
 
+export type PeacekeeperUnitCommitment = Partial<Pick<
+  StationedPeacekeeper,
+  "deployedUnitQuantities" | "userArmadaSnapshot" | "deployedUnits"
+>>;
+
 export const PEACEKEEPER_UPDATED_EVENT = "neosantara_peacekeeper_updated";
 
 // In-memory store (hilang saat halaman di-refresh)
 let inMemoryPeacekeepers: StationedPeacekeeper[] = [];
+let inTransitPeacekeepers: Array<{
+  id: string;
+  allyCountry: string;
+  deployedUnitQuantities: Record<string, number>;
+}> = [];
 
 export function getStationedPeacekeeperUnitQuantities(
-  peacekeeper: Pick<
+  peacekeeper: Partial<Pick<
     StationedPeacekeeper,
     "deployedUnitQuantities" | "userArmadaSnapshot" | "deployedUnits"
-  > | null | undefined,
+  >> | null | undefined,
 ): Record<string, number> {
   if (!peacekeeper) return {};
 
@@ -51,7 +61,7 @@ export function getStationedPeacekeeperUnitQuantities(
 
 export function restoreStationedPeacekeeperUnits(
   currentDetail: Record<string, unknown> | null,
-  peacekeeper: StationedPeacekeeper,
+  peacekeeper: PeacekeeperUnitCommitment,
 ): Record<string, unknown> | null {
   if (!currentDetail) return currentDetail;
 
@@ -119,6 +129,38 @@ export function restoreStationedPeacekeeperUnits(
   return nextDetail;
 }
 
+export function getArmyWithStationedPeacekeepers(
+  currentDetail: Record<string, unknown> | null,
+  peacekeepers: readonly PeacekeeperUnitCommitment[] = loadPeacekeeperUnitCommitments(),
+): Record<string, unknown> | null {
+  return peacekeepers.reduce(
+    (detail, peacekeeper) => restoreStationedPeacekeeperUnits(detail, peacekeeper),
+    currentDetail,
+  );
+}
+
+export function loadPeacekeeperDeploymentsInTransit(): PeacekeeperUnitCommitment[] {
+  return inTransitPeacekeepers.map(({ deployedUnitQuantities }) => ({ deployedUnitQuantities }));
+}
+
+export function loadPeacekeeperUnitCommitments(): PeacekeeperUnitCommitment[] {
+  return [...loadStationedPeacekeepers(), ...loadPeacekeeperDeploymentsInTransit()];
+}
+
+export function registerPeacekeeperInTransit(deployment: {
+  id: string;
+  allyCountry: string;
+  deployedUnitQuantities: Record<string, number>;
+}): void {
+  inTransitPeacekeepers = [
+    ...inTransitPeacekeepers.filter((item) => item.id !== deployment.id),
+    deployment,
+  ];
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(PEACEKEEPER_UPDATED_EVENT));
+  }
+}
+
 export function loadStationedPeacekeepers(): StationedPeacekeeper[] {
   // Hanya simpan di memori runtime saat sesi permainan aktif
   // Ketika user me-refresh halaman (F5), tank penjaga perdamaian akan hilang/reset
@@ -136,7 +178,13 @@ export function saveStationedPeacekeepers(list: StationedPeacekeeper[]): void {
   }
 }
 
-export function addStationedPeacekeeper(pk: Omit<StationedPeacekeeper, "id">): StationedPeacekeeper {
+export function addStationedPeacekeeper(
+  pk: Omit<StationedPeacekeeper, "id">,
+  deploymentId?: string,
+): StationedPeacekeeper {
+  if (deploymentId) {
+    inTransitPeacekeepers = inTransitPeacekeepers.filter((item) => item.id !== deploymentId);
+  }
   const current = loadStationedPeacekeepers();
   // Selalu pastikan koordinat terkunci di ibukota resmi sekutu
   const officialCoord = getCapitalCoord(pk.allyCountry);

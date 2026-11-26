@@ -39,7 +39,11 @@
     "cancel": "Cancel",
     "confirm": "Confirm Attack",
     "militaryAidTitle": "CONFIRM MILITARY AID",
-    "militaryAidConfirm": "SEND MILITARY AID"
+    "militaryAidConfirm": "SEND MILITARY AID",
+    "peacekeeperTitle": "CONFIRM PEACEKEEPING FORCE DEPLOYMENT",
+    "peacekeeperConfirm": "SEND PEACEKEEPING FORCES",
+    "militaryAidSender": "Sending Forces",
+    "militaryAidTarget": "Allied Forces"
   },
   "groups": {
     "darat": "Land",

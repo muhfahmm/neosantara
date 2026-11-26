@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { MENU_INFO_MODAL_VISIBILITY_EVENT } from "../../../NotebookModalWrapper";
 import { isMobilePhone, useViewportMode } from "@/app/hooks/useViewportMode";
 import Image from "next/image";
@@ -16,6 +16,12 @@ import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfante
 import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 import { BuildingCardGridRoot, BuildingCardRoot } from "@/app/page/root_modals_design_menu/card_building_root";
 import { useMilitaryMenuTranslation } from "@/app/page/paused_menu/terjemahan_paused_menu/useMilitaryMenuTranslation";
+import {
+  getArmyWithStationedPeacekeepers,
+  loadPeacekeeperUnitCommitments,
+  PEACEKEEPER_UPDATED_EVENT,
+  type PeacekeeperUnitCommitment,
+} from "@/app/page/path_logic/peacekeeper/peacekeeperLogic";
 
 interface TabProps {
   countryDetail: any;
@@ -124,43 +130,55 @@ const getSafeDateString = (currentDate?: string | Date, gameDate?: string): stri
 export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCountryDetail, onCapacityFull, highlightKey, onGotoProduction, currentDate }: TabProps) {
   const { language, translate: tr } = useMilitaryMenuTranslation();
   const viewportMode = useViewportMode();
-  const unitBreakdown = getArmadaUnitBreakdown(countryDetail || {});
+  const [peacekeeperCommitments, setPeacekeeperCommitments] = useState<PeacekeeperUnitCommitment[]>([]);
+  useEffect(() => {
+    const refreshPeacekeeperUnits = () => setPeacekeeperCommitments(loadPeacekeeperUnitCommitments());
+    window.addEventListener(PEACEKEEPER_UPDATED_EVENT, refreshPeacekeeperUnits);
+    refreshPeacekeeperUnits();
+    return () => window.removeEventListener(PEACEKEEPER_UPDATED_EVENT, refreshPeacekeeperUnits);
+  }, []);
+
+  const totalMilitaryDetail = useMemo(
+    () => getArmyWithStationedPeacekeepers(countryDetail || null, peacekeeperCommitments) || countryDetail || {},
+    [countryDetail, peacekeeperCommitments],
+  );
+  const unitBreakdown = getArmadaUnitBreakdown(totalMilitaryDetail);
 
   const getData = (key: string, group?: string): number => {
-    if (!countryDetail) return 0;
-    if (countryDetail?.[key] !== undefined && countryDetail?.[key] !== null) {
-      const val = Number(countryDetail[key]); if (!Number.isNaN(val)) return val;
+    if (!totalMilitaryDetail) return 0;
+    if (totalMilitaryDetail?.[key] !== undefined && totalMilitaryDetail?.[key] !== null) {
+      const val = Number(totalMilitaryDetail[key]); if (!Number.isNaN(val)) return val;
     }
-    if (countryDetail?.pertahanan?.[key] !== undefined && countryDetail?.pertahanan?.[key] !== null) {
-      const val = Number(countryDetail.pertahanan[key]); if (!Number.isNaN(val)) return val;
+    if (totalMilitaryDetail?.pertahanan?.[key] !== undefined && totalMilitaryDetail?.pertahanan?.[key] !== null) {
+      const val = Number(totalMilitaryDetail.pertahanan[key]); if (!Number.isNaN(val)) return val;
     }
-    if (countryDetail?.armada?.[key] !== undefined && countryDetail?.armada?.[key] !== null) {
-      const val = Number(countryDetail.armada[key]); if (!Number.isNaN(val)) return val;
+    if (totalMilitaryDetail?.armada?.[key] !== undefined && totalMilitaryDetail?.armada?.[key] !== null) {
+      const val = Number(totalMilitaryDetail.armada[key]); if (!Number.isNaN(val)) return val;
     }
-    if (group && countryDetail?.armada?.[group]?.[key] !== undefined && countryDetail?.armada?.[group]?.[key] !== null) {
-      const val = Number(countryDetail.armada[group][key]); if (!Number.isNaN(val)) return val;
+    if (group && totalMilitaryDetail?.armada?.[group]?.[key] !== undefined && totalMilitaryDetail?.armada?.[group]?.[key] !== null) {
+      const val = Number(totalMilitaryDetail.armada[group][key]); if (!Number.isNaN(val)) return val;
     }
-    if (group && countryDetail?.[group]?.[key] !== undefined && countryDetail?.[group]?.[key] !== null) {
-      const val = Number(countryDetail[group][key]); if (!Number.isNaN(val)) return val;
+    if (group && totalMilitaryDetail?.[group]?.[key] !== undefined && totalMilitaryDetail?.[group]?.[key] !== null) {
+      const val = Number(totalMilitaryDetail[group][key]); if (!Number.isNaN(val)) return val;
     }
     return 0;
   };
 
   const getGroupCapacityDisplay = (group: "darat" | "laut" | "udara") => {
     if (group === "laut") {
-      const cap = getInfraCapacityDetails("pangkalan_laut", countryDetail);
+      const cap = getInfraCapacityDetails("pangkalan_laut", totalMilitaryDetail);
       if (!cap) return "0 / 0";
       return `${formatNumber(cap.used, language)} / ${formatNumber(cap.totalCapacity, language)}`;
     }
     if (group === "udara") {
-      const cap = getInfraCapacityDetails("pangkalan_udara", countryDetail);
+      const cap = getInfraCapacityDetails("pangkalan_udara", totalMilitaryDetail);
       if (!cap) return "0 / 0";
       return `${formatNumber(cap.used, language)} / ${formatNumber(cap.totalCapacity, language)}`;
     }
     if (group === "darat") {
-      const barakCap = getInfraCapacityDetails("barak", countryDetail);
-      const hangarCap = getInfraCapacityDetails("hangar_tank", countryDetail);
-      const gudangCap = getInfraCapacityDetails("gudang_senjata", countryDetail);
+      const barakCap = getInfraCapacityDetails("barak", totalMilitaryDetail);
+      const hangarCap = getInfraCapacityDetails("hangar_tank", totalMilitaryDetail);
+      const gudangCap = getInfraCapacityDetails("gudang_senjata", totalMilitaryDetail);
       const totalUsed = (barakCap?.used || 0) + (hangarCap?.used || 0) + (gudangCap?.used || 0);
       const totalCap = (barakCap?.totalCapacity || 0) + (hangarCap?.totalCapacity || 0) + (gudangCap?.totalCapacity || 0);
       return `${formatNumber(totalUsed, language)} / ${formatNumber(totalCap, language)}`;
@@ -596,13 +614,13 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           formatNumber={(value) => formatNumber(value, language)}
           unitBreakdown={unitBreakdown}
           countryIdeology={countryDetail?.ideology ?? countryDetail?.ideologi}
-          capacityInfo={getArmadaCapacityInfo(infoKey, countryDetail)}
+          capacityInfo={getArmadaCapacityInfo(infoKey, totalMilitaryDetail)}
           isCapacityFull={(() => {
-            const cap = getArmadaCapacityInfo(infoKey, countryDetail);
+            const cap = getArmadaCapacityInfo(infoKey, totalMilitaryDetail);
             return cap ? cap.isFull : false;
           })()}
           capacityDisplay={(() => {
-            const cap = getArmadaCapacityInfo(infoKey, countryDetail);
+            const cap = getArmadaCapacityInfo(infoKey, totalMilitaryDetail);
           return cap ? `${formatNumber(cap.used, language)} / ${formatNumber(cap.totalCapacity, language)}` : "";
           })()}
           onNavigateToInfra={onCapacityFull}

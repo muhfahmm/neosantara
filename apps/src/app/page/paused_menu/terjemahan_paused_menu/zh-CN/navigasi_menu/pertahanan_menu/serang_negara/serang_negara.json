@@ -39,7 +39,11 @@
     "cancel": "取消",
     "confirm": "确认攻击",
     "militaryAidTitle": "确认军事援助",
-    "militaryAidConfirm": "发送军事援助"
+    "militaryAidConfirm": "发送军事援助",
+    "peacekeeperTitle": "确认派遣维和部队",
+    "peacekeeperConfirm": "派遣维和部队",
+    "militaryAidSender": "派遣方部队",
+    "militaryAidTarget": "盟军部队"
   },
   "groups": {
     "darat": "陆军",

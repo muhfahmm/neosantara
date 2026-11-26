@@ -412,7 +412,7 @@ export default function SerangModals({
                     <Shield className="w-6 h-6 text-root-accent" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                    {isMilitaryAid ? "Pasukan Pengirim" : tr("deployment.attacker")}
+                    {isMilitaryAid ? tr("deployment.militaryAidSender") : tr("deployment.attacker")}
                   </p>
                   <p className="text-xl font-black text-root-accent">{attackerName}</p>
                   <p className="text-xs text-root-text">
@@ -433,7 +433,7 @@ export default function SerangModals({
                     <Shield className={`w-6 h-6 ${isMilitaryAid ? 'text-sky-400' : 'text-rose-400'}`} />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-root-subtle">
-                    {isMilitaryAid ? "Pasukan Sekutu" : tr("deployment.target")}
+                    {isMilitaryAid ? tr("deployment.militaryAidTarget") : tr("deployment.target")}
                   </p>
                   <p className={`text-xl font-black ${isMilitaryAid ? 'text-sky-400' : 'text-rose-400'}`}>{targetName}</p>
                   <p className="text-xs text-root-text">

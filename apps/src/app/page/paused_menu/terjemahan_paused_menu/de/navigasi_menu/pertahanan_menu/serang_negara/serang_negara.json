@@ -39,7 +39,11 @@
     "cancel": "Abbrechen",
     "confirm": "Angriff bestätigen",
     "militaryAidTitle": "MILITÄRHILFE BESTÄTIGEN",
-    "militaryAidConfirm": "MILITÄRHILFE SENDEN"
+    "militaryAidConfirm": "MILITÄRHILFE SENDEN",
+    "peacekeeperTitle": "ENTSENDUNG DER FRIEDENSTRUPPEN BESTÄTIGEN",
+    "peacekeeperConfirm": "FRIEDENSTRUPPEN ENTSENDEN",
+    "militaryAidSender": "Entsendende Truppen",
+    "militaryAidTarget": "Verbündete Truppen"
   },
   "groups": {
     "darat": "Landstreitkräfte",

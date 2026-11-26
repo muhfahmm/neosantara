@@ -71,6 +71,7 @@ import {
   getStationedPeacekeeper,
   getStationedPeacekeeperUnitQuantities,
   PEACEKEEPER_UPDATED_EVENT,
+  registerPeacekeeperInTransit,
   removeStationedPeacekeeper,
   restoreStationedPeacekeeperUnits,
   type StationedPeacekeeper,
@@ -1189,6 +1190,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
           // Dispatch event animasi konvoi penjaga perdamaian (warna biru muda PBB)
           if (typeof window !== 'undefined') {
+            const peacekeeperDeploymentId = `pk-transit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+            registerPeacekeeperInTransit({
+              id: peacekeeperDeploymentId,
+              allyCountry: countryName,
+              deployedUnitQuantities,
+            });
             window.dispatchEvent(
               new CustomEvent('start_war_animation', {
                 detail: {
@@ -1201,6 +1208,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                   travelDurationDays: arrival.days,
                   deployedUnitsConfig: deploymentConfig,
                   deployedUnitQuantities,
+                  peacekeeperDeploymentId,
                   allyCountry: countryName,
                   allyIso: undefined,
                   attackerCountryDetail: playerCountryDetail,

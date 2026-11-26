@@ -92,8 +92,8 @@ export default function KirimPasukanModal({
 				travelFuelStatus={travelFuelStatus}
 				mode="bantuan_militer"
 				requiresTravelFuel
-				customTitle="KONFIRMASI PENGIRIMAN PASUKAN PERDAMAIAN"
-				customConfirmLabel="KIRIM PASUKAN PERDAMAIAN"
+				customTitle={t("navigation_defense_attack.deployment.peacekeeperTitle")}
+				customConfirmLabel={t("navigation_defense_attack.deployment.peacekeeperConfirm")}
 			/>
 		);
 	}

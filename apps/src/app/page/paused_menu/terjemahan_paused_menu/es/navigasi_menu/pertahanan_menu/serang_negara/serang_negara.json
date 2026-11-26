@@ -39,7 +39,11 @@
     "cancel": "Cancelar",
     "confirm": "Confirmar ataque",
     "militaryAidTitle": "CONFIRMAR AYUDA MILITAR",
-    "militaryAidConfirm": "ENVIAR AYUDA MILITAR"
+    "militaryAidConfirm": "ENVIAR AYUDA MILITAR",
+    "peacekeeperTitle": "CONFIRMAR EL ENVÍO DE FUERZAS DE PAZ",
+    "peacekeeperConfirm": "ENVIAR FUERZAS DE PAZ",
+    "militaryAidSender": "Fuerzas remitentes",
+    "militaryAidTarget": "Fuerzas aliadas"
   },
   "groups": {
     "darat": "Tierra",
