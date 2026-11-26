@@ -218,6 +218,8 @@
     "requestHelpPromptSuffix": "Bantuan dapat berupa dukungan militer, ekonomi, atau kemanusiaan.",
     "aidRequestInProgressTitle": "Permintaan Bantuan Sedang Berjalan",
     "aidRequestInProgressMessage": "Permintaan bantuan kepada {country} sedang diproses atau bantuannya sedang dalam perjalanan. Tunggu hingga bantuan tiba sebelum meminta lagi dari negara ini.",
+    "aidRelationTooLowTitle": "Hubungan Belum Cukup Baik",
+    "aidRelationTooLowMessage": "Hubungan dengan {country} saat ini {relation}/100. Hubungan harus mencapai minimal 41 untuk meminta bantuan.",
     "giveTerritoryTitle": "Konfirmasi Berikan Wilayah",
     "recipient": "Penerima",
     "noAnnexedTerritories": "Tidak ada wilayah aneksasi",

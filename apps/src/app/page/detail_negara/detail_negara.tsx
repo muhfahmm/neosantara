@@ -1087,6 +1087,7 @@ export function CountryDetailModal({
             {activeTab === "geopolitik" && (
               <Geopolitik
                 countryName={cardCountryName}
+                relationValue={relationValue}
                 playerCountryDetail={countryDetail}
                 currentDate={currentDate}
                 setPlayerCountryDetail={setCountryDetail}

@@ -218,6 +218,8 @@
     "requestHelpPromptSuffix": "قد تشمل المساعدة دعماً عسكرياً أو اقتصادياً أو إنسانياً.",
     "aidRequestInProgressTitle": "طلب المساعدة قيد التنفيذ",
     "aidRequestInProgressMessage": "يجري معالجة طلبك من {country} أو أن المساعدة في طريقها بالفعل. انتظر وصولها قبل طلب المساعدة من هذه الدولة مرة أخرى.",
+    "aidRelationTooLowTitle": "العلاقات غير كافية",
+    "aidRelationTooLowMessage": "تبلغ العلاقة مع {country} حاليًا {relation}/100. يجب أن تبلغ العلاقة 41 على الأقل لطلب المساعدة.",
     "giveTerritoryTitle": "تأكيد التنازل عن الإقليم",
     "recipient": "المستلم",
     "noAnnexedTerritories": "لا توجد أقاليم مُلحقة",

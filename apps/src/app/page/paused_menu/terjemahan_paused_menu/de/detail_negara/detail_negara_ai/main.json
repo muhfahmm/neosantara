@@ -218,6 +218,8 @@
     "requestHelpPromptSuffix": "Die Hilfe kann militärischer, wirtschaftlicher oder humanitärer Art sein.",
     "aidRequestInProgressTitle": "Hilfegesuch wird bearbeitet",
     "aidRequestInProgressMessage": "Ihre Anfrage an {country} wird bearbeitet oder die Hilfe ist bereits unterwegs. Warten Sie auf die Ankunft, bevor Sie dieses Land erneut um Hilfe bitten.",
+    "aidRelationTooLowTitle": "Beziehungen sind zu schlecht",
+    "aidRelationTooLowMessage": "Die Beziehungen zu {country} liegen derzeit bei {relation}/100. Für eine Hilfsanfrage müssen sie mindestens 41 betragen.",
     "giveTerritoryTitle": "Gebietsübertragung bestätigen",
     "recipient": "Empfänger",
     "noAnnexedTerritories": "Keine annektierten Gebiete",

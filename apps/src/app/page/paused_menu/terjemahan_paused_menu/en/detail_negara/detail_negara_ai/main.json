@@ -218,6 +218,8 @@
     "requestHelpPromptSuffix": "Assistance may include military, economic, or humanitarian support.",
     "aidRequestInProgressTitle": "Aid Request In Progress",
     "aidRequestInProgressMessage": "Your request to {country} is being processed or the aid is already on its way. Wait for it to arrive before requesting help from this country again.",
+    "aidRelationTooLowTitle": "Relations Are Too Low",
+    "aidRelationTooLowMessage": "Relations with {country} are currently {relation}/100. Relations must be at least 41 to request aid.",
     "giveTerritoryTitle": "Confirm Give Territory",
     "recipient": "Recipient",
     "noAnnexedTerritories": "No annexed territories",

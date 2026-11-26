@@ -11,6 +11,7 @@ import BeriTentaraModal from './1_beri_tentara/beriTentaraModals';
 import BeriHadiahModal from './2_beri_hadiah/beriHadiahModals';
 import TingkatkanHubunganModal from './3_tingkatkan_hubungan/tingkatkanHubunganModals';
 import MintaBantuanKonfirmasiModal from './5_minta_bantuan/mintaBantuanKonfirmasiModal';
+import MintaBantuanHubunganRendahModal from './5_minta_bantuan/mintaBantuanHubunganRendahModal';
 import MintaBantuanSedangBerjalanModal from './5_minta_bantuan/mintaBantuanSedangBerjalanModal';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
@@ -21,6 +22,7 @@ import { dispatchAidDeliveryPath } from '../../path_logic/path-helper';
 
 interface GeopolitikProps {
   countryName: string;
+  relationValue: number;
   playerCountryDetail?: any;
   currentDate?: Date;
   setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
@@ -66,13 +68,14 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
   );
 };
 
-export default function Geopolitik({ countryName, playerCountryDetail, currentDate, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail, onActionModalStateChange }: GeopolitikProps) {
+export default function Geopolitik({ countryName, relationValue, playerCountryDetail, currentDate, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail, onActionModalStateChange }: GeopolitikProps) {
   const { t, language } = useLanguage();
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
   const [isMintaBantuanOpen, setIsMintaBantuanOpen] = useState(false);
   const [isAidRequestInProgressOpen, setIsAidRequestInProgressOpen] = useState(false);
+  const [isAidRelationTooLowOpen, setIsAidRelationTooLowOpen] = useState(false);
   const [isBerikanWilayahOpen, setIsBerikanWilayahOpen] = useState(false);
   const pendingAidRequestCountryKeysRef = useRef(new Set<string>());
   const [pendingAidRequestCountryKeys, setPendingAidRequestCountryKeys] = useState<Set<string>>(
@@ -94,6 +97,16 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
 
   const closeAidRequestInProgressModal = () => {
     setIsAidRequestInProgressOpen(false);
+    onActionModalStateChange?.(false);
+  };
+
+  const openAidRelationTooLowModal = () => {
+    setIsAidRelationTooLowOpen(true);
+    onActionModalStateChange?.(true);
+  };
+
+  const closeAidRelationTooLowModal = () => {
+    setIsAidRelationTooLowOpen(false);
     onActionModalStateChange?.(false);
   };
 
@@ -143,6 +156,7 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
   const selectedAidCountryKey = normalizeCountryName(countryName);
   const aidRequestBlocked = Boolean(activeAidDelivery) ||
     pendingAidRequestCountryKeys.has(selectedAidCountryKey);
+  const isAidRelationTooLow = relationValue < 41;
   const formatAidArrivalDate = (dateString?: string) => {
     if (!dateString) return null;
     const [year, month, day] = dateString.split('-').map(Number);
@@ -325,8 +339,15 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
 
   const requestAid = async () => {
     const senderCountryKey = normalizeCountryName(countryName);
-    if (!playerCountryName || !senderCountryKey || aidRequestBlocked ||
-      pendingAidRequestCountryKeysRef.current.has(senderCountryKey)) {
+    if (aidRequestBlocked || pendingAidRequestCountryKeysRef.current.has(senderCountryKey)) {
+      openAidRequestInProgressModal();
+      return;
+    }
+    if (isAidRelationTooLow) {
+      openAidRelationTooLowModal();
+      return;
+    }
+    if (!playerCountryName || !senderCountryKey) {
       return;
     }
     if (!setPlayerCountryDetail) {
@@ -447,6 +468,10 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
                 openAidRequestInProgressModal();
                 return;
               }
+              if (isAidRelationTooLow) {
+                openAidRelationTooLowModal();
+                return;
+              }
               setIsMintaBantuanOpen(true);
             }}
           />
@@ -541,6 +566,12 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
         isOpen={isAidRequestInProgressOpen}
         countryName={countryName}
         onClose={closeAidRequestInProgressModal}
+      />
+      <MintaBantuanHubunganRendahModal
+        isOpen={isAidRelationTooLowOpen}
+        countryName={countryName}
+        relationValue={relationValue}
+        onClose={closeAidRelationTooLowModal}
       />
       <BerikanWilayahModal
         isOpen={isBerikanWilayahOpen}

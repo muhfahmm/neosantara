@@ -218,6 +218,8 @@
     "requestHelpPromptSuffix": "援助可能包括军事、经济或人道支持。",
     "aidRequestInProgressTitle": "援助请求正在处理中",
     "aidRequestInProgressMessage": "您向{country}提出的请求正在处理中，或援助已在途中。请等待援助抵达后，再次向该国请求帮助。",
+    "aidRelationTooLowTitle": "外交关系不足",
+    "aidRelationTooLowMessage": "您与{country}的关系目前为{relation}/100。关系至少达到41才能请求援助。",
     "giveTerritoryTitle": "确认移交领土",
     "recipient": "接收方",
     "noAnnexedTerritories": "没有已吞并的领土",
