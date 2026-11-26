@@ -6,15 +6,9 @@ import {
   getTravelArrivalDateString,
   getEmbassyConstructionDaysFromDistance,
 } from "./time_logic.ts";
-import {
-  CONTINENT_TRAVEL_DAYS,
-  getFallbackTravelDaysFromDistance,
-  getTravelDaysBetweenContinents,
-  type SupportedContinent,
-} from "./continentTravelTime.ts";
 import { getEffectiveEmbassyBuildTime } from "../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/1_Manfaat Kedutaan.ts";
 
-test("distance-based journeys use the configured origin and destination continents", () => {
+test("distance-based journeys use the fixed three-day duration", () => {
   const nearbyRoute = estimateTravelTime("Indonesia", "Malaysia", {
     durationByDistance: true,
   });
@@ -22,8 +16,8 @@ test("distance-based journeys use the configured origin and destination continen
     durationByDistance: true,
   });
 
-  assert.equal(nearbyRoute?.days, 60);
-  assert.equal(distantRoute?.days, 150);
+  assert.equal(nearbyRoute?.days, 3);
+  assert.equal(distantRoute?.days, 3);
 });
 
 test("routes without distance-based timing keep the existing three-day duration", () => {
@@ -33,12 +27,12 @@ test("routes without distance-based timing keep the existing three-day duration"
 });
 
 test("travel arrival dates advance by whole simulation days across leap years", () => {
-  assert.equal(getTravelArrivalDateString(new Date(2028, 1, 1), 60), "2028-04-01");
-  assert.equal(getTravelArrivalDateString(new Date(Number.NaN), 60), null);
+  assert.equal(getTravelArrivalDateString(new Date(2028, 1, 1), 3), "2028-02-04");
+  assert.equal(getTravelArrivalDateString(new Date(Number.NaN), 3), null);
   assert.equal(getTravelArrivalDateString(new Date(2028, 1, 1), -1), null);
 });
 
-test("diplomatic and military routes use the continent-pair schedule", () => {
+test("all diplomatic and military route kinds use the fixed three-day duration", () => {
   const kinds = [
     "spionase",
     "sabotase",
@@ -47,16 +41,17 @@ test("diplomatic and military routes use the continent-pair schedule", () => {
     "research-contract",
     "defense-alliance",
     "aid-delivery",
+    "icbm",
+    "serang",
+    "serang-negara",
+    "kudeta",
   ];
 
   for (const diplomacyKind of kinds) {
     const route = estimateTravelTime("Indonesia", "Amerika Serikat", { diplomacyKind });
 
     assert.ok(route);
-    assert.equal(
-      route.days,
-      getTravelDaysBetweenContinents(route.originContinent, route.destinationContinent),
-    );
+    assert.equal(route.days, 3);
   }
 
   const nearbyRoute = estimateTravelTime("Indonesia", "Malaysia", {
@@ -66,92 +61,19 @@ test("diplomatic and military routes use the continent-pair schedule", () => {
     diplomacyKind: "non-aggression-pact",
   });
   assert.ok(nearbyRoute && distantRoute);
-  assert.equal(nearbyRoute.days, 60);
-  assert.equal(distantRoute.days, 150);
+  assert.equal(nearbyRoute.days, 3);
+  assert.equal(distantRoute.days, 3);
 });
 
-test("continent-pair schedule includes every directed route", () => {
-  const continents = Object.keys(CONTINENT_TRAVEL_DAYS) as SupportedContinent[];
-  const expectedSchedule: typeof CONTINENT_TRAVEL_DAYS = {
-    Asia: {
-      Asia: 60,
-      Afrika: 120,
-      Eropa: 90,
-      Oceania: 100,
-      "Amerika Selatan": 170,
-      "Amerika Utara": 150,
-    },
-    Afrika: {
-      Asia: 120,
-      Afrika: 60,
-      Eropa: 80,
-      Oceania: 140,
-      "Amerika Selatan": 130,
-      "Amerika Utara": 130,
-    },
-    Eropa: {
-      Asia: 90,
-      Afrika: 80,
-      Eropa: 60,
-      Oceania: 150,
-      "Amerika Selatan": 120,
-      "Amerika Utara": 90,
-    },
-    Oceania: {
-      Asia: 100,
-      Afrika: 140,
-      Eropa: 150,
-      Oceania: 60,
-      "Amerika Selatan": 160,
-      "Amerika Utara": 140,
-    },
-    "Amerika Selatan": {
-      Asia: 170,
-      Afrika: 130,
-      Eropa: 120,
-      Oceania: 160,
-      "Amerika Selatan": 60,
-      "Amerika Utara": 80,
-    },
-    "Amerika Utara": {
-      Asia: 150,
-      Afrika: 130,
-      Eropa: 90,
-      Oceania: 140,
-      "Amerika Selatan": 80,
-      "Amerika Utara": 60,
-    },
-  };
-
-  assert.deepEqual(CONTINENT_TRAVEL_DAYS, expectedSchedule);
-  assert.equal(continents.length, 6);
-  for (const origin of continents) {
-    for (const destination of continents) {
-      const days = getTravelDaysBetweenContinents(origin, destination);
-      assert.ok(days >= 60 && days <= 170);
-      assert.equal(days, CONTINENT_TRAVEL_DAYS[origin][destination]);
-    }
-  }
-});
-
-test("user military attacks use distance-based travel days", () => {
+test("user military attacks use the fixed three-day duration", () => {
   for (const kind of ["serang", "serang-negara"]) {
     const route = estimateTravelTime("Indonesia", "Amerika Serikat", {
       diplomacyKind: kind,
     });
 
     assert.ok(route);
-    assert.equal(
-      route.days,
-      getTravelDaysBetweenContinents(route.originContinent, route.destinationContinent),
-    );
+    assert.equal(route.days, 3);
   }
-});
-
-test("fallback travel duration remains bounded for routes without continent data", () => {
-  assert.equal(getFallbackTravelDaysFromDistance(0), 60);
-  assert.equal(getFallbackTravelDaysFromDistance(Math.PI * 6371), 170);
-  assert.throws(() => getFallbackTravelDaysFromDistance(-1), RangeError);
 });
 
 test("embassy construction duration scales with distance and stays within 60 to 120 days", () => {

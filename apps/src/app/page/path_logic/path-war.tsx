@@ -34,8 +34,8 @@ import {
   getSimulationDayPosition,
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
+  MAX_TRAVEL_DAYS,
 } from './time_logic';
-import { getFallbackTravelDaysFromDistance } from './continentTravelTime';
 import {
   initializeRouteMathRust,
   isRouteMathRustReady,
@@ -569,22 +569,13 @@ export function buildWarPath(input: BuildWarPathInput): WarPath | null {
     return null;
   }
 
-  const travelDays = travelEstimate?.days ?? (() => {
-    const radians = (degrees: number) => degrees * Math.PI / 180;
-    const latitudeDifference = radians(target.lat - attacker.lat);
-    const longitudeDifference = radians(target.lng - attacker.lng);
-    const haversine =
-      Math.sin(latitudeDifference / 2) ** 2 +
-      Math.cos(radians(attacker.lat)) *
-        Math.cos(radians(target.lat)) *
-        Math.sin(longitudeDifference / 2) ** 2;
-    const distanceKm = 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
-    console.warn('[WarPath] Using coordinate-based travel estimate', {
+  const travelDays = travelEstimate?.days ?? MAX_TRAVEL_DAYS;
+  if (!travelEstimate) {
+    console.warn('[WarPath] Using the fixed travel duration because country data is unavailable', {
       attackerCountry: attacker.country,
       targetCountry: target.country,
     });
-    return getFallbackTravelDaysFromDistance(distanceKm);
-  })();
+  }
 
   return {
     id: `${attacker.country}-${target.country}-${Date.now()}`,
@@ -1050,7 +1041,6 @@ export default function WarMap({
     if (!isOpen) return null;
     const path = buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
     if (!path) return null;
-    // Animasi perang tidak lagi dipangkas ke 1 hari agar pergerakan tank berdurasi proporsional 120-180 hari antarbenua
     return path;
   }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 

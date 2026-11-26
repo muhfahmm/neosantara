@@ -1,43 +1,18 @@
 import { CAPITALS_DATA, COUNTRIES_DATA } from '../map_system/map-data';
 import { greatCircleDistanceKmRust } from './routeMathRust';
-import {
-  getTravelDaysBetweenContinents,
-  type SupportedContinent,
-} from './continentTravelTime';
 
 export const GAME_DAYS_PER_1000_KM = 1;
 
 export const MIN_TRAVEL_DAYS = 3;
 export const MAX_TRAVEL_DAYS = 3;
 
-const DISTANCE_BASED_TRAVEL_KINDS = new Set([
-  'spionase',
-  'sabotase',
-  'non-aggression-pact',
-  'trade-agreement',
-  'research-contract',
-  'defense-alliance',
-  'aid-delivery',
-  'serang',
-  'serang-negara',
-  'kudeta',
-]);
-
-export const getDiplomaticRatificationDays = (
-  kind?: string | null,
-  originContinent?: SupportedContinent,
-  destinationContinent?: SupportedContinent,
-): number => {
-  if (!kind) return MAX_TRAVEL_DAYS;
-  if (DISTANCE_BASED_TRAVEL_KINDS.has(kind)) {
-    if (!originContinent || !destinationContinent) {
-      throw new Error(`Cannot estimate ${kind} travel time without both continents`);
-    }
-    return getTravelDaysBetweenContinents(originContinent, destinationContinent);
-  }
-
-  return MAX_TRAVEL_DAYS;
-};
+export type SupportedContinent =
+  | 'Asia'
+  | 'Afrika'
+  | 'Eropa'
+  | 'Oceania'
+  | 'Amerika Selatan'
+  | 'Amerika Utara';
 
 const EARTH_RADIUS_KM = 6371;
 const MAX_GREAT_CIRCLE_DISTANCE_KM = Math.PI * EARTH_RADIUS_KM;
@@ -262,15 +237,9 @@ export const estimateTravelTime = (
 
   const distanceKm = getGreatCircleDistanceKm(origin, destination);
 
-  const days = options.diplomacyKind
-    ? getDiplomaticRatificationDays(
-        options.diplomacyKind,
-        origin.continent,
-        destination.continent,
-      )
-    : options.durationByDistance
-    ? getTravelDaysBetweenContinents(origin.continent, destination.continent)
-    : MAX_TRAVEL_DAYS;
+  // Keep the options parameter for existing callers; every route now takes the same duration.
+  void options;
+  const days = MAX_TRAVEL_DAYS;
 
   return {
     distanceKm,
