@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ShoppingBag, Coins, Gem } from "lucide-react";
+import { ShoppingBag, Coins, Gem, Crown, Tag, PlaySquare } from "lucide-react";
 import NotebookModalWrapper from "@/app/page/navigasi_menu/2_navigasi_bawah/NotebookModalWrapper";
 import RootInfoModalHeader from "@/app/page/root_modals_design_menu/RootInfoModalHeader";
 import { useLanguage } from "@/app/page/paused_menu/terjemahan_paused_menu/languageLogic";
@@ -13,6 +13,8 @@ import PremiumItems from "./premiumItems";
 import DiscountItems from "./discountItems";
 import AdMenu from "./adMenu";
 
+type ShopTabType = "neo" | "gems" | "premium" | "discount" | "ads";
+
 interface ShopModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,7 +22,7 @@ interface ShopModalProps {
   isMenuButtonHidden?: boolean;
   playerDiamonds?: number;
   countryDetail?: any;
-  initialTab?: "neo" | "gems";
+  initialTab?: ShopTabType;
 }
 
 export default function ShopModal({
@@ -33,7 +35,7 @@ export default function ShopModal({
   initialTab = "neo",
 }: ShopModalProps) {
   const { t, language } = useLanguage();
-  const [activeTab, setActiveTab] = useState<"neo" | "gems">(initialTab);
+  const [activeTab, setActiveTab] = useState<ShopTabType>(initialTab);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -106,31 +108,15 @@ export default function ShopModal({
                 backgroundColor: "var(--root-color-canvas)",
               }}
             >
-              {/* Tab Navigasi Atas: NEO vs GEMS */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  borderBottom: "1px solid color-mix(in srgb, var(--root-color-accent) 25%, transparent)",
-                  paddingBottom: "0.15rem",
-                }}
-              >
+              {/* Tab Navigasi Atas: Kategori Toko */}
+              <div className="shop-tabs-bar">
+                {/* 1. Item NEO (Koin) */}
                 <button
                   type="button"
                   onClick={() => setActiveTab("neo")}
+                  className="shop-tab-btn"
+                  title={t('side_shop.coins')}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.375rem",
-                    padding: "0.45rem 1rem",
-                    fontSize: "0.8125rem",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    cursor: "pointer",
-                    borderRadius: "var(--root-radius-card, 0.5rem) var(--root-radius-card, 0.5rem) 0 0",
-                    border: "none",
                     borderBottom: activeTab === "neo"
                       ? "3px solid var(--root-color-accent)"
                       : "3px solid transparent",
@@ -140,28 +126,19 @@ export default function ShopModal({
                     color: activeTab === "neo"
                       ? "var(--root-color-accent)"
                       : "var(--root-color-subtle)",
-                    transition: "all 0.2s ease",
                   }}
                 >
-                  <Coins size={15} />
+                  <Coins />
                   <span>{t('side_shop.coins')}</span>
                 </button>
 
+                {/* 2. Item GEMS */}
                 <button
                   type="button"
                   onClick={() => setActiveTab("gems")}
+                  className="shop-tab-btn"
+                  title={t('side_shop.gems')}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.375rem",
-                    padding: "0.45rem 1rem",
-                    fontSize: "0.8125rem",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    cursor: "pointer",
-                    borderRadius: "var(--root-radius-card, 0.5rem) var(--root-radius-card, 0.5rem) 0 0",
-                    border: "none",
                     borderBottom: activeTab === "gems"
                       ? "3px solid #06B6D4"
                       : "3px solid transparent",
@@ -171,49 +148,86 @@ export default function ShopModal({
                     color: activeTab === "gems"
                       ? "#38BDF8"
                       : "var(--root-color-subtle)",
-                    transition: "all 0.2s ease",
                   }}
                 >
-                  <Gem size={15} />
+                  <Gem />
                   <span>{t('side_shop.gems')}</span>
+                </button>
+
+                {/* 3. Item Premium */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("premium")}
+                  className="shop-tab-btn"
+                  title={t('side_shop.premiumItems.title')}
+                  style={{
+                    borderBottom: activeTab === "premium"
+                      ? "3px solid #F59E0B"
+                      : "3px solid transparent",
+                    backgroundColor: activeTab === "premium"
+                      ? "color-mix(in srgb, #F59E0B 15%, transparent)"
+                      : "transparent",
+                    color: activeTab === "premium"
+                      ? "#FBBF24"
+                      : "var(--root-color-subtle)",
+                  }}
+                >
+                  <Crown />
+                  <span>{t('side_shop.premiumItems.title')}</span>
+                </button>
+
+                {/* 4. Item Diskon */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("discount")}
+                  className="shop-tab-btn"
+                  title={t('side_shop.discountItems.title')}
+                  style={{
+                    borderBottom: activeTab === "discount"
+                      ? "3px solid var(--root-color-danger, #EF4444)"
+                      : "3px solid transparent",
+                    backgroundColor: activeTab === "discount"
+                      ? "color-mix(in srgb, var(--root-color-danger, #EF4444) 15%, transparent)"
+                      : "transparent",
+                    color: activeTab === "discount"
+                      ? "var(--root-color-danger, #EF4444)"
+                      : "var(--root-color-subtle)",
+                  }}
+                >
+                  <Tag />
+                  <span>{t('side_shop.discountItems.title')}</span>
+                </button>
+
+                {/* 5. Iklan Berhadiah */}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("ads")}
+                  className="shop-tab-btn"
+                  title={t('side_shop.adItems.title')}
+                  style={{
+                    borderBottom: activeTab === "ads"
+                      ? "3px solid #10B981"
+                      : "3px solid transparent",
+                    backgroundColor: activeTab === "ads"
+                      ? "color-mix(in srgb, #10B981 15%, transparent)"
+                      : "transparent",
+                    color: activeTab === "ads"
+                      ? "#34D399"
+                      : "var(--root-color-subtle)",
+                  }}
+                >
+                  <PlaySquare />
+                  <span>{t('side_shop.adItems.title')}</span>
                 </button>
               </div>
 
               {/* Area Konten Tab Aktif */}
               <div className="w-full">
-                {activeTab === "neo" ? <ShopCoinsItems /> : <ShopGemsItems />}
-              </div>
-
-              {/* Section Menu Tambahan: Premium, Diskon, & Iklan */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                  marginTop: "0.25rem",
-                  paddingTop: "0.75rem",
-                  borderTop: "1px solid color-mix(in srgb, var(--root-color-accent) 15%, transparent)",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "0.6875rem",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    color: "var(--root-color-subtle)",
-                  }}
-                >
-                  {t('side_shop.premium')}
-                </div>
-
-                <div
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3"
-                >
-                  <PremiumItems />
-                  <DiscountItems />
-                  <AdMenu />
-                </div>
+                {activeTab === "neo" && <ShopCoinsItems />}
+                {activeTab === "gems" && <ShopGemsItems />}
+                {activeTab === "premium" && <PremiumItems />}
+                {activeTab === "discount" && <DiscountItems />}
+                {activeTab === "ads" && <AdMenu />}
               </div>
             </div>
           </div>

@@ -37,9 +37,87 @@
   letter-spacing: -0.02em;
 }
 
-.root-modal-tabs {
+/* Shop Modal Tabs Responsive Styling */
+.shop-tabs-bar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  gap: 2px;
+  border-bottom: 1px solid color-mix(in srgb, var(--root-color-accent) 25%, transparent);
+  padding-bottom: 0.15rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.shop-tab-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 4px;
+  padding: 4px 2px;
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  border-radius: var(--root-radius-card, 0.5rem) var(--root-radius-card, 0.5rem) 0 0;
+  border: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.shop-tab-btn span {
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.shop-tab-btn svg {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+}
+
+@media (min-width: 1280px) {
+  .shop-tab-btn {
+    font-size: 11px;
+    gap: 5px;
+    padding: 6px 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .shop-tab-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .shop-tab-btn {
+    font-size: 8.5px;
+    gap: 3px;
+    padding: 4px 1px;
+    letter-spacing: 0;
+  }
+
+  .shop-tab-btn svg {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-tab-btn {
+    font-size: 7.5px;
+    gap: 2px;
+    padding: 3px 1px;
+  }
+
+  .shop-tab-btn svg {
+    width: 10px;
+    height: 10px;
+  }
 }
 
 .root-modal-tab-button {
@@ -48,8 +126,8 @@
   padding: 8px 14px;
 }
 
-@media ((orientation: landscape) and (max-height: 500px)),
-((orientation: portrait) and (max-width: 640px)) {
+@media (orientation: landscape) and (max-height: 500px),
+(orientation: portrait) and (max-width: 640px) {
   .root-modal-tab-button {
     min-height: 28px;
     padding: 4px 10px;
@@ -67,6 +145,7 @@
     --modal-font-body: 0.875rem;
     --modal-font-label: 0.625rem;
     --modal-font-value: 0.875rem;
+    --modal-font-tab: 0.6875rem;
   }
 }
 
@@ -78,6 +157,7 @@
     --modal-font-body: 0.875rem;
     --modal-font-label: 0.6875rem;
     --modal-font-value: 0.9375rem;
+    --modal-font-tab: 0.75rem;
     --building-card-image-size: 80px;
   }
 }
@@ -90,6 +170,7 @@
     --modal-font-body: 0.875rem;
     --modal-font-label: 0.75rem;
     --modal-font-value: 1rem;
+    --modal-font-tab: 0.8125rem;
     --building-card-image-size: 80px;
   }
 }
@@ -196,7 +277,7 @@
   }
 }
 
-@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+@media (orientation: landscape) and (max-height: 500px), (orientation: portrait) and (max-width: 640px) {
   :root {
     --satisfaction-title-font-size: 10px;
     --satisfaction-value-font-size: 10px;
@@ -782,7 +863,7 @@
   }
 }
 
-@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+@media (orientation: landscape) and (max-height: 500px), (orientation: portrait) and (max-width: 640px) {
   .root-modal-close-button {
     box-sizing: border-box !important;
     width: 64px !important;
@@ -1137,7 +1218,7 @@
   flex: 0 1 auto !important;
 }
 
-@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+@media (orientation: landscape) and (max-height: 500px), (orientation: portrait) and (max-width: 640px) {
   .notebook-modal-frame[data-viewport-mode] > .modal-responsive-shell,
   .paused-menu-frame[data-viewport-mode] > .modal-responsive-shell {
     box-sizing: border-box;
@@ -1231,7 +1312,7 @@
 }
 
 /* Pengurangan efek grafis berat pada landscape phone dan portrait phone demi performa */
-@media ((orientation: landscape) and (max-height: 500px)), ((orientation: portrait) and (max-width: 640px)) {
+@media (orientation: landscape) and (max-height: 500px), (orientation: portrait) and (max-width: 640px) {
   .backdrop-blur-xl, .backdrop-blur-lg, .backdrop-blur-md {
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
