@@ -26,6 +26,7 @@ interface PerbandinganPasukanProps {
   attackerDeploymentPercent?: number;
   attackerDetail?: unknown;
   targetDetail?: unknown;
+  isMilitaryAid?: boolean;
   isUserAttacker?: boolean;
   isUserDefender?: boolean;
   isCoalitionForce?: boolean;
@@ -238,8 +239,10 @@ function WinProbabilityPanel({
 export default function PerbandinganPasukan({
   attackerName,
   targetName,
+  targetPower,
   attackerDetail,
   targetDetail,
+  isMilitaryAid = false,
   attackerDeploymentPercent,
   isUserDefender = false,
   isUserAttacker = false,
@@ -342,7 +345,9 @@ export default function PerbandinganPasukan({
   const targetDeployedPower = getDeployedMilitaryPower(targetBreakdown, targetSummary);
 
   const actualAttackerPower = attackerDeployedPower;
-  const actualTargetPower = targetDeployedPower;
+  const actualTargetPower = isMilitaryAid
+    ? targetPower
+    : targetDeployedPower;
 
   const totalCombinedPower = actualAttackerPower + actualTargetPower;
   const attackerPct = totalCombinedPower > 0

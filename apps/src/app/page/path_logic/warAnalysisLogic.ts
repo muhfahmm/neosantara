@@ -69,7 +69,9 @@ export function combineMilitaryAidWithDefender({
         combinedArmada[unit.groupId][unit.dataKey] =
           (combinedArmada[unit.groupId][unit.dataKey] || 0) + quantity;
       }
-      if (isAid) addedPower += unit.totalPower * percent / 100;
+      if (isAid && unit.quantity > 0) {
+        addedPower += quantity * unit.totalPower / unit.quantity;
+      }
     }
     return addedPower;
   };

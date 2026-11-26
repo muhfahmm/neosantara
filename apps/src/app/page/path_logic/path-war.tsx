@@ -1905,6 +1905,7 @@ export default function WarMap({
           targetIso={target.iso || 'un'}
           targetPower={targetPower}
           targetDetail={target}
+          isMilitaryAid={isMilitaryAid}
           isUserAttacker={(!isNpcWar && !isUserDefender) || isPlayerCoalitionAttacker}
           isUserDefender={isUserDefender}
           isCoalitionForce={isPbbCoalition}
