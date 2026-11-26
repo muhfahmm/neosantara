@@ -6,16 +6,18 @@ import {
   Phone, 
   Map 
 } from 'lucide-react';
-import { useState } from 'react';
+import { startTransition, useEffect, useRef, useState } from 'react';
 import BeriTentaraModal from './1_beri_tentara/beriTentaraModals';
 import BeriHadiahModal from './2_beri_hadiah/beriHadiahModals';
 import TingkatkanHubunganModal from './3_tingkatkan_hubungan/tingkatkanHubunganModals';
-import MintaBantuanModal from './5_minta_bantuan/mintaBantuanModals';
+import MintaBantuanKonfirmasiModal from './5_minta_bantuan/mintaBantuanKonfirmasiModal';
+import MintaBantuanSedangBerjalanModal from './5_minta_bantuan/mintaBantuanSedangBerjalanModal';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
 import { getCountryColor } from '../../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { estimateTravelTime, getTravelArrivalDateString } from '../../path_logic/time_logic';
+import { dispatchAidDeliveryPath } from '../../path_logic/path-helper';
 
 interface GeopolitikProps {
   countryName: string;
@@ -70,7 +72,12 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
   const [isMintaBantuanOpen, setIsMintaBantuanOpen] = useState(false);
+  const [isAidRequestInProgressOpen, setIsAidRequestInProgressOpen] = useState(false);
   const [isBerikanWilayahOpen, setIsBerikanWilayahOpen] = useState(false);
+  const pendingAidRequestCountryKeysRef = useRef(new Set<string>());
+  const [pendingAidRequestCountryKeys, setPendingAidRequestCountryKeys] = useState<Set<string>>(
+    () => new Set()
+  );
 
   const handleAction = (action: string) => {
     console.log(`Aksi geopolitik: ${action} untuk ${countryName}`);
@@ -78,6 +85,16 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
 
   const closeAidRequestModal = () => {
     setIsMintaBantuanOpen(false);
+  };
+
+  const openAidRequestInProgressModal = () => {
+    setIsAidRequestInProgressOpen(true);
+    onActionModalStateChange?.(true);
+  };
+
+  const closeAidRequestInProgressModal = () => {
+    setIsAidRequestInProgressOpen(false);
+    onActionModalStateChange?.(false);
   };
 
   const openBerikanWilayahModal = () => {
@@ -107,6 +124,25 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
       typeof delivery?.endDate === 'string'
     )
     .sort((a, b) => a.endDate.localeCompare(b.endDate))[0];
+  const ongoingAidSenderKeys = aidDeliveryRecords
+    .filter(isAidDeliverySchedule)
+    .filter(delivery =>
+      normalizeCountryName(delivery.targetCountry) === normalizeCountryName(playerCountryName)
+    )
+    .map(delivery => normalizeCountryName(delivery.senderCountry));
+  const ongoingAidSenderKeySignature = [...new Set(ongoingAidSenderKeys)].sort().join(',');
+  useEffect(() => {
+    const ongoingAidSenderKeySet = new Set(ongoingAidSenderKeySignature.split(',').filter(Boolean));
+    const nextPendingKeys = new Set(pendingAidRequestCountryKeysRef.current);
+    ongoingAidSenderKeySet.forEach(key => nextPendingKeys.delete(key));
+    if (nextPendingKeys.size === pendingAidRequestCountryKeysRef.current.size) return;
+
+    pendingAidRequestCountryKeysRef.current = nextPendingKeys;
+    setPendingAidRequestCountryKeys(nextPendingKeys);
+  }, [ongoingAidSenderKeySignature]);
+  const selectedAidCountryKey = normalizeCountryName(countryName);
+  const aidRequestBlocked = Boolean(activeAidDelivery) ||
+    pendingAidRequestCountryKeys.has(selectedAidCountryKey);
   const formatAidArrivalDate = (dateString?: string) => {
     if (!dateString) return null;
     const [year, month, day] = dateString.split('-').map(Number);
@@ -288,7 +324,19 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
   };
 
   const requestAid = async () => {
-    if (!playerCountryName) return;
+    const senderCountryKey = normalizeCountryName(countryName);
+    if (!playerCountryName || !senderCountryKey || aidRequestBlocked ||
+      pendingAidRequestCountryKeysRef.current.has(senderCountryKey)) {
+      return;
+    }
+    if (!setPlayerCountryDetail) {
+      console.error('[Geopolitik] Cannot request aid without player country state.');
+      return;
+    }
+
+    pendingAidRequestCountryKeysRef.current.add(senderCountryKey);
+    setPendingAidRequestCountryKeys(new Set(pendingAidRequestCountryKeysRef.current));
+    let deliveryScheduled = false;
     try {
       const response = await fetch(`/api/sda-data?country=${encodeURIComponent(countryName)}`);
       const sda = response.ok ? await response.json() as Record<string, boolean> : null;
@@ -326,38 +374,55 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
       }
 
       const pathId = `aid-delivery-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-      setPlayerCountryDetail?.((previous: Record<string, unknown> | null) => {
-        if (!previous) return previous;
-        const ongoingDeliveries: unknown[] = Array.isArray(previous.ongoingAidDeliveries)
-          ? previous.ongoingAidDeliveries
-          : [];
-        return {
-          ...previous,
-          ongoingAidDeliveries: [
-            ...ongoingDeliveries,
-            {
-              id: pathId,
-              senderCountry: countryName,
-              targetCountry: playerCountryName,
-              endDate,
-              durationDays: estimate.days,
-            },
-          ],
-        };
-      });
+      if (!dispatchAidDeliveryPath({
+        pathId,
+        senderCountry: countryName,
+        targetCountry: playerCountryName,
+        resourceKey,
+        amount,
+      })) return;
 
-      window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
-        detail: {
-          pathId,
-          kind: 'aid-delivery',
-          senderCountry: countryName,
-          targetCountry: playerCountryName,
-          resourceKey,
-          amount,
-        },
-      }));
+      deliveryScheduled = true;
+      startTransition(() => {
+        setPlayerCountryDetail((previous: Record<string, unknown> | null) => {
+          if (!previous) return previous;
+          const ongoingDeliveries: unknown[] = Array.isArray(previous.ongoingAidDeliveries)
+            ? previous.ongoingAidDeliveries
+            : [];
+          const aidRequests: unknown[] = Array.isArray(previous.aidRequests)
+            ? previous.aidRequests
+            : [];
+          const updatedAidRequests = aidRequests.some(request =>
+            normalizeCountryName(request) === normalizeCountryName(countryName)
+          )
+            ? aidRequests
+            : [...aidRequests, countryName];
+          return {
+            ...previous,
+            aidRequests: updatedAidRequests,
+            aidRequestedCount: updatedAidRequests.length,
+            ongoingAidDeliveries: [
+              ...ongoingDeliveries,
+              {
+                id: pathId,
+                senderCountry: countryName,
+                targetCountry: playerCountryName,
+                endDate,
+                durationDays: estimate.days,
+              },
+            ],
+          };
+        });
+      });
     } catch (error) {
       console.error('Gagal menyiapkan bantuan sekutu.', error);
+    } finally {
+      if (!deliveryScheduled) {
+        const nextPendingKeys = new Set(pendingAidRequestCountryKeysRef.current);
+        nextPendingKeys.delete(senderCountryKey);
+        pendingAidRequestCountryKeysRef.current = nextPendingKeys;
+        setPendingAidRequestCountryKeys(nextPendingKeys);
+      }
     }
   };
 
@@ -374,7 +439,17 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
               {aidArrivalBadge}
             </div>
           )}
-          <ActionButton icon={Phone} label={t('detail_negara_ai.actions.requestHelp')} onClick={() => setIsMintaBantuanOpen(true)} />
+          <ActionButton
+            icon={Phone}
+            label={t('detail_negara_ai.actions.requestHelp')}
+            onClick={() => {
+              if (aidRequestBlocked || pendingAidRequestCountryKeysRef.current.has(selectedAidCountryKey)) {
+                openAidRequestInProgressModal();
+                return;
+              }
+              setIsMintaBantuanOpen(true);
+            }}
+          />
         </div>
         <ActionButton icon={Map} label={t('detail_negara_ai.actions.transferTerritory')} onClick={openBerikanWilayahModal} disabled={!hasAnnexedTerritory} />
       </div>
@@ -456,28 +531,16 @@ export default function Geopolitik({ countryName, playerCountryDetail, currentDa
           console.log(`Tingkatkan Hubungan -> ${countryName} sebesar ${amount} NEO (+${gained} tingkat)`);
         }}
       />
-      <MintaBantuanModal
+      <MintaBantuanKonfirmasiModal
         isOpen={isMintaBantuanOpen}
         countryName={countryName}
         onClose={closeAidRequestModal}
-        onConfirm={() => {
-          if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => {
-              if (!prev) return prev;
-              const prevRequests = Array.isArray(prev?.aidRequests) ? prev.aidRequests : [];
-              const normTarget = String(countryName || '').toLowerCase().trim();
-              const updatedRequests = prevRequests.some((p: string) => String(p).toLowerCase().trim() === normTarget)
-                ? prevRequests
-                : [...prevRequests, countryName];
-              return {
-                ...prev,
-                aidRequests: updatedRequests,
-                aidRequestedCount: updatedRequests.length,
-              };
-            });
-          }
-          requestAid();
-        }}
+        onConfirm={() => { void requestAid(); }}
+      />
+      <MintaBantuanSedangBerjalanModal
+        isOpen={isAidRequestInProgressOpen}
+        countryName={countryName}
+        onClose={closeAidRequestInProgressModal}
       />
       <BerikanWilayahModal
         isOpen={isBerikanWilayahOpen}

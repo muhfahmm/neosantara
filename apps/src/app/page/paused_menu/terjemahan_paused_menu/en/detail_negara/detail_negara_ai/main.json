@@ -216,6 +216,8 @@
     "requestHelpConfirm": "Request",
     "requestHelpPromptPrefix": "Do you want to request assistance from",
     "requestHelpPromptSuffix": "Assistance may include military, economic, or humanitarian support.",
+    "aidRequestInProgressTitle": "Aid Request In Progress",
+    "aidRequestInProgressMessage": "Your request to {country} is being processed or the aid is already on its way. Wait for it to arrive before requesting help from this country again.",
     "giveTerritoryTitle": "Confirm Give Territory",
     "recipient": "Recipient",
     "noAnnexedTerritories": "No annexed territories",

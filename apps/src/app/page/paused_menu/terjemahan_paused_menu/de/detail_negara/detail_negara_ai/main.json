@@ -216,6 +216,8 @@
     "requestHelpConfirm": "Hilfe anfordern",
     "requestHelpPromptPrefix": "Möchten Sie Unterstützung anfordern von",
     "requestHelpPromptSuffix": "Die Hilfe kann militärischer, wirtschaftlicher oder humanitärer Art sein.",
+    "aidRequestInProgressTitle": "Hilfegesuch wird bearbeitet",
+    "aidRequestInProgressMessage": "Ihre Anfrage an {country} wird bearbeitet oder die Hilfe ist bereits unterwegs. Warten Sie auf die Ankunft, bevor Sie dieses Land erneut um Hilfe bitten.",
     "giveTerritoryTitle": "Gebietsübertragung bestätigen",
     "recipient": "Empfänger",
     "noAnnexedTerritories": "Keine annektierten Gebiete",

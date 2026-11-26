@@ -216,6 +216,8 @@
     "requestHelpConfirm": "요청",
     "requestHelpPromptPrefix": "다음 국가에 지원을 요청하시겠습니까:",
     "requestHelpPromptSuffix": "군사·경제·인도적 지원이 제공될 수 있습니다.",
+    "aidRequestInProgressTitle": "지원 요청 처리 중",
+    "aidRequestInProgressMessage": "{country}에 대한 요청이 처리 중이거나 지원이 이미 이동 중입니다. 도착할 때까지 이 국가에 다시 지원을 요청할 수 없습니다.",
     "giveTerritoryTitle": "영토 양도 확인",
     "recipient": "수령국",
     "noAnnexedTerritories": "병합한 영토가 없습니다",

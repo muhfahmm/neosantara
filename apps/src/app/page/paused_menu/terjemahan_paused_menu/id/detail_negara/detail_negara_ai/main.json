@@ -216,6 +216,8 @@
     "requestHelpConfirm": "Minta",
     "requestHelpPromptPrefix": "Apakah Anda ingin meminta bantuan kepada",
     "requestHelpPromptSuffix": "Bantuan dapat berupa dukungan militer, ekonomi, atau kemanusiaan.",
+    "aidRequestInProgressTitle": "Permintaan Bantuan Sedang Berjalan",
+    "aidRequestInProgressMessage": "Permintaan bantuan kepada {country} sedang diproses atau bantuannya sedang dalam perjalanan. Tunggu hingga bantuan tiba sebelum meminta lagi dari negara ini.",
     "giveTerritoryTitle": "Konfirmasi Berikan Wilayah",
     "recipient": "Penerima",
     "noAnnexedTerritories": "Tidak ada wilayah aneksasi",

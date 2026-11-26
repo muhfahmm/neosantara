@@ -216,6 +216,8 @@
     "requestHelpConfirm": "要請する",
     "requestHelpPromptPrefix": "次の国に支援を要請しますか：",
     "requestHelpPromptSuffix": "支援には軍事・経済・人道的な援助が含まれる場合があります。",
+    "aidRequestInProgressTitle": "支援要請を処理中",
+    "aidRequestInProgressMessage": "{country}への支援要請を処理中か、支援がすでに向かっています。到着するまで、この国への再要請はお待ちください。",
     "giveTerritoryTitle": "領土譲渡の確認",
     "recipient": "譲渡先",
     "noAnnexedTerritories": "併合した領土はありません",

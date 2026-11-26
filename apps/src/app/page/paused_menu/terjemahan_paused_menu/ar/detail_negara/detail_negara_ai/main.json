@@ -216,6 +216,8 @@
     "requestHelpConfirm": "طلب المساعدة",
     "requestHelpPromptPrefix": "هل تريد طلب المساعدة من",
     "requestHelpPromptSuffix": "قد تشمل المساعدة دعماً عسكرياً أو اقتصادياً أو إنسانياً.",
+    "aidRequestInProgressTitle": "طلب المساعدة قيد التنفيذ",
+    "aidRequestInProgressMessage": "يجري معالجة طلبك من {country} أو أن المساعدة في طريقها بالفعل. انتظر وصولها قبل طلب المساعدة من هذه الدولة مرة أخرى.",
     "giveTerritoryTitle": "تأكيد التنازل عن الإقليم",
     "recipient": "المستلم",
     "noAnnexedTerritories": "لا توجد أقاليم مُلحقة",
