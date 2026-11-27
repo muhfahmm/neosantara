@@ -16,7 +16,8 @@ import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobileP
 import { isMobileDevice } from './map_system/rust_map_mobile';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { stagePendingGameSave } from '@/app/logic/pendingGameSave';
-import { fetchWithFirebaseAuth } from '@/lib/firebaseClient';
+import { checkIsUserAuthenticated, fetchWithFirebaseAuth } from '@/lib/firebaseClient';
+import { SaveAuthRequiredModal } from './paused_menu/1_savegame/SaveAuthRequiredModal';
 
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
@@ -556,6 +557,7 @@ export default function PlayMenuPage() {
 
     const [mainMenuScreen, setMainMenuScreen] = useState<'menu' | 'continue' | 'settings' | 'credits'>('menu');
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [saveFiles, setSaveFiles] = useState<MainMenuSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
 
@@ -570,7 +572,10 @@ export default function PlayMenuPage() {
         setIsLoadingSaves(true);
         try {
             const response = await fetchWithFirebaseAuth('/api/game-save');
-            if (!response.ok) throw new Error('Gagal memuat save file.');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.error || 'Gagal memuat save file.');
+            }
             const data = await response.json();
             if (!Array.isArray(data)) throw new Error('Respons daftar save tidak valid.');
             setSaveFiles(data);
@@ -582,7 +587,12 @@ export default function PlayMenuPage() {
         }
     };
 
-    const openContinueScreen = () => {
+    const openContinueScreen = async () => {
+        const isAuth = await checkIsUserAuthenticated();
+        if (!isAuth) {
+            setIsAuthModalOpen(true);
+            return;
+        }
         fetchSaveFiles();
         setMainMenuScreen('continue');
     };
@@ -851,6 +861,17 @@ export default function PlayMenuPage() {
                         if (typeof window !== 'undefined') {
                             window.close();
                         }
+                    }}
+                />
+
+                <SaveAuthRequiredModal
+                    isOpen={isAuthModalOpen}
+                    actionContext="load"
+                    onClose={() => setIsAuthModalOpen(false)}
+                    onLoginSuccess={() => {
+                        setIsAuthModalOpen(false);
+                        fetchSaveFiles();
+                        setMainMenuScreen('continue');
                     }}
                 />
             </div>

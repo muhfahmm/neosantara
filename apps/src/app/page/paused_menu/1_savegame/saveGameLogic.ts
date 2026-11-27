@@ -14,7 +14,8 @@ export interface GameSaveRecord {
 export async function fetchGameSaves(): Promise<GameSaveRecord[]> {
     const response = await fetchWithFirebaseAuth('/api/game-save');
     if (!response.ok) {
-        throw new Error('Gagal memuat save file');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || 'Gagal memuat save file');
     }
 
     const data: unknown = await response.json();

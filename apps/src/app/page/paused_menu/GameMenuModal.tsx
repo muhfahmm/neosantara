@@ -16,6 +16,7 @@ import { LanguageSettingsSection } from './terjemahan_paused_menu/LanguageSettin
 import { useLanguage } from './terjemahan_paused_menu/languageLogic';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
+import { SaveAuthRequiredModal } from './1_savegame/SaveAuthRequiredModal';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
 import PausedMenuFrame from '../root_modals_design_menu/rootFrameMenu';
 import { PausedMenuHeader } from '../root_modals_design_menu/PausedMenuHeader';
@@ -70,6 +71,8 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     const [subview, setSubview] = useState<'menu' | 'load' | 'options' | 'googleLogin'>('menu');
     const [saveFiles, setSaveFiles] = useState<LoadGameSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMessage, setAuthModalMessage] = useState<string | undefined>(undefined);
     const [mounted, setMounted] = useState(false);
     const [showKeywordModal, setShowKeywordModal] = useState(false);
     const [firebaseUser, setFirebaseUser] = useState<User | null>(null);

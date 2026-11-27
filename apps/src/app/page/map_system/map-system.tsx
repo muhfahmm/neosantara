@@ -13,6 +13,8 @@ import { TERRITORY_OVERRIDES } from './territoryOverrides';
 import { getMapDisplaySettings, type MapDisplaySettings } from '../paused_menu/4_settings/mapSettingsLogic';
 import { restartGame } from '../paused_menu/3_restart_game/restartGameLogic';
 import { SaveGameModal } from '../paused_menu/1_savegame/SaveGameModal';
+import { SaveAuthRequiredModal } from '../paused_menu/1_savegame/SaveAuthRequiredModal';
+import { checkIsUserAuthenticated, isAuthRequiredError } from '@/lib/firebaseClient';
 import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../paused_menu/1_savegame/saveGameLogic';
 import { mergeClaimedTerritories } from './world-map-geometry';
 import {
@@ -140,6 +142,11 @@ import {
     captureGameSaveStorage,
     clearPendingGameSave,
     readPendingGameSave,
+    stagePendingGameSave,
+    saveActiveGameSessionSnapshot,
+    readActiveGameSessionSnapshot,
+    readSyncActiveGameSessionSnapshot,
+    clearActiveGameSessionSnapshot,
 } from '@/app/logic/pendingGameSave';
 import { executeCoup } from '@/app/page/detail_negara/3_operasi_militer/5_lakukan_kudeta/logic/coupLogic';
 import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
@@ -1378,7 +1385,7 @@ export default function MapPage() {
     const [isTutorialWelcomeOpen, setIsTutorialWelcomeOpen] = useState(false);
 
     useEffect(() => {
-        if (sessionStorage.getItem('presiden_simulator_load_save')) {
+        if (sessionStorage.getItem('presiden_simulator_load_save') || readSyncActiveGameSessionSnapshot()) {
             setTutorialStartup('suppressed');
             return;
         }
@@ -1680,6 +1687,8 @@ export default function MapPage() {
     }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, countryDetail?.autoRemovedEmbassies]);
 
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+    const [showSaveAuthModal, setShowSaveAuthModal] = useState(false);
+    const [saveAuthModalMessage, setSaveAuthModalMessage] = useState<string | undefined>(undefined);
     const [saveNameInput, setSaveNameInput] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [existingSaveFiles, setExistingSaveFiles] = useState<GameSaveRecord[]>([]);
@@ -2058,6 +2067,17 @@ export default function MapPage() {
             } catch (err) {
                 console.error("Gagal melakukan zoom/pan ke negara player:", err);
             }
+        } else if (iso) {
+            // Fallback jika wasmModuleRef belum terikat langsung
+            const mod = (window as any).__neosantara_wasm_module;
+            if (mod?.set_selected_country_on_map) {
+                try {
+                    mod.set_selected_country_on_map(iso, true);
+                    isMapFocusedRef.current = true;
+                } catch (err) {
+                    console.error("Gagal melakukan zoom/pan ke negara player via global wasm:", err);
+                }
+            }
         }
     }, [selectedCountry, countryDetail, setActiveMenu]);
 
@@ -2068,6 +2088,24 @@ export default function MapPage() {
             window.removeEventListener('focus_home_country', onFocusEvent);
         };
     }, [handleFocusHome]);
+
+    // Auto-focus ke negara player setelah profil negara termuat
+    useEffect(() => {
+        if (!selectedCountry) return;
+        const timer = setTimeout(() => {
+            if (!isMapFocusedRef.current) {
+                const iso = selectedCountry.iso;
+                const mod = wasmModuleRef.current || (typeof window !== 'undefined' && (window as any).__neosantara_wasm_module);
+                if (iso && mod?.set_selected_country_on_map) {
+                    try {
+                        mod.set_selected_country_on_map(iso, true);
+                        isMapFocusedRef.current = true;
+                    } catch {}
+                }
+            }
+        }, 200);
+        return () => clearTimeout(timer);
+    }, [selectedCountry]);
 
     // 🎮 Integrasi Keyboard Shortcuts Neosantara
     useKeyboardShortcuts({
@@ -3625,7 +3663,7 @@ export default function MapPage() {
                 String(currentDate.getDate()).padStart(2, '0'),
             ].join('-');
             if (!result.success) {
-                console.error(`[Coup] Operation ${detail.pathId} failed on arrival:`, result.reason);
+                console.info(`[Coup] Operation ${detail.pathId} failed on arrival:`, result.reason);
                 setNotifications(previous => [{
                     id: `coup-failed-${detail.pathId}`,
                     title: 'Operasi Kudeta Gagal',
@@ -8757,6 +8795,22 @@ export default function MapPage() {
     // Client-side query param extraction & profile fetching
     useEffect(() => {
         if (typeof window !== 'undefined') {
+            const syncActiveSnapshot = !sessionStorage.getItem('presiden_simulator_load_save') && gameStateStorage.getItem('presiden_simulator_new_game') !== '1'
+                ? readSyncActiveGameSessionSnapshot<any>()
+                : null;
+            if (syncActiveSnapshot && syncActiveSnapshot.country_name) {
+                // Jangan hapus atau reload, langsung jadikan sebagai target load pending
+                const metadata = {
+                    id: syncActiveSnapshot.id ?? 1,
+                    country_name: syncActiveSnapshot.country_name,
+                    countryName: syncActiveSnapshot.country_name,
+                    game_date: syncActiveSnapshot.game_date ?? '',
+                    pendingSaveId: 'active-session-sync',
+                };
+                sessionStorage.setItem('presiden_simulator_load_save', JSON.stringify(metadata));
+                (window as any).__neosantara_active_sync_save = syncActiveSnapshot;
+            }
+
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const isNewGame = gameStateStorage.getItem('presiden_simulator_new_game') === '1';
             clearUnpersistedOrganizationMembershipState();
@@ -8768,7 +8822,10 @@ export default function MapPage() {
             if (loadSaveStr) {
                 void (async () => {
                     try {
-                        const savedState = await readPendingGameSave<ReturnType<typeof JSON.parse>>();
+                        let savedState = (window as any).__neosantara_active_sync_save;
+                        if (!savedState) {
+                            savedState = await readPendingGameSave<ReturnType<typeof JSON.parse>>();
+                        }
                         if (!savedState) {
                             throw new Error('Data save yang dipilih tidak ditemukan.');
                         }
@@ -9146,6 +9203,7 @@ export default function MapPage() {
                             restoreRelationModifiersSnapshot(sessionState.relationModifiersSnapshot);
                         }
 
+                        delete (window as any).__neosantara_active_sync_save;
                         await clearPendingGameSave();
                     } catch (error) {
                         console.error('Gagal memulihkan data save:', error);
@@ -9165,7 +9223,8 @@ export default function MapPage() {
                 if (chosen) {
                     setSelectedCountry(chosen);
                     loadCountryStats(chosen.country, chosen.capital);
-                    if (isNewGame || (!loadSaveStr && !returningFromDialog)) {
+                    if (isNewGame) {
+                        void clearActiveGameSessionSnapshot();
                         expelCountryFromOrganizations(chosen.country);
                         clearMissionProgressData();
                         clearAchievementProgressData();
@@ -10519,6 +10578,12 @@ export default function MapPage() {
     // Open save dialog with existing slots check
     const openSaveModal = async () => {
         if (!selectedCountry) return;
+        const isAuthed = await checkIsUserAuthenticated();
+        if (!isAuthed) {
+            setSaveAuthModalMessage('Silakan login dengan Google sebelum mengakses save game.');
+            setShowSaveAuthModal(true);
+            return;
+        }
         const defaultName = calendarRef.current?.calendar.formatSaveName(selectedCountry.country)
             || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`;
         setSaveNameInput(defaultName);
@@ -10532,19 +10597,176 @@ export default function MapPage() {
             if (saves.length === 0) {
                 setIsCreatingNewSaveSlot(true);
             }
-        } catch (error) {
-            console.error('Error fetching saves before save:', error);
+        } catch (error: any) {
             setExistingSaveFiles([]);
             setIsCreatingNewSaveSlot(false);
             setIsSaveModalOpen(false);
-            alert(error instanceof Error ? error.message : t('game.notification.saveGameFailed'));
+            const msg = error instanceof Error ? error.message : (error?.message || t('game.notification.saveGameFailed'));
+            if (isAuthRequiredError(error) || msg.toLowerCase().includes('login') || msg.toLowerCase().includes('google') || msg.toLowerCase().includes('auth')) {
+                setSaveAuthModalMessage(msg);
+                setShowSaveAuthModal(true);
+            } else {
+                console.error('Error fetching saves before save:', error);
+                alert(msg);
+            }
         } finally {
             setIsLoadingExistingSaves(false);
         }
     };
 
+    
+    // Helper untuk menangkap snapshot status permainan saat ini agar tidak hilang saat browser direfresh
+    const captureCurrentActiveSessionSnapshot = () => {
+        if (!selectedCountry || !countryDetail) return null;
+        const timeManager = timeManagerRef.current;
+        const gameDate = timeManager?.getCurrentDate().toISOString() || new Date().toISOString();
+        const currentSaveVersion = countryDetail?.__neosantara_game_session?.saveVersion ?? 1;
+
+        const sessionState = {
+            npcSimulation: getNpcCountrySimulationSnapshot(),
+            countryColorOverrides: (window as any).neosantara_country_color_overrides || countryColorOverrides,
+            annexedCountries: (window as any).neosantara_annexed_countries || {},
+            cityOwner: (window as any).neosantara_city_owner || {},
+            provinceReligionOverrides: (window as any).neosantara_province_religion_overrides || {},
+            provinceIdeologyOverrides: (window as any).neosantara_province_ideology_overrides || {},
+            playerAttack: (window as any).neosantara_player_attack || null,
+            stationedPeacekeepers: loadStationedPeacekeepers(),
+            peacekeepersInTransit: loadRawPeacekeepersInTransit(),
+            economicSanctionCounts: getEconomicSanctionCounts(),
+            covertPersonnel: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_covert_personnel') : null,
+            requestedInvasions: typeof window !== 'undefined' ? gameStateStorage.getItem('requested_attack_requests_v1') : null,
+            pbbSecurityCouncilState: typeof window !== 'undefined' ? (gameStateStorage.getItem('neosantara_pbb_security_council_election') || gameStateStorage.getItem('pbb_security_council_election_state_v1')) : null,
+            pbbWarSanctions: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_war_sanction_history_v1') : null,
+            pendingOrgApplications: typeof window !== 'undefined' ? (gameStateStorage.getItem('neosantara_org_applications_v1') || gameStateStorage.getItem('org_membership_pending_applications_v1')) : null,
+            relationModifiersSnapshot: exportRelationModifiersSnapshot(),
+            tradeVolumeLedger: countryDetail?.tradeVolumeLedger || null,
+            deployed_units_config: typeof window !== 'undefined' ? gameStateStorage.getItem('deployed_units_config') : null,
+            subsidy_states: (countryDetail as any)?.subsidy_states || {},
+            sistem_ekonomi_val: (countryDetail as any)?.sistem_ekonomi_val !== undefined ? Number((countryDetail as any).sistem_ekonomi_val) : 50,
+            policy_price_control: (countryDetail as any)?.policy_price_control || 'A',
+            policy_strategic_ownership: (countryDetail as any)?.policy_strategic_ownership || 'A',
+            policy_trade_policy: (countryDetail as any)?.policy_trade_policy || 'A',
+            policy_labor_regulation: (countryDetail as any)?.policy_labor_regulation || 'A',
+            policy_land_property_rights: (countryDetail as any)?.policy_land_property_rights || 'A',
+            policy_labor_unions_rights: (countryDetail as any)?.policy_labor_unions_rights || 'A',
+            policy_monetary_banking: (countryDetail as any)?.policy_monetary_banking || 'A',
+            opennessIndex: (countryDetail as any)?.opennessIndex !== undefined ? Number((countryDetail as any).opennessIndex) : 73,
+            speechScore: (countryDetail as any)?.speechScore !== undefined ? Number((countryDetail as any).speechScore) : 50,
+            religionScore: (countryDetail as any)?.religionScore !== undefined ? Number((countryDetail as any).religionScore) : 60,
+            demoScore: (countryDetail as any)?.demoScore !== undefined ? Number((countryDetail as any).demoScore) : 45,
+            transparencyScore: (countryDetail as any)?.transparencyScore !== undefined ? Number((countryDetail as any).transparencyScore) : 55,
+            mediaScore: (countryDetail as any)?.mediaScore !== undefined ? Number((countryDetail as any).mediaScore) : 50,
+            internetScore: (countryDetail as any)?.internetScore !== undefined ? Number((countryDetail as any).internetScore) : 60,
+            borderScore: (countryDetail as any)?.borderScore !== undefined ? Number((countryDetail as any).borderScore) : 40,
+            tradeScore: (countryDetail as any)?.tradeScore !== undefined ? Number((countryDetail as any).tradeScore) : 60,
+            diplomacyScore: (countryDetail as any)?.diplomacyScore !== undefined ? Number((countryDetail as any).diplomacyScore) : 80,
+            research_levels: (countryDetail as any)?.research_levels || {},
+            completed_research: Array.isArray((countryDetail as any)?.completed_research) ? (countryDetail as any).completed_research : [],
+            active_research_by_category: (countryDetail as any)?.active_research_by_category || null,
+            active_research: (countryDetail as any)?.active_research || null,
+            active_research_end_date: (countryDetail as any)?.active_research_end_date || null,
+            researchContracts: Array.isArray((countryDetail as any)?.researchContracts) ? (countryDetail as any).researchContracts : [],
+            nonAggressionPacts: Array.isArray((countryDetail as any)?.nonAggressionPacts) ? (countryDetail as any).nonAggressionPacts : [],
+            nonAggressionPactHistory: Array.isArray((countryDetail as any)?.nonAggressionPactHistory) ? (countryDetail as any).nonAggressionPactHistory : [],
+            defenseAlliances: Array.isArray((countryDetail as any)?.defenseAlliances) ? (countryDetail as any).defenseAlliances : [],
+            ongoingDiplomacyRatifications: Array.isArray((countryDetail as any)?.ongoingDiplomacyRatifications) ? (countryDetail as any).ongoingDiplomacyRatifications : [],
+            economicSanctions: getEconomicSanctionCounts(),
+            taxedProvinces: Array.isArray((countryDetail as any)?.taxedProvinces) ? (countryDetail as any).taxedProvinces : [],
+            poin_pendidikan: (countryDetail as any)?.poin_pendidikan !== undefined ? Number((countryDetail as any).poin_pendidikan) : null,
+            prasekolah: Number((countryDetail as any)?.prasekolah || 0),
+            dasar: Number((countryDetail as any)?.dasar || 0),
+            menengah: Number((countryDetail as any)?.menengah || 0),
+            lanjutan: Number((countryDetail as any)?.lanjutan || 0),
+            universitas: Number((countryDetail as any)?.universitas || 0),
+            lembaga_pendidikan: Number((countryDetail as any)?.lembaga_pendidikan || 0),
+            laboratorium: Number((countryDetail as any)?.laboratorium || 0),
+            observatorium: Number((countryDetail as any)?.observatorium || 0),
+            pusat_penelitian: Number((countryDetail as any)?.pusat_penelitian || 0),
+            pusat_pengembangan: Number((countryDetail as any)?.pusat_pengembangan || 0),
+            provinceTensions: (countryDetail as any)?.provinceTensions && typeof (countryDetail as any).provinceTensions === 'object' && !Array.isArray((countryDetail as any).provinceTensions) ? (countryDetail as any).provinceTensions : {},
+            provinceReferendums: (countryDetail as any)?.provinceReferendums && typeof (countryDetail as any).provinceReferendums === 'object' && !Array.isArray((countryDetail as any).provinceReferendums) ? (countryDetail as any).provinceReferendums : {},
+            provinceCasualties: (countryDetail as any)?.provinceCasualties && typeof (countryDetail as any).provinceCasualties === 'object' && !Array.isArray((countryDetail as any).provinceCasualties) ? (countryDetail as any).provinceCasualties : {},
+            ...Object.fromEntries(
+                Object.entries(countryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('kem_') || k.startsWith('keamanan_') || k.startsWith('layanan_') || k.startsWith('inventory_') || k.startsWith('last_update_date_') || k.startsWith('build_date_') || k.startsWith('accumulated_'))
+            ),
+            ...Object.fromEntries(
+                NEOSANTARA_ALL_BUILDING_KEYS
+                    .filter(k => (countryDetail as any)?.[k] !== undefined && (countryDetail as any)?.[k] !== null)
+                    .map(k => [k, Number((countryDetail as any)[k]) || 0])
+            ),
+        };
+
+        return {
+            id: 0,
+            save_name: 'Auto Sesi Aktif',
+            country_name: selectedCountry.country,
+            country_iso: selectedCountry.iso,
+            game_date: gameDate,
+            capital: countryDetail?.capital || selectedCountry.capital,
+            jumlah_penduduk: countryDetail?.jumlah_penduduk || 0,
+            anggaran: countryDetail?.anggaran || 0,
+            ideology: countryDetail?.ideology || '-',
+            religion: countryDetail?.religion || '-',
+            un_vote: countryDetail?.un_vote || 0,
+            kepuasan: countryDetail?.kepuasan ?? 50,
+            countryDetail: {
+                ...countryDetail,
+                presidentRating,
+                playerDiamonds,
+                playerXp: typeof window !== 'undefined' ? Number(gameStateStorage.getItem('neosantara_player_xp') || 0) : 0,
+                notifications,
+                newsList,
+                organizationMemberships: getUserJoinedOrgSnapshot(selectedCountry.country),
+                missionCompletions: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_mission_completions') : null,
+                activeMissionId: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_active_mission') : null,
+                claimableMissions: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_claimable_missions') : null,
+                achievementsState: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_achievements_state') : null,
+                dailyRewardData: typeof window !== 'undefined' ? gameStateStorage.getItem('dailyRewardData') : null,
+                programNuklirActive: countryDetail?.programNuklirActive ?? (typeof window !== 'undefined' && gameStateStorage.getItem('programNuklirActive') === '1'),
+                icbm_jumlah: Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0),
+                icbm_status: Boolean(countryDetail?.icbm_status ?? (Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0) > 0)),
+                icbm_consumed: Number(countryDetail?.icbm_consumed || 0),
+                icbmBuildTask: countryDetail?.icbmBuildTask || null,
+                embassies: Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [],
+                removedEmbassies: Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [],
+                tradeAgreements: Array.isArray(countryDetail?.tradeAgreements) ? countryDetail.tradeAgreements : [],
+                removedTradePartners: Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [],
+                addedTradePartners: Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [],
+                ongoingEmbassyConstructions: Array.isArray(countryDetail?.ongoingEmbassyConstructions) ? countryDetail.ongoingEmbassyConstructions : [],
+                tradeVolumeLedger: countryDetail?.tradeVolumeLedger || null,
+                __neosantara_game_session: {
+                    ...sessionState,
+                    saveVersion: currentSaveVersion,
+                    gameState: captureGameSaveStorage(),
+                },
+            },
+        };
+    };
+
+    // Auto-save snapshot status permainan aktif ke IndexedDB saat window akan ditutup/direfresh
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            const snapshot = captureCurrentActiveSessionSnapshot();
+            if (snapshot) {
+                void saveActiveGameSessionSnapshot(snapshot);
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [selectedCountry, countryDetail, presidentRating, playerDiamonds, notifications, newsList]);
+
     const handleSaveGame = async (targetSaveId: number | null, requestedSaveName: string) => {
         if (!selectedCountry) return;
+        const isAuthed = await checkIsUserAuthenticated();
+        if (!isAuthed) {
+            setIsSaveModalOpen(false);
+            setSaveAuthModalMessage('Silakan login dengan Google sebelum mengakses save game.');
+            setShowSaveAuthModal(true);
+            return;
+        }
 
         const timeManager = timeManagerRef.current;
         const wasPaused = timeManager?.getIsPaused() ?? true;
@@ -10689,8 +10911,15 @@ export default function MapPage() {
             setIsSaveModalOpen(false);
             setIsCreatingNewSaveSlot(false);
         } catch (error: any) {
-            console.error('Error saving game:', error);
-            alert(t('game.notification.errorOccurred', { error: error.message || t('game.notification.saveGameFailed') }));
+            const rawMsg = error?.message || t('game.notification.saveGameFailed');
+            if (isAuthRequiredError(error) || rawMsg.toLowerCase().includes('login') || rawMsg.toLowerCase().includes('google') || rawMsg.toLowerCase().includes('auth')) {
+                setIsSaveModalOpen(false);
+                setSaveAuthModalMessage(rawMsg);
+                setShowSaveAuthModal(true);
+            } else {
+                console.error('Error saving game:', error);
+                alert(t('game.notification.errorOccurred', { error: rawMsg }));
+            }
         } finally {
             timeManager?.setPaused(wasPaused);
             setIsPaused(wasPaused);
@@ -10729,6 +10958,7 @@ export default function MapPage() {
                 }
 
                 wasmModuleRef.current = wasmModule;
+                (window as any).__neosantara_wasm_module = wasmModule;
 
 
                 // After init, the exported functions are available on the module
@@ -10968,20 +11198,24 @@ export default function MapPage() {
                 // Highlight and center player country if present
                 if (typeof window !== 'undefined') {
                     const params = new URLSearchParams(window.location.search);
-                    const countryParam = params.get('country');
+                    const countryParam = params.get('country') || selectedCountry?.country;
                     if (countryParam) {
                         const chosen = COUNTRIES_DATA.find(
-                            c => c.country.toLowerCase() === countryParam.toLowerCase()
+                            c => c.country.toLowerCase() === countryParam.toLowerCase() || c.iso.toLowerCase() === countryParam.toLowerCase()
                         );
                         if (chosen) {
-                            // Delay slightly to ensure map engine is initialized and ready to render
-                            setTimeout(() => {
+                            // Coba beberapa kali (0ms, 150ms, 400ms) untuk memastikan canvas dan render loop siap
+                            const centerToCountry = () => {
                                 try {
                                     set_selected_country_on_map(chosen.iso, true);
+                                    isMapFocusedRef.current = true;
                                 } catch (err) {
                                     console.error("Failed to highlight player country:", err);
                                 }
-                            }, 100);
+                            };
+                            centerToCountry();
+                            setTimeout(centerToCountry, 150);
+                            setTimeout(centerToCountry, 400);
                         }
                     }
                 }
@@ -14079,6 +14313,16 @@ export default function MapPage() {
                 onBackToSlots={() => setIsCreatingNewSaveSlot(false)}
                 onSave={(saveId, saveName) => { void handleSaveGame(saveId, saveName); }}
             />}
+
+            <SaveAuthRequiredModal
+                isOpen={showSaveAuthModal}
+                onClose={() => setShowSaveAuthModal(false)}
+                errorMessage={saveAuthModalMessage}
+                actionContext="save"
+                onLoginSuccess={() => {
+                    openSaveModal();
+                }}
+            />
 
             {/* Tropico Game Menu Modal */}
             <GameMenuModal

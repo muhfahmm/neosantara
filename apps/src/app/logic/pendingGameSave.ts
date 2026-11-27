@@ -2,8 +2,10 @@ import { gameStateStorage, type GameStateSnapshot } from '@/app/logic/gameStateS
 
 const SESSION_KEY = 'presiden_simulator_load_save';
 const DATABASE_NAME = 'presiden_simulator_pending_saves';
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 const STORE_NAME = 'saves';
+const ACTIVE_SESSION_STORE = 'active_session';
+const ACTIVE_SESSION_KEY = 'current_active_session';
 export type GameSaveStorageSnapshot = GameStateSnapshot;
 
 interface SaveSummary {
@@ -54,15 +56,31 @@ function openDatabase(): Promise<IDBDatabase> {
     }
 
     return new Promise((resolve, reject) => {
+        // Coba buka dengan versi target DATABASE_VERSION
         const request = window.indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
         request.onupgradeneeded = () => {
             const database = request.result;
             if (!database.objectStoreNames.contains(STORE_NAME)) {
                 database.createObjectStore(STORE_NAME, { keyPath: 'id' });
             }
+            if (!database.objectStoreNames.contains(ACTIVE_SESSION_STORE)) {
+                database.createObjectStore(ACTIVE_SESSION_STORE, { keyPath: 'id' });
+            }
         };
         request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error ?? new Error('Gagal membuka penyimpanan save game.'));
+        request.onerror = () => {
+            const err = request.error;
+            // Jika ada VersionError (misal browser pemain sudah pernah merekam versi lebih tinggi dari percobaan sebelumnya)
+            if (err && err.name === 'VersionError') {
+                // Buka tanpa menentukan nomor versi agar otomatis memakai versi tertinggi yang sudah ada di browser
+                const fallbackReq = window.indexedDB.open(DATABASE_NAME);
+                fallbackReq.onsuccess = () => resolve(fallbackReq.result);
+                fallbackReq.onerror = () => reject(fallbackReq.error ?? new Error('Gagal membuka penyimpanan save game.'));
+                fallbackReq.onblocked = () => reject(new Error('Penyimpanan save game sedang digunakan tab lain.'));
+                return;
+            }
+            reject(err ?? new Error('Gagal membuka penyimpanan save game.'));
+        };
         request.onblocked = () => reject(new Error('Penyimpanan save game sedang digunakan tab lain.'));
     });
 }
@@ -180,5 +198,80 @@ export async function clearPendingGameSave(): Promise<void> {
         });
     } finally {
         database.close();
+    }
+}
+
+const ACTIVE_SESSION_SYNC_KEY = 'neosantara_active_session_sync';
+
+export async function saveActiveGameSessionSnapshot<T>(snapshot: T): Promise<void> {
+    if (typeof window === 'undefined') return;
+    try {
+        try {
+            window.sessionStorage.setItem(ACTIVE_SESSION_SYNC_KEY, JSON.stringify(snapshot));
+        } catch {}
+
+        const database = await openDatabase();
+        await new Promise<void>((resolve, reject) => {
+            const transaction = database.transaction(ACTIVE_SESSION_STORE, 'readwrite');
+            transaction.objectStore(ACTIVE_SESSION_STORE).put({ id: ACTIVE_SESSION_KEY, save: snapshot });
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+        });
+        database.close();
+    } catch (e) {
+        console.warn('Failed to save active session snapshot to IndexedDB:', e);
+    }
+}
+
+export function readSyncActiveGameSessionSnapshot<T>(): T | null {
+    if (typeof window === 'undefined') return null;
+    try {
+        const raw = window.sessionStorage.getItem(ACTIVE_SESSION_SYNC_KEY);
+        return raw ? JSON.parse(raw) as T : null;
+    } catch {
+        return null;
+    }
+}
+
+export async function readActiveGameSessionSnapshot<T>(): Promise<T | null> {
+    if (typeof window === 'undefined') return null;
+    const syncData = readSyncActiveGameSessionSnapshot<T>();
+    if (syncData) return syncData;
+
+    try {
+        const database = await openDatabase();
+        const result = await new Promise<T | null>((resolve, reject) => {
+            const transaction = database.transaction(ACTIVE_SESSION_STORE, 'readonly');
+            const request = transaction.objectStore(ACTIVE_SESSION_STORE).get(ACTIVE_SESSION_KEY);
+            request.onsuccess = () => {
+                const record = request.result as { id: string; save: T } | undefined;
+                resolve(record ? record.save : null);
+            };
+            request.onerror = () => reject(request.error);
+        });
+        database.close();
+        return result;
+    } catch {
+        return null;
+    }
+}
+
+export async function clearActiveGameSessionSnapshot(): Promise<void> {
+    if (typeof window === 'undefined') return;
+    try {
+        window.sessionStorage.removeItem(ACTIVE_SESSION_SYNC_KEY);
+    } catch {}
+
+    try {
+        const database = await openDatabase();
+        await new Promise<void>((resolve, reject) => {
+            const transaction = database.transaction(ACTIVE_SESSION_STORE, 'readwrite');
+            transaction.objectStore(ACTIVE_SESSION_STORE).delete(ACTIVE_SESSION_KEY);
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+        });
+        database.close();
+    } catch {
+        // Abaikan jika database tidak tersedia
     }
 }
