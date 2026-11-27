@@ -1389,13 +1389,21 @@ export default function MapPage() {
             setTutorialStartup('suppressed');
             return;
         }
+
+        const currentProgress = getTutorialProgress();
+        if (currentProgress.status === 'completed' || currentProgress.status === 'skipped') {
+            setTutorialStartup('suppressed');
+            setIsTutorialWelcomeOpen(false);
+            return;
+        }
+
         if (gameStateStorage.getItem('presiden_simulator_new_game') === '1') {
             resetTutorial();
             setTutorialStartup('new-game');
             setIsTutorialWelcomeOpen(true);
             return;
         }
-        const currentProgress = getTutorialProgress();
+
         if (
             currentProgress.status === 'not_started' ||
             (currentProgress.status === 'in_progress' && currentProgress.stepIndex === 0)
@@ -14342,6 +14350,7 @@ export default function MapPage() {
                     setIsTutorialWelcomeOpen(false);
                     setTutorialStartup('suppressed');
                     setTutorialProgress({ stepIndex: 0, status: 'skipped' });
+                    gameStateStorage.removeItem('presiden_simulator_new_game');
                 }}
             />
 

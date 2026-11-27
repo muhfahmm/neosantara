@@ -403,6 +403,40 @@ function interpolate(template: string, params?: InterpolationParams): string {
   });
 }
 
+// Modul level cache agar kamus yang pernah dimuat tersimpan di memory lintas render
+const dictionaryCache: Partial<Record<LanguageCode, LanguageDictionary>> = {
+  id: ID_DICTIONARY,
+};
+const pendingLoads = new Map<LanguageCode, Promise<LanguageDictionary>>();
+
+function ensureLanguageDictionaryLoaded(code: LanguageCode): Promise<LanguageDictionary> {
+  if (dictionaryCache[code]) {
+    return Promise.resolve(dictionaryCache[code]!);
+  }
+  const existing = pendingLoads.get(code);
+  if (existing) {
+    return existing;
+  }
+  const loadPromise = loadLanguageDictionary(code).then((dict) => {
+    dictionaryCache[code] = dict;
+    pendingLoads.delete(code);
+    return dict;
+  });
+  pendingLoads.set(code, loadPromise);
+  return loadPromise;
+}
+
+// Inisialisasi awal saat bundle pertama kali dieksekusi di browser:
+// Langsung mulai preload kamus bahasa yang tersimpan di localStorage sebelum React selesai mount
+if (typeof window !== 'undefined') {
+  try {
+    const initialLang = readStoredLanguage();
+    if (initialLang && initialLang !== 'id') {
+      ensureLanguageDictionaryLoaded(initialLang).catch(() => {});
+    }
+  } catch {}
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const language = useSyncExternalStore(
     subscribeToLanguageChange,
@@ -410,26 +444,37 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     () => DEFAULT_LANGUAGE
   );
 
-  const [dictionaries, setDictionaries] = useState<Partial<Record<LanguageCode, LanguageDictionary>>>({
-    id: ID_DICTIONARY,
+  const [dictionaries, setDictionaries] = useState<Partial<Record<LanguageCode, LanguageDictionary>>>(() => {
+    return { ...dictionaryCache };
+  });
+
+  const [isDictionaryReady, setIsDictionaryReady] = useState<boolean>(() => {
+    return Boolean(dictionaryCache[language]);
   });
 
   // Dynamic import kamus saat bahasa berubah
   useEffect(() => {
     let isCancelled = false;
 
-    if (!dictionaries[language]) {
-      loadLanguageDictionary(language)
+    if (!dictionaries[language] || !dictionaryCache[language]) {
+      setIsDictionaryReady(false);
+      ensureLanguageDictionaryLoaded(language)
         .then((dict) => {
           if (!isCancelled) {
             setDictionaries((prev) => ({ ...prev, [language]: dict }));
+            setIsDictionaryReady(true);
           }
         })
         .catch((err) => {
           if (process.env.NODE_ENV === 'development') {
             console.error(`Failed to load dictionary for language ${language}:`, err);
           }
+          if (!isCancelled) {
+            setIsDictionaryReady(true);
+          }
         });
+    } else {
+      setIsDictionaryReady(true);
     }
 
     return () => {
@@ -497,13 +542,22 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // 3. Fallback ke bahasa Indonesia (id)
-      const idDict = ID_DICTIONARY[ns];
-      if (idDict) {
-        const fallbackValue = resolveNestedValue(idDict as Record<string, unknown>, keyPath);
-        if (fallbackValue !== undefined && fallbackValue.trim() !== '') {
-          return interpolate(fallbackValue, params);
+      // 3. Fallback ke bahasa Indonesia (id) HANYA jika bahasa yang dipilih memang Indonesia,
+      // ATAU kamus bahasa aktif sudah siap dimuat tetapi key tersebut memang tidak ditemukan di kamus bahasa aktif
+      if (language === 'id' || isDictionaryReady) {
+        const idDict = ID_DICTIONARY[ns];
+        if (idDict) {
+          const fallbackValue = resolveNestedValue(idDict as Record<string, unknown>, keyPath);
+          if (fallbackValue !== undefined && fallbackValue.trim() !== '') {
+            return interpolate(fallbackValue, params);
+          }
         }
+      }
+
+      // 4. Jika kamus masih dalam proses loading dan belum siap, jangan flash fallback Indonesia
+      // Kembalikan empty string sementara atau placeholder non-bahasa lain agar tampilan tidak berkedip ke Bahasa Indonesia
+      if (!isDictionaryReady && language !== 'id') {
+        return '';
       }
 
       // 4. Jika di seluruh fallback tidak ditemukan
@@ -523,9 +577,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       dir: currentMeta.dir,
       currentMeta,
       t,
-      isReady: true,
+      isReady: isDictionaryReady,
     }),
-    [language, setLanguage, currentMeta, t]
+    [language, setLanguage, currentMeta, t, isDictionaryReady]
   );
 
   return (

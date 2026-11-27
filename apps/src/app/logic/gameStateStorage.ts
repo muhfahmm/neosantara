@@ -2,6 +2,7 @@ import {
     getScopedKey,
     setActiveUserScope,
     purgeUserRuntimeState,
+    scopedLocalStorage,
 } from './scopedStorage';
 
 export type GameStateSnapshot = Record<string, string>;
@@ -61,6 +62,21 @@ export function purgeMigratedLocalStorage(): void {
     }
 }
 
+function loadFromStorage(key: string): string | null {
+    if (typeof window === 'undefined') return null;
+    return scopedLocalStorage.getItem(key);
+}
+
+function saveToStorage(key: string, value: string): void {
+    if (typeof window === 'undefined') return;
+    scopedLocalStorage.setItem(key, value);
+}
+
+function removeFromStorage(key: string): void {
+    if (typeof window === 'undefined') return;
+    scopedLocalStorage.removeItem(key);
+}
+
 export const gameStateStorage = {
     get length(): number {
         return gameState.size;
@@ -75,15 +91,29 @@ export const gameStateStorage = {
     },
 
     getItem(key: string): string | null {
-        return gameState.get(String(key)) ?? null;
+        const k = String(key);
+        if (gameState.has(k)) {
+            return gameState.get(k) ?? null;
+        }
+        const fromLocal = loadFromStorage(k);
+        if (fromLocal !== null) {
+            gameState.set(k, fromLocal);
+            return fromLocal;
+        }
+        return null;
     },
 
     setItem(key: string, value: string): void {
-        gameState.set(String(key), String(value));
+        const k = String(key);
+        const v = String(value);
+        gameState.set(k, v);
+        saveToStorage(k, v);
     },
 
     removeItem(key: string): void {
-        gameState.delete(String(key));
+        const k = String(key);
+        gameState.delete(k);
+        removeFromStorage(k);
     },
 
     clear(): void {
@@ -99,6 +129,7 @@ export const gameStateStorage = {
         Object.entries(snapshot).forEach(([key, value]) => {
             if (isGameStateKey(key) && typeof value === 'string') {
                 gameState.set(key, value);
+                saveToStorage(key, value);
             }
         });
     },
