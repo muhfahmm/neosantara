@@ -6,30 +6,21 @@ import { ensureGameSavesTable } from '@/lib/initGameSavesTable';
 import { requireUser } from '@/lib/serverAuth';
 import { FirebaseRequestAuthError } from '@/lib/firebaseAdmin';
 import { normalizeCountryFinancialState, roundNeo } from '@/app/logic/economic_logic/neoCurrency';
+import {
+    checkRateLimit,
+    createRateLimitErrorResponse,
+    getCorsHeaders,
+    handleCorsPreflight
+} from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// In-Memory Rate Limiting per UID (Maksimal 60 request per menit per UID)
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 60;
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(uid: string): boolean {
-    const now = Date.now();
-    const userLimit = rateLimitMap.get(uid);
-    if (!userLimit || now > userLimit.resetAt) {
-        rateLimitMap.set(uid, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-        return true;
-    }
-    if (userLimit.count >= MAX_REQUESTS_PER_WINDOW) {
-        return false;
-    }
-    userLimit.count += 1;
-    return true;
+export async function OPTIONS(request: Request) {
+    return handleCorsPreflight(request) ?? new NextResponse(null, { status: 204 });
 }
 
-// Zod Schema untuk validasi payload save
+// Zod Schema untuk validasi payload save (Strict: tolak field asing yang tidak dikenal)
 const SavePayloadSchema = z.object({
     saveId: z.union([z.number().int().positive(), z.string().trim().min(1)]).nullable().optional(),
     saveName: z.string().trim().min(1).max(255),
@@ -46,11 +37,17 @@ const SavePayloadSchema = z.object({
     expectedVersion: z.number().int().optional().nullable(),
     idempotencyKey: z.string().trim().max(128).optional().nullable(),
     schemaVersion: z.string().trim().max(20).default('v2'),
-});
+}).strict();
 
-function withPrivateCacheHeaders(response: NextResponse): NextResponse {
+function withSecurityHeaders(response: NextResponse, request?: Request): NextResponse {
     response.headers.set('Cache-Control', 'private, no-store, no-cache, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
+    if (request) {
+        const cors = getCorsHeaders(request);
+        for (const [k, v] of Object.entries(cors)) {
+            response.headers.set(k, v);
+        }
+    }
     return response;
 }
 
@@ -79,12 +76,12 @@ export async function GET(request: Request) {
             const row = result.rows[0];
             if (!row) {
                 // Mengembalikan 404 jika bukan milik user ini (tidak membocorkan keberadaan)
-                return withPrivateCacheHeaders(
+                return withSecurityHeaders(
                     NextResponse.json({ error: 'Save file not found.' }, { status: 404 })
                 );
             }
 
-            return withPrivateCacheHeaders(NextResponse.json({
+            return withSecurityHeaders(NextResponse.json({
                 ...row,
                 anggaran: roundNeo(row.anggaran),
                 version: row.version ?? 1,
@@ -113,18 +110,18 @@ export async function GET(request: Request) {
             [ownerUid],
         );
 
-        return withPrivateCacheHeaders(NextResponse.json(result.rows.map((row: Record<string, unknown>) => ({
+        return withSecurityHeaders(NextResponse.json(result.rows.map((row: Record<string, unknown>) => ({
             ...row,
             anggaran: roundNeo(row.anggaran as number),
         }))));
     } catch (error) {
         if (error instanceof FirebaseRequestAuthError) {
-            return withPrivateCacheHeaders(
+            return withSecurityHeaders(
                 NextResponse.json({ error: error.message }, { status: error.status })
             );
         }
         console.error('Error fetching game saves:', error);
-        return withPrivateCacheHeaders(
+        return withSecurityHeaders(
             NextResponse.json({ error: 'Failed to fetch game saves.' }, { status: 500 })
         );
     }
@@ -134,17 +131,17 @@ export async function POST(request: Request) {
     try {
         const { uid: ownerUid } = await requireUser(request);
 
-        if (!checkRateLimit(ownerUid)) {
-            return withPrivateCacheHeaders(
-                NextResponse.json({ error: 'Terlalu banyak permintaan simpan. Harap tunggu beberapa saat.' }, { status: 429 })
-            );
+        const limitRes = await checkRateLimit(request, 'strict', ownerUid);
+        if (!limitRes.success) {
+            return createRateLimitErrorResponse(limitRes.retryAfter, request);
         }
 
         // Batasi ukuran body maksimal 15MB
         const contentLength = Number(request.headers.get('content-length') || 0);
         if (contentLength > 15 * 1024 * 1024) {
-            return withPrivateCacheHeaders(
-                NextResponse.json({ error: 'Payload save file melebihi batas ukuran 15MB.' }, { status: 413 })
+            return withSecurityHeaders(
+                NextResponse.json({ error: 'Payload save file melebihi batas ukuran 15MB.' }, { status: 413 }),
+                request
             );
         }
 
@@ -152,15 +149,17 @@ export async function POST(request: Request) {
         try {
             rawBody = await request.json();
         } catch {
-            return withPrivateCacheHeaders(
-                NextResponse.json({ error: 'Format JSON payload tidak valid.' }, { status: 400 })
+            return withSecurityHeaders(
+                NextResponse.json({ error: 'Format JSON payload tidak valid.' }, { status: 400 }),
+                request
             );
         }
 
         const parseResult = SavePayloadSchema.safeParse(rawBody);
         if (!parseResult.success) {
-            return withPrivateCacheHeaders(
-                NextResponse.json({ error: 'Payload tidak valid: ' + parseResult.error.issues.map(i => i.message).join(', ') }, { status: 400 })
+            return withSecurityHeaders(
+                NextResponse.json({ error: 'Payload tidak valid: ' + parseResult.error.issues.map(i => i.message).join(', ') }, { status: 400 }),
+                request
             );
         }
 
@@ -196,7 +195,7 @@ export async function POST(request: Request) {
             );
             if (existingIdempotent.rows.length > 0) {
                 const existing = existingIdempotent.rows[0];
-                return withPrivateCacheHeaders(NextResponse.json({
+                return withSecurityHeaders(NextResponse.json({
                     success: true,
                     insertId: existing.id,
                     saveUuid: existing.save_uuid,
@@ -226,13 +225,13 @@ export async function POST(request: Request) {
                     : await pool.query('SELECT version FROM game_saves WHERE save_uuid = $1 AND owner_uid = $2', [uuidQuery, ownerUid]);
 
                 if (checkResult.rows.length === 0) {
-                    return withPrivateCacheHeaders(
+                    return withSecurityHeaders(
                         NextResponse.json({ error: 'Save file not found.' }, { status: 404 })
                     );
                 }
                 const currentVersion = checkResult.rows[0].version ?? 1;
                 if (currentVersion > expectedVersion) {
-                    return withPrivateCacheHeaders(NextResponse.json({
+                    return withSecurityHeaders(NextResponse.json({
                         error: 'Konflik save: Data telah diperbarui di perangkat atau tab lain.',
                         code: 'SAVE_CONFLICT',
                         currentVersion,
@@ -275,12 +274,12 @@ export async function POST(request: Request) {
             ]);
 
             if (result.rowCount === 0) {
-                return withPrivateCacheHeaders(
+                return withSecurityHeaders(
                     NextResponse.json({ error: 'Save file not found.' }, { status: 404 })
                 );
             }
 
-            return withPrivateCacheHeaders(NextResponse.json({
+            return withSecurityHeaders(NextResponse.json({
                 success: true,
                 insertId: result.rows[0]?.id,
                 saveUuid: result.rows[0]?.save_uuid,
@@ -316,7 +315,7 @@ export async function POST(request: Request) {
             ],
         );
 
-        return withPrivateCacheHeaders(NextResponse.json({
+        return withSecurityHeaders(NextResponse.json({
             success: true,
             insertId: result.rows[0]?.id,
             saveUuid: result.rows[0]?.save_uuid,
@@ -325,12 +324,12 @@ export async function POST(request: Request) {
         }));
     } catch (error) {
         if (error instanceof FirebaseRequestAuthError) {
-            return withPrivateCacheHeaders(
+            return withSecurityHeaders(
                 NextResponse.json({ error: error.message }, { status: error.status })
             );
         }
         console.error('Error saving game:', error);
-        return withPrivateCacheHeaders(
+        return withSecurityHeaders(
             NextResponse.json({ error: 'Failed to save game state.' }, { status: 500 })
         );
     }
@@ -341,7 +340,7 @@ export async function DELETE(request: Request) {
         const { uid: ownerUid } = await requireUser(request);
         const idParam = new URL(request.url).searchParams.get('id');
         if (!idParam || idParam.trim() === '') {
-            return withPrivateCacheHeaders(
+            return withSecurityHeaders(
                 NextResponse.json({ error: 'Invalid save file ID.' }, { status: 400 })
             );
         }
@@ -364,22 +363,22 @@ export async function DELETE(request: Request) {
             );
 
         if (result.rowCount === 0) {
-            return withPrivateCacheHeaders(
+            return withSecurityHeaders(
                 NextResponse.json({ error: 'Save file not found.' }, { status: 404 })
             );
         }
 
-        return withPrivateCacheHeaders(
+        return withSecurityHeaders(
             NextResponse.json({ success: true, message: 'Save file deleted successfully.' })
         );
     } catch (error) {
         if (error instanceof FirebaseRequestAuthError) {
-            return withPrivateCacheHeaders(
+            return withSecurityHeaders(
                 NextResponse.json({ error: error.message }, { status: error.status })
             );
         }
         console.error('Error deleting save file:', error);
-        return withPrivateCacheHeaders(
+        return withSecurityHeaders(
             NextResponse.json({ error: 'Failed to delete save file.' }, { status: 500 })
         );
     }
