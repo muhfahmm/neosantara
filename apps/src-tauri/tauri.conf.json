@@ -13,6 +13,7 @@
     "windows": [
       {
         "title": "Presiden Simulator",
+        "userAgent": "NeosantaraClient-Desktop/1.0 (Windows; Tauri)",
         "width": 1280,
         "height": 720,
         "minWidth": 960,

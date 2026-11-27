@@ -50,6 +50,7 @@ function createWindow() {
       sandbox: true,
       zoomFactor: 1.0,
     },
+    userAgent: "NeosantaraClient-Desktop/1.0 (Windows; Electron)",
   });
 
   window.webContents.on("did-finish-load", () => {
