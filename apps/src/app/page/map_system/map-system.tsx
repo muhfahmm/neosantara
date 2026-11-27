@@ -8976,6 +8976,17 @@ export default function MapPage() {
                             ongoingDiplomacyRatifications: Array.isArray(savedCountryDetail.ongoingDiplomacyRatifications) ? savedCountryDetail.ongoingDiplomacyRatifications : [],
                             economicSanctions: savedCountryDetail.economicSanctions || sessionState.economicSanctionCounts || {},
                             taxedProvinces: Array.isArray(savedCountryDetail.taxedProvinces) ? savedCountryDetail.taxedProvinces : [],
+                            poin_pendidikan: savedCountryDetail.poin_pendidikan !== undefined && savedCountryDetail.poin_pendidikan !== null ? Number(savedCountryDetail.poin_pendidikan) : undefined,
+                            prasekolah: Number(savedCountryDetail.prasekolah || 0),
+                            dasar: Number(savedCountryDetail.dasar || 0),
+                            menengah: Number(savedCountryDetail.menengah || 0),
+                            lanjutan: Number(savedCountryDetail.lanjutan || 0),
+                            universitas: Number(savedCountryDetail.universitas || 0),
+                            lembaga_pendidikan: Number(savedCountryDetail.lembaga_pendidikan || 0),
+                            laboratorium: Number(savedCountryDetail.laboratorium || 0),
+                            observatorium: Number(savedCountryDetail.observatorium || 0),
+                            pusat_penelitian: Number(savedCountryDetail.pusat_penelitian || 0),
+                            pusat_pengembangan: Number(savedCountryDetail.pusat_pengembangan || 0),
                             provinceTensions: savedCountryDetail.provinceTensions && typeof savedCountryDetail.provinceTensions === 'object' && !Array.isArray(savedCountryDetail.provinceTensions) ? savedCountryDetail.provinceTensions : {},
                             provinceReferendums: savedCountryDetail.provinceReferendums && typeof savedCountryDetail.provinceReferendums === 'object' && !Array.isArray(savedCountryDetail.provinceReferendums) ? savedCountryDetail.provinceReferendums : {},
                             provinceCasualties: savedCountryDetail.provinceCasualties && typeof savedCountryDetail.provinceCasualties === 'object' && !Array.isArray(savedCountryDetail.provinceCasualties) ? savedCountryDetail.provinceCasualties : {},
@@ -9054,6 +9065,16 @@ export default function MapPage() {
                             } else {
                                 clearAchievementProgressData();
                             }
+                        }
+                        if (restoredDetail.dailyRewardData !== undefined) {
+                            if (restoredDetail.dailyRewardData) {
+                                gameStateStorage.setItem('dailyRewardData', typeof restoredDetail.dailyRewardData === 'string'
+                                    ? restoredDetail.dailyRewardData
+                                    : JSON.stringify(restoredDetail.dailyRewardData));
+                            } else {
+                                gameStateStorage.removeItem('dailyRewardData');
+                            }
+                            window.dispatchEvent(new CustomEvent('daily_reward_updated'));
                         }
 
                         // Pulihkan status Program Nuklir & Stok Rudal ICBM User
@@ -10556,6 +10577,17 @@ export default function MapPage() {
                     ongoingDiplomacyRatifications: Array.isArray((countryDetail as any)?.ongoingDiplomacyRatifications) ? (countryDetail as any).ongoingDiplomacyRatifications : [],
                     economicSanctions: getEconomicSanctionCounts(),
                     taxedProvinces: Array.isArray((countryDetail as any)?.taxedProvinces) ? (countryDetail as any).taxedProvinces : [],
+                    poin_pendidikan: (countryDetail as any)?.poin_pendidikan !== undefined ? Number((countryDetail as any).poin_pendidikan) : null,
+                    prasekolah: Number((countryDetail as any)?.prasekolah || 0),
+                    dasar: Number((countryDetail as any)?.dasar || 0),
+                    menengah: Number((countryDetail as any)?.menengah || 0),
+                    lanjutan: Number((countryDetail as any)?.lanjutan || 0),
+                    universitas: Number((countryDetail as any)?.universitas || 0),
+                    lembaga_pendidikan: Number((countryDetail as any)?.lembaga_pendidikan || 0),
+                    laboratorium: Number((countryDetail as any)?.laboratorium || 0),
+                    observatorium: Number((countryDetail as any)?.observatorium || 0),
+                    pusat_penelitian: Number((countryDetail as any)?.pusat_penelitian || 0),
+                    pusat_pengembangan: Number((countryDetail as any)?.pusat_pengembangan || 0),
                     provinceTensions: (countryDetail as any)?.provinceTensions && typeof (countryDetail as any).provinceTensions === 'object' && !Array.isArray((countryDetail as any).provinceTensions) ? (countryDetail as any).provinceTensions : {},
                     provinceReferendums: (countryDetail as any)?.provinceReferendums && typeof (countryDetail as any).provinceReferendums === 'object' && !Array.isArray((countryDetail as any).provinceReferendums) ? (countryDetail as any).provinceReferendums : {},
                     provinceCasualties: (countryDetail as any)?.provinceCasualties && typeof (countryDetail as any).provinceCasualties === 'object' && !Array.isArray((countryDetail as any).provinceCasualties) ? (countryDetail as any).provinceCasualties : {},
@@ -10597,6 +10629,7 @@ export default function MapPage() {
                     activeMissionId: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_active_mission') : null,
                     claimableMissions: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_claimable_missions') : null,
                     achievementsState: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_achievements_state') : null,
+                    dailyRewardData: typeof window !== 'undefined' ? gameStateStorage.getItem('dailyRewardData') : null,
                     programNuklirActive: countryDetail?.programNuklirActive ?? (typeof window !== 'undefined' && gameStateStorage.getItem('programNuklirActive') === '1'),
                     icbm_jumlah: Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0),
                     icbm_status: Boolean(countryDetail?.icbm_status ?? (Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0) > 0)),
