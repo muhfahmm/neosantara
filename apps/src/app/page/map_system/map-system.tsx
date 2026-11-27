@@ -82,6 +82,8 @@ import {
     getStationedPeacekeeper,
     removeStationedPeacekeeper,
     restoreStationedPeacekeeperUnits,
+    loadStationedPeacekeepers,
+    saveStationedPeacekeepers,
 } from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint, getCapitalCoord } from '../path_logic/path-war';
@@ -8544,9 +8546,10 @@ export default function MapPage() {
                 }
                 if (loadSaveStr) {
                     try {
-                        const savedState = JSON.parse(loadSaveStr);
-                        if (savedState.game_date) {
-                            timeManager.setCurrentDate(new Date(savedState.game_date));
+                        const savedMetadata = JSON.parse(loadSaveStr);
+                        const targetDate = savedMetadata.game_date || savedMetadata.gameDate;
+                        if (targetDate) {
+                            timeManager.setCurrentDate(new Date(targetDate));
                         }
                     } catch (err) {
                         console.error("Failed to restore date from save:", err);
@@ -8720,6 +8723,11 @@ export default function MapPage() {
                 ongoingConstructions: mergedData.ongoingConstructions || [],
                 kesejahteraan_bonus: mergedData.kesejahteraan_bonus ?? 0,
                 kesejahteraan_decay: mergedData.kesejahteraan_decay ?? 0,
+                programNuklirActive: mergedData.programNuklirActive ?? isNegaraNuklirBawaan(mergedData.country_slug || countryName.toLowerCase().replace(/\s+/g, '_'), countryName),
+                icbm_jumlah: Number(mergedData.icbm_jumlah ?? getNegaraNuklirBaseIcbm(mergedData.country_slug || countryName.toLowerCase().replace(/\s+/g, '_'), countryName)),
+                icbm_status: Boolean(mergedData.icbm_status ?? (Number(mergedData.icbm_jumlah ?? getNegaraNuklirBaseIcbm(mergedData.country_slug || countryName.toLowerCase().replace(/\s+/g, '_'), countryName)) > 0)),
+                icbmBuildTask: mergedData.icbmBuildTask || null,
+                icbm_consumed: Number(mergedData.icbm_consumed || 0),
             };
             setCountryDetail(loadedCountryDetail);
 
@@ -8998,6 +9006,52 @@ export default function MapPage() {
                             } else {
                                 clearAchievementProgressData();
                             }
+                        }
+
+                        // Pulihkan status Program Nuklir & Stok Rudal ICBM User
+                        if (restoredDetail.programNuklirActive !== undefined) {
+                            if (restoredDetail.programNuklirActive) {
+                                gameStateStorage.setItem('programNuklirActive', '1');
+                            } else {
+                                gameStateStorage.removeItem('programNuklirActive');
+                            }
+                        }
+                        if (restoredDetail.icbmBuildTask !== undefined) {
+                            if (restoredDetail.icbmBuildTask) {
+                                gameStateStorage.setItem('icbmBuildTask', JSON.stringify(restoredDetail.icbmBuildTask));
+                            } else {
+                                gameStateStorage.removeItem('icbmBuildTask');
+                            }
+                        }
+
+                        // Pulihkan Pasukan Perdamaian PBB (Stationed Peacekeepers)
+                        if (Array.isArray(sessionState.stationedPeacekeepers)) {
+                            saveStationedPeacekeepers(sessionState.stationedPeacekeepers);
+                        }
+
+                        // Pulihkan Personel Intelijen (Covert Personnel)
+                        if (sessionState.covertPersonnel) {
+                            gameStateStorage.setItem('neosantara_covert_personnel', sessionState.covertPersonnel);
+                            try {
+                                const parsedCovert = JSON.parse(sessionState.covertPersonnel);
+                                window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: parsedCovert }));
+                            } catch {}
+                        }
+
+                        // Pulihkan Permintaan Invasi Sekutu
+                        if (sessionState.requestedInvasions) {
+                            gameStateStorage.setItem('requested_attack_requests_v1', sessionState.requestedInvasions);
+                        }
+
+                        // Pulihkan Status Dewan Keamanan PBB & Sanksi Perang
+                        if (sessionState.pbbSecurityCouncilState) {
+                            gameStateStorage.setItem('pbb_security_council_election_state_v1', sessionState.pbbSecurityCouncilState);
+                        }
+                        if (sessionState.pbbWarSanctions) {
+                            gameStateStorage.setItem('pbb_war_sanction_history_v1', sessionState.pbbWarSanctions);
+                        }
+                        if (sessionState.pendingOrgApplications) {
+                            gameStateStorage.setItem('org_membership_pending_applications_v1', sessionState.pendingOrgApplications);
                         }
 
                         await clearPendingGameSave();
@@ -10401,6 +10455,12 @@ export default function MapPage() {
                 provinceReligionOverrides: (window as any).neosantara_province_religion_overrides || {},
                 provinceIdeologyOverrides: (window as any).neosantara_province_ideology_overrides || {},
                 playerAttack: (window as any).neosantara_player_attack || null,
+                stationedPeacekeepers: loadStationedPeacekeepers(),
+                covertPersonnel: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_covert_personnel') : null,
+                requestedInvasions: typeof window !== 'undefined' ? gameStateStorage.getItem('requested_attack_requests_v1') : null,
+                pbbSecurityCouncilState: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_security_council_election_state_v1') : null,
+                pbbWarSanctions: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_war_sanction_history_v1') : null,
+                pendingOrgApplications: typeof window !== 'undefined' ? gameStateStorage.getItem('org_membership_pending_applications_v1') : null,
             };
             const existingSave = targetSaveId ? existingSaveFiles.find(s => s.id === targetSaveId) : null;
             const currentSaveVersion = existingSave?.version ?? (countryDetail?.__neosantara_game_session?.saveVersion ?? 1);
@@ -10436,6 +10496,11 @@ export default function MapPage() {
                     activeMissionId: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_active_mission') : null,
                     claimableMissions: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_claimable_missions') : null,
                     achievementsState: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_achievements_state') : null,
+                    programNuklirActive: countryDetail?.programNuklirActive ?? (typeof window !== 'undefined' && gameStateStorage.getItem('programNuklirActive') === '1'),
+                    icbm_jumlah: Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0),
+                    icbm_status: Boolean(countryDetail?.icbm_status ?? (Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0) > 0)),
+                    icbm_consumed: Number(countryDetail?.icbm_consumed || 0),
+                    icbmBuildTask: countryDetail?.icbmBuildTask || null,
                     __neosantara_game_session: {
                         ...sessionState,
                         saveVersion: (currentSaveVersion || 1) + 1,
