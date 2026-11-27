@@ -116,6 +116,7 @@ import {
 } from '../detail_negara/3_operasi_militer/covertEffectsLogic';
 import { convertBarakToSoldiers } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
+import { NEOSANTARA_ALL_BUILDING_KEYS } from '@/lib/buildingRegistryKeys';
 import { loadCountryProfileSummaries } from '@/lib/countryProfileSummaryRegistry';
 import {
     hasActiveNationalization,
@@ -8944,7 +8945,8 @@ export default function MapPage() {
                                     ? savedCountryDetail.sector_nationalization
                                     : {}),
                             },
-                            religion: databaseReligion || cachedReligion || savedDetail.religion || savedState.religion || '-',
+                            religion: savedDetail.religion || savedState.religion || databaseReligion || cachedReligion || '-',
+                            pending_social_cultural_changes: Array.isArray(savedCountryDetail.pending_social_cultural_changes) ? savedCountryDetail.pending_social_cultural_changes : [],
                             subsidy_states: savedCountryDetail.subsidy_states || {},
                             sistem_ekonomi_val: savedCountryDetail.sistem_ekonomi_val !== undefined ? Number(savedCountryDetail.sistem_ekonomi_val) : 50,
                             policy_price_control: savedCountryDetail.policy_price_control || 'A',
@@ -8991,7 +8993,12 @@ export default function MapPage() {
                             provinceReferendums: savedCountryDetail.provinceReferendums && typeof savedCountryDetail.provinceReferendums === 'object' && !Array.isArray(savedCountryDetail.provinceReferendums) ? savedCountryDetail.provinceReferendums : {},
                             provinceCasualties: savedCountryDetail.provinceCasualties && typeof savedCountryDetail.provinceCasualties === 'object' && !Array.isArray(savedCountryDetail.provinceCasualties) ? savedCountryDetail.provinceCasualties : {},
                             ...Object.fromEntries(
-                                Object.entries(savedCountryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('keamanan_') || k.startsWith('layanan_'))
+                                Object.entries(savedCountryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('kem_') || k.startsWith('keamanan_') || k.startsWith('layanan_') || k.startsWith('inventory_') || k.startsWith('last_update_date_') || k.startsWith('build_date_') || k.startsWith('accumulated_'))
+                            ),
+                            ...Object.fromEntries(
+                                NEOSANTARA_ALL_BUILDING_KEYS
+                                    .filter(k => savedCountryDetail[k] !== undefined && savedCountryDetail[k] !== null)
+                                    .map(k => [k, Number(savedCountryDetail[k]) || 0])
                             ),
                         };
 
@@ -9008,6 +9015,9 @@ export default function MapPage() {
                             } else {
                                 gameStateStorage.removeItem('deployed_units_config');
                             }
+                        }
+                        if (restoredDetail.capital && typeof window !== 'undefined') {
+                            (window as any).neosantara_player_capital = restoredDetail.capital;
                         }
                         setCountryDetail(restoredDetail);
                         setNewsListRaw(Array.isArray(savedDetail.newsList) ? savedDetail.newsList : []);
@@ -9120,12 +9130,14 @@ export default function MapPage() {
 
                         // Pulihkan Status Dewan Keamanan PBB & Sanksi Perang
                         if (sessionState.pbbSecurityCouncilState) {
+                            gameStateStorage.setItem('neosantara_pbb_security_council_election', sessionState.pbbSecurityCouncilState);
                             gameStateStorage.setItem('pbb_security_council_election_state_v1', sessionState.pbbSecurityCouncilState);
                         }
                         if (sessionState.pbbWarSanctions) {
                             gameStateStorage.setItem('pbb_war_sanction_history_v1', sessionState.pbbWarSanctions);
                         }
                         if (sessionState.pendingOrgApplications) {
+                            gameStateStorage.setItem('neosantara_org_applications_v1', sessionState.pendingOrgApplications);
                             gameStateStorage.setItem('org_membership_pending_applications_v1', sessionState.pendingOrgApplications);
                         }
 
@@ -9804,6 +9816,24 @@ export default function MapPage() {
                     currentOngoing = currentOngoing.filter((c: any) => !completedIds.includes(c.id));
                 }
 
+                // 🔥 OTOMATIS SELESAIKAN ANTREAN BANGUNAN UMUM, PRODUKSI & MANUFAKTUR DI BACKGROUND
+                const completedGeneralBuilds = currentOngoing.filter((c: any) => {
+                    if (c.type === "event" || c.buildingKey === "program_nuklir") return false;
+                    return c.endDate && c.endDate <= currentDateStr;
+                });
+
+                let generalBuildCompletedUpdates: Record<string, number> = {};
+                if (completedGeneralBuilds.length > 0) {
+                    completedGeneralBuilds.forEach((c: any) => {
+                        const key = c.buildingKey;
+                        if (key) {
+                            generalBuildCompletedUpdates[key] = (Number(generalBuildCompletedUpdates[key] ?? prev[key]) || 0) + (Number(c.quantity) || 1);
+                        }
+                    });
+                    const completedGeneralIds = completedGeneralBuilds.map((c: any) => c.id);
+                    currentOngoing = currentOngoing.filter((c: any) => !completedGeneralIds.includes(c.id));
+                }
+
                 // 🔥 HITUNG SELESAINYA PEMBANGUNAN PROGRAM NUKLIR
                 const completedNuclearBuilds = currentOngoing.filter((c: any) => c.buildingKey === "program_nuklir" && c.endDate <= currentDateStr);
                 let nextProgramNuklirActive = Boolean(prev.programNuklirActive);
@@ -10249,6 +10279,7 @@ export default function MapPage() {
                     ],
                     active_outbreaks: nextActiveOutbreaks,
                     active_disaster_effects: nextActiveDisasters,
+                    ...generalBuildCompletedUpdates,
                     ongoingConstructions: currentOngoing,
                     ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
                     ongoingNonAggressionPactRatifications: nextOngoingPactRatifications,
@@ -10540,9 +10571,9 @@ export default function MapPage() {
                 economicSanctionCounts: getEconomicSanctionCounts(),
                 covertPersonnel: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_covert_personnel') : null,
                 requestedInvasions: typeof window !== 'undefined' ? gameStateStorage.getItem('requested_attack_requests_v1') : null,
-                pbbSecurityCouncilState: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_security_council_election_state_v1') : null,
+                pbbSecurityCouncilState: typeof window !== 'undefined' ? (gameStateStorage.getItem('neosantara_pbb_security_council_election') || gameStateStorage.getItem('pbb_security_council_election_state_v1')) : null,
                 pbbWarSanctions: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_war_sanction_history_v1') : null,
-                pendingOrgApplications: typeof window !== 'undefined' ? gameStateStorage.getItem('org_membership_pending_applications_v1') : null,
+                pendingOrgApplications: typeof window !== 'undefined' ? (gameStateStorage.getItem('neosantara_org_applications_v1') || gameStateStorage.getItem('org_membership_pending_applications_v1')) : null,
                 relationModifiersSnapshot: exportRelationModifiersSnapshot(),
                 tradeVolumeLedger: countryDetail?.tradeVolumeLedger || null,
                     deployed_units_config: typeof window !== 'undefined' ? gameStateStorage.getItem('deployed_units_config') : null,
@@ -10592,7 +10623,12 @@ export default function MapPage() {
                     provinceReferendums: (countryDetail as any)?.provinceReferendums && typeof (countryDetail as any).provinceReferendums === 'object' && !Array.isArray((countryDetail as any).provinceReferendums) ? (countryDetail as any).provinceReferendums : {},
                     provinceCasualties: (countryDetail as any)?.provinceCasualties && typeof (countryDetail as any).provinceCasualties === 'object' && !Array.isArray((countryDetail as any).provinceCasualties) ? (countryDetail as any).provinceCasualties : {},
                     ...Object.fromEntries(
-                        Object.entries(countryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('keamanan_') || k.startsWith('layanan_'))
+                        Object.entries(countryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('kem_') || k.startsWith('keamanan_') || k.startsWith('layanan_') || k.startsWith('inventory_') || k.startsWith('last_update_date_') || k.startsWith('build_date_') || k.startsWith('accumulated_'))
+                    ),
+                    ...Object.fromEntries(
+                        NEOSANTARA_ALL_BUILDING_KEYS
+                            .filter(k => (countryDetail as any)?.[k] !== undefined && (countryDetail as any)?.[k] !== null)
+                            .map(k => [k, Number((countryDetail as any)[k]) || 0])
                     ),
             };
             const existingSave = targetSaveId ? existingSaveFiles.find(s => s.id === targetSaveId) : null;
