@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import React, { useEffect, useState, useRef } from "react";
 import { getLocalizedCountryName } from "@/app/logic/countryNameLogic";
@@ -28,7 +29,7 @@ export default function StationedPeacekeepersOverlay({
   useEffect(() => {
     // Bersihkan storage tersimpan lama jika ada agar saat refresh benar-benar hilang/reset
     try {
-      localStorage.removeItem("neosantara_stationed_peacekeepers");
+      gameStateStorage.removeItem("neosantara_stationed_peacekeepers");
     } catch {}
 
     setPeacekeepers(loadStationedPeacekeepers());

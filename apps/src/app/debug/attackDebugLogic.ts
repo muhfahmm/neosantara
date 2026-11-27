@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { COUNTRIES_DATA, type CountryData } from '../page/map_system/map-data';
 import { applyWarLossesToUserArmada } from '../page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 
@@ -255,7 +256,7 @@ export function triggerPlayerAttackOnAi(options: PlayerAttackDebugOptions): stri
 
   let storedDeploymentConfig: unknown;
   try {
-    const raw = window.localStorage.getItem('deployed_units_config');
+    const raw = gameStateStorage.getItem('deployed_units_config');
     storedDeploymentConfig = raw ? JSON.parse(raw) : null;
   } catch (error) {
     console.error('[AttackDebug] Gagal membaca konfigurasi pasukan yang dikerahkan.', error);

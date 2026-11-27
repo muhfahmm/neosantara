@@ -188,24 +188,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     }
   }, [buildCompleted, isNuclearProgramActive, programBuildTask, safeDateString, setCountryDetail, isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    try {
-      if (isNuclearProgramActive) sessionStorage.setItem('programNuklirActive', '1');
-      else sessionStorage.removeItem('programNuklirActive');
-    } catch (e) {}
-  }, [isNuclearProgramActive, isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    try {
-      const flag = sessionStorage.getItem('programNuklirActive') === '1';
-      if (flag && !Boolean(countryDetail?.programNuklirActive) && countryDetail) {
-        setCountryDetail((prev: any) => ({ ...(prev || {}), programNuklirActive: true }));
-      }
-    } catch (e) {}
-  }, [countryDetail, setCountryDetail, isOpen]);
-
   const status = (() => {
     if (isNuclearProgramActive) {
       return {

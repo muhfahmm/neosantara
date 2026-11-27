@@ -84,6 +84,27 @@ async fn play_games_current_user(
 }
 
 #[tauri::command]
+async fn play_games_id_token(
+  app: tauri::AppHandle<tauri::Wry>,
+  config: NativePlayGamesAuthConfig,
+) -> Result<serde_json::Value, String> {
+  #[cfg(target_os = "android")]
+  {
+    let plugin = app.state::<PlayGamesAuthPluginState>();
+    plugin
+      .0
+      .run_mobile_plugin_async("idToken", config)
+      .await
+      .map_err(|error| error.to_string())
+  }
+  #[cfg(not(target_os = "android"))]
+  {
+    let _ = (app, config);
+    Err("Google Play Games sign-in is only available in the Android app.".into())
+  }
+}
+
+#[tauri::command]
 async fn play_games_sign_out(
   app: tauri::AppHandle<tauri::Wry>,
   config: NativePlayGamesAuthConfig,
@@ -111,6 +132,7 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
       play_games_sign_in,
       play_games_current_user,
+      play_games_id_token,
       play_games_sign_out
     ])
     .setup(|app| {

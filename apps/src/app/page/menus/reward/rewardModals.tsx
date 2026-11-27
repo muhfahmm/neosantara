@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
@@ -203,14 +204,14 @@ export default function TopRightGiftIcon({
   }, []);
 
   // --------------------------------------------------------------------
-  // Load & update status dari localStorage
+  // Load & update status dari gameStateStorage
   // --------------------------------------------------------------------
   const loadRewardStatus = useCallback(() => {
     const today = getToday();
     const weekKey = getWeekKey(today);
     syncedDateRef.current = today;
 
-    const stored = localStorage.getItem(REWARD_STORAGE_KEY);
+    const stored = gameStateStorage.getItem(REWARD_STORAGE_KEY);
 
     let lastClaimDate: string | null = null;
     let claimedDay: number | null = null;
@@ -262,7 +263,7 @@ export default function TopRightGiftIcon({
     setWeeklyRewards(rewards);
     setIsLoading(false);
 
-    localStorage.setItem(
+    gameStateStorage.setItem(
       REWARD_STORAGE_KEY,
       JSON.stringify({
         version: REWARD_STORAGE_VERSION,
@@ -278,12 +279,12 @@ export default function TopRightGiftIcon({
     loadRewardStatus();
 
     const resetRewardStatus = () => {
-      localStorage.removeItem(REWARD_STORAGE_KEY);
+      gameStateStorage.removeItem(REWARD_STORAGE_KEY);
       loadRewardStatus();
     };
 
     const handlePageExit = () => {
-      localStorage.removeItem(REWARD_STORAGE_KEY);
+      gameStateStorage.removeItem(REWARD_STORAGE_KEY);
     };
 
     window.addEventListener('daily_reward_reset', resetRewardStatus);
@@ -331,7 +332,7 @@ export default function TopRightGiftIcon({
     setClaimedToday(true);
     setLastClaimDate(today);
 
-    localStorage.setItem(
+    gameStateStorage.setItem(
       REWARD_STORAGE_KEY,
       JSON.stringify({
         version: REWARD_STORAGE_VERSION,

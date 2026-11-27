@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useEffect, useRef, useState } from "react";
 import { ShieldAlert } from "lucide-react";
@@ -186,7 +187,7 @@ export default function SerangNegaraModal({
 		let committedDeploymentConfig = deploymentConfig;
 		if (!committedDeploymentConfig && typeof window !== "undefined") {
 			try {
-				const saved = localStorage.getItem("deployed_units_config");
+				const saved = gameStateStorage.getItem("deployed_units_config");
 				if (saved) {
 					committedDeploymentConfig = Object.fromEntries(
 						Object.entries(JSON.parse(saved) as Record<string, unknown>).filter(

@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { generateAIKeamananPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { getCurrentGameDateString } from '@/app/logic/gameSessionState';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
@@ -135,7 +136,7 @@ function initializeSessionOnlySecurityItems(): void {
   initializedSessionOnlySecurityItems = true;
 
   try {
-    localStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN);
+    gameStateStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN);
   } catch (error) {
     console.error('Failed to clear persisted PBB Security Council agenda:', error);
   }
@@ -414,7 +415,7 @@ export function clearActiveSecurityCouncilItems(): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN);
+    gameStateStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN);
   } catch (error) {
     console.error('Failed to clear PBB Security Council agenda:', error);
   }

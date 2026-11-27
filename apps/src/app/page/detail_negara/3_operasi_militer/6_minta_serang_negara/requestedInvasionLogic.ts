@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { areSameWarCountry } from '../1_serang_negara/warCountryIdentity';
 
 export interface RequestedInvasionOutcomeInput {
@@ -39,7 +40,7 @@ function publishRequestedAttackRequestsChanged(): void {
 function readStoredRequests(): RequestedAttackRecord[] {
   if (typeof window === 'undefined') return [];
   try {
-    const stored = window.localStorage.getItem(REQUESTED_ATTACK_REQUESTS_STORAGE_KEY);
+    const stored = gameStateStorage.getItem(REQUESTED_ATTACK_REQUESTS_STORAGE_KEY);
     if (!stored) return [];
     const parsed: unknown = JSON.parse(stored);
     if (!Array.isArray(parsed)) {
@@ -65,7 +66,7 @@ function readStoredRequests(): RequestedAttackRecord[] {
 function writeStoredRequests(requests: RequestedAttackRecord[]): void {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(REQUESTED_ATTACK_REQUESTS_STORAGE_KEY, JSON.stringify(requests));
+    gameStateStorage.setItem(REQUESTED_ATTACK_REQUESTS_STORAGE_KEY, JSON.stringify(requests));
     publishRequestedAttackRequestsChanged();
   } catch (error) {
     console.error('[RequestedInvasion] Unable to persist request status.', error);

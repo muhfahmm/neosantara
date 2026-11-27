@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage, purgeMigratedLocalStorage } from '@/app/logic/gameStateStorage';
 
 import { getRelationColor } from '@/app/logic/relationTiers';
 import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef, useSyncExternalStore } from 'react';
@@ -130,7 +131,11 @@ import {
     NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
-import { clearPendingGameSave, readPendingGameSave } from '@/app/logic/pendingGameSave';
+import {
+    captureGameSaveStorage,
+    clearPendingGameSave,
+    readPendingGameSave,
+} from '@/app/logic/pendingGameSave';
 import { executeCoup } from '@/app/page/detail_negara/3_operasi_militer/5_lakukan_kudeta/logic/coupLogic';
 import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
 import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
@@ -1372,7 +1377,7 @@ export default function MapPage() {
             setTutorialStartup('suppressed');
             return;
         }
-        if (localStorage.getItem('presiden_simulator_new_game') === '1') {
+        if (gameStateStorage.getItem('presiden_simulator_new_game') === '1') {
             resetTutorial();
             setTutorialStartup('new-game');
             setIsTutorialWelcomeOpen(true);
@@ -3874,18 +3879,18 @@ export default function MapPage() {
     const [shopInitialTab, setShopInitialTab] = useState<"neo" | "gems">("neo");
     const [playerDiamonds, setPlayerDiamonds] = useState<number>(500);
 
-    // Sinkronisasi saldo diamond dari localStorage saat client mounted & realtime event
+    // Sinkronisasi saldo diamond dari gameStateStorage saat client mounted & realtime event
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
-            const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
+            const newGameMarker = gameStateStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {
-                localStorage.setItem('player_diamonds', '500');
+                gameStateStorage.setItem('player_diamonds', '500');
                 setPlayerDiamonds(500);
             }
 
             const syncDiamonds = () => {
-                const saved = localStorage.getItem('player_diamonds');
+                const saved = gameStateStorage.getItem('player_diamonds');
                 if (saved !== null) {
                     const parsed = parseInt(saved, 10);
                     if (!isNaN(parsed)) {
@@ -8393,16 +8398,16 @@ export default function MapPage() {
 
         if (lastCountryDetailStateRef.current && lastCountryDetailStateRef.current !== serialized) {
             // Ada tindakan pembangunan, pelaksanaan event, alokasi anggaran, atau perubahan negara
-            const activeMission = typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null;
+            const activeMission = typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_active_mission') : null;
             if (activeMission) {
                 try {
                     // Cek apakah misi aktif merupakan salah satu misi produksi dengan kuantitas khusus (0/5, dst.)
                     // Jika iya, biarkan recordBuildingProgress yang memvalidasi target terpenuhi
-                    const rawProgressMap = localStorage.getItem('presiden_simulator_mission_building_progress');
+                    const rawProgressMap = gameStateStorage.getItem('presiden_simulator_mission_building_progress');
                     const bMap = rawProgressMap ? JSON.parse(rawProgressMap) : {};
                     const curProgress = Number(bMap[activeMission]) || 0;
 
-                    const rawCompletions = localStorage.getItem('presiden_simulator_mission_completions');
+                    const rawCompletions = gameStateStorage.getItem('presiden_simulator_mission_completions');
                     const compMap = rawCompletions ? JSON.parse(rawCompletions) : {};
                     const completionCount = Number(compMap[activeMission]) || 0;
                     const requiredTarget = 5 * (completionCount + 1);
@@ -8423,11 +8428,11 @@ export default function MapPage() {
 
                     // Jika ini misi pembangunan produksi dan target belum tercapai (misal belum mencapai 5), jangan tandai claimable
                     if (!isProductionBuildingMission || curProgress >= requiredTarget) {
-                        const rawList = localStorage.getItem('presiden_simulator_claimable_missions');
+                        const rawList = gameStateStorage.getItem('presiden_simulator_claimable_missions');
                         const list: string[] = rawList ? JSON.parse(rawList) : [];
                         if (!list.includes(activeMission)) {
                             list.push(activeMission);
-                            localStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
+                            gameStateStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
                             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: activeMission, claimableList: list } }));
                         }
                     }
@@ -8497,13 +8502,13 @@ export default function MapPage() {
             // Check if there is a save to load to restore the date
             if (typeof window !== 'undefined') {
                 const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
-                const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
+                const newGameMarker = gameStateStorage.getItem('presiden_simulator_new_game');
                 // Reset hanya saat pemain benar-benar memulai game baru. Navigasi ke dialog lalu kembali
                 // tidak boleh menghapus progress sesi yang masih berjalan.
                 if (newGameMarker === '1') {
                     clearMissionProgressData();
                     clearAchievementProgressData();
-                    localStorage.setItem('player_diamonds', '500');
+                    gameStateStorage.setItem('player_diamonds', '500');
                     setPlayerDiamonds(500);
                     window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 500 } }));
                 }
@@ -8514,14 +8519,14 @@ export default function MapPage() {
                     clearActiveResolutionsForSession();
                     clearActiveSecurityCouncilItems();
                     clearReportedInvasionViolations();
-                    localStorage.removeItem('hutangModalLoanSources');
-                    localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-                    localStorage.removeItem('pbb_active_resolutions_v4');
-                    localStorage.removeItem('pbb_active_keamanan_v4');
-                    localStorage.removeItem('pbb_reported_war_ban_violations_v1');
-                    localStorage.removeItem('programNuklirActive');
-                    localStorage.removeItem('icbmBuildTask');
-                    localStorage.removeItem('neosantara_covert_personnel');
+                    gameStateStorage.removeItem('hutangModalLoanSources');
+                    gameStateStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                    gameStateStorage.removeItem('pbb_active_resolutions_v4');
+                    gameStateStorage.removeItem('pbb_active_keamanan_v4');
+                    gameStateStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                    gameStateStorage.removeItem('programNuklirActive');
+                    gameStateStorage.removeItem('icbmBuildTask');
+                    gameStateStorage.removeItem('neosantara_covert_personnel');
                     window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
                     try {
                         sessionStorage.removeItem('programNuklirActive');
@@ -8535,7 +8540,7 @@ export default function MapPage() {
                     clearActiveNpcCountrySimulationState();
                     (window as any).neosantara_annexed_countries = {};
                     (window as any).neosantara_country_color_overrides = {};
-                    localStorage.removeItem('presiden_simulator_new_game');
+                    gameStateStorage.removeItem('presiden_simulator_new_game');
                 }
                 if (loadSaveStr) {
                     try {
@@ -8604,7 +8609,7 @@ export default function MapPage() {
     const cacheDatabaseReligion = (countrySlug: string, religion: string) => {
         if (typeof window === 'undefined' || !countrySlug || !religion) return;
         try {
-            localStorage.setItem(religionCacheKey(countrySlug), religion);
+            gameStateStorage.setItem(religionCacheKey(countrySlug), religion);
         } catch (error) {
             console.error('Gagal menyimpan cache agama negara:', error);
         }
@@ -8742,7 +8747,7 @@ export default function MapPage() {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
-            const isNewGame = localStorage.getItem('presiden_simulator_new_game') === '1';
+            const isNewGame = gameStateStorage.getItem('presiden_simulator_new_game') === '1';
             clearUnpersistedOrganizationMembershipState();
             if (loadSaveStr || isNewGame) {
                 setActivePlayerAttack(null);
@@ -8854,6 +8859,12 @@ export default function MapPage() {
                         (window as any).neosantara_country_color_overrides = restoredOverrides;
                         (window as any).neosantara_annexed_countries = restoredAnnexed;
                         (window as any).neosantara_city_owner = restoredCityOwners;
+                        (window as any).neosantara_province_religion_overrides = sessionState.provinceReligionOverrides || {};
+                        (window as any).neosantara_province_ideology_overrides = sessionState.provinceIdeologyOverrides || {};
+                        if (sessionState.playerAttack) {
+                            (window as any).neosantara_player_attack = sessionState.playerAttack;
+                            setActivePlayerAttack(sessionState.playerAttack);
+                        }
                         if (isMobileDevice() && Object.keys(restoredCityOwners).length > 0) {
                             void loadCityBoundaryCells('/city_province_cells.json');
                         }
@@ -8895,7 +8906,7 @@ export default function MapPage() {
                         let cachedReligion = '';
                         const cacheSlug = databaseSlug || String(savedDetail.country_slug || savedCountryName);
                         try {
-                            cachedReligion = localStorage.getItem(religionCacheKey(cacheSlug)) || '';
+                            cachedReligion = gameStateStorage.getItem(religionCacheKey(cacheSlug)) || '';
                         } catch (error) {
                             console.error('Gagal membaca cache agama negara:', error);
                         }
@@ -8932,6 +8943,7 @@ export default function MapPage() {
                             restoredDetail.nationalization_diplomacy_month_counter
                         );
                         setCountryDetail(restoredDetail);
+                        setNewsListRaw(Array.isArray(savedDetail.newsList) ? savedDetail.newsList : []);
                         if (restoredDetail.presidentRating !== undefined) {
                             setPresidentRating(Number(restoredDetail.presidentRating));
                         }
@@ -8939,46 +8951,46 @@ export default function MapPage() {
                             setKesejahteraan(Number(restoredDetail.kesejahteraan));
                         }
                         if (Array.isArray(restoredDetail.notifications)) {
-                            setNotifications(restoredDetail.notifications);
+                            setNotificationsRaw(restoredDetail.notifications);
                         }
 
                         if (restoredDetail.playerDiamonds !== undefined) {
                             const dia = Number(restoredDetail.playerDiamonds);
                             setPlayerDiamonds(dia);
-                            localStorage.setItem('player_diamonds', dia.toString());
+                            gameStateStorage.setItem('player_diamonds', dia.toString());
                         }
                         if (restoredDetail.playerXp !== undefined) {
                             const xpVal = Number(restoredDetail.playerXp) || 0;
-                            localStorage.setItem('neosantara_player_xp', String(xpVal));
+                            gameStateStorage.setItem('neosantara_player_xp', String(xpVal));
                             window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: xpVal, added: 0 } }));
                         }
                         if (restoredDetail.missionCompletions !== undefined) {
                             if (restoredDetail.missionCompletions) {
-                                localStorage.setItem('presiden_simulator_mission_completions', restoredDetail.missionCompletions);
+                                gameStateStorage.setItem('presiden_simulator_mission_completions', restoredDetail.missionCompletions);
                             } else {
-                                localStorage.removeItem('presiden_simulator_mission_completions');
+                                gameStateStorage.removeItem('presiden_simulator_mission_completions');
                             }
                             window.dispatchEvent(new CustomEvent('mission_completions_updated'));
                         }
                         if (restoredDetail.activeMissionId !== undefined) {
                             if (restoredDetail.activeMissionId) {
-                                localStorage.setItem('presiden_simulator_active_mission', restoredDetail.activeMissionId);
+                                gameStateStorage.setItem('presiden_simulator_active_mission', restoredDetail.activeMissionId);
                             } else {
-                                localStorage.removeItem('presiden_simulator_active_mission');
+                                gameStateStorage.removeItem('presiden_simulator_active_mission');
                             }
                             window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: restoredDetail.activeMissionId } }));
                         }
                         if (restoredDetail.claimableMissions !== undefined) {
                             if (restoredDetail.claimableMissions) {
-                                localStorage.setItem('presiden_simulator_claimable_missions', restoredDetail.claimableMissions);
+                                gameStateStorage.setItem('presiden_simulator_claimable_missions', restoredDetail.claimableMissions);
                             } else {
-                                localStorage.removeItem('presiden_simulator_claimable_missions');
+                                gameStateStorage.removeItem('presiden_simulator_claimable_missions');
                             }
                             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: restoredDetail.claimableMissions ? JSON.parse(restoredDetail.claimableMissions) : [] } }));
                         }
                         if (restoredDetail.achievementsState !== undefined) {
                             if (restoredDetail.achievementsState) {
-                                localStorage.setItem('neosantara_achievements_state', restoredDetail.achievementsState);
+                                gameStateStorage.setItem('neosantara_achievements_state', restoredDetail.achievementsState);
                                 try {
                                     const parsedState = JSON.parse(restoredDetail.achievementsState);
                                     window.dispatchEvent(new CustomEvent('achievements_state_updated', { detail: parsedState }));
@@ -9012,9 +9024,9 @@ export default function MapPage() {
                         clearMissionProgressData();
                         clearAchievementProgressData();
                         clearActiveNpcCountrySimulationState();
-                        localStorage.removeItem('programNuklirActive');
-                        localStorage.removeItem('icbmBuildTask');
-                        localStorage.removeItem('neosantara_covert_personnel');
+                        gameStateStorage.removeItem('programNuklirActive');
+                        gameStateStorage.removeItem('icbmBuildTask');
+                        gameStateStorage.removeItem('neosantara_covert_personnel');
                         window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
                         try {
                             sessionStorage.removeItem('programNuklirActive');
@@ -9022,7 +9034,7 @@ export default function MapPage() {
                             sessionStorage.removeItem('icbm_detail_open');
                             sessionStorage.removeItem('perang_nuklir_detail_open');
                         } catch (e) { }
-                        localStorage.setItem('player_diamonds', '500');
+                        gameStateStorage.setItem('player_diamonds', '500');
                         setPlayerDiamonds(500);
                         window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 500 } }));
                     }
@@ -9064,7 +9076,7 @@ export default function MapPage() {
                 countryDetail.pbbSecurityCouncilElection
             );
             try {
-                localStorage.setItem(
+                gameStateStorage.setItem(
                     SECURITY_COUNCIL_ELECTION_STATE_KEY,
                     JSON.stringify(initialElectionState)
                 );
@@ -9086,8 +9098,8 @@ export default function MapPage() {
             );
             if (JSON.stringify(electionStateSource) !== JSON.stringify(electionState)) {
                 try {
-                    if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== JSON.stringify(electionState)) {
-                        localStorage.setItem(
+                    if (gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== JSON.stringify(electionState)) {
+                        gameStateStorage.setItem(
                             SECURITY_COUNCIL_ELECTION_STATE_KEY,
                             JSON.stringify(electionState)
                         );
@@ -9179,7 +9191,7 @@ export default function MapPage() {
                             }
 
                             try {
-                                localStorage.setItem(
+                                gameStateStorage.setItem(
                                     "neosantara_pbb_security_council_election",
                                     JSON.stringify(result.state)
                                 );
@@ -10358,7 +10370,9 @@ export default function MapPage() {
         } catch (error) {
             console.error('Error fetching saves before save:', error);
             setExistingSaveFiles([]);
-            setIsCreatingNewSaveSlot(true);
+            setIsCreatingNewSaveSlot(false);
+            setIsSaveModalOpen(false);
+            alert(error instanceof Error ? error.message : t('game.notification.saveGameFailed'));
         } finally {
             setIsLoadingExistingSaves(false);
         }
@@ -10384,7 +10398,16 @@ export default function MapPage() {
                 countryColorOverrides: (window as any).neosantara_country_color_overrides || countryColorOverrides,
                 annexedCountries: (window as any).neosantara_annexed_countries || {},
                 cityOwner: (window as any).neosantara_city_owner || {},
+                provinceReligionOverrides: (window as any).neosantara_province_religion_overrides || {},
+                provinceIdeologyOverrides: (window as any).neosantara_province_ideology_overrides || {},
+                playerAttack: (window as any).neosantara_player_attack || null,
             };
+            const existingSave = targetSaveId ? existingSaveFiles.find(s => s.id === targetSaveId) : null;
+            const currentSaveVersion = existingSave?.version ?? (countryDetail?.__neosantara_game_session?.saveVersion ?? 1);
+            const idempotencyKey = typeof crypto !== 'undefined' && crypto.randomUUID
+                ? crypto.randomUUID()
+                : String(Date.now()) + '-' + Math.random().toString(36).slice(2, 10);
+
             await saveGameToDatabase({
                 saveId: targetSaveId,
                 saveName,
@@ -10398,20 +10421,29 @@ export default function MapPage() {
                 religion: countryDetail?.religion || '-',
                 unVote: countryDetail?.un_vote || 0,
                 kepuasan: countryDetail?.kepuasan ?? 50,
+                schemaVersion: 'v2',
+                expectedVersion: targetSaveId ? currentSaveVersion : undefined,
+                idempotencyKey,
                 countryDetail: {
                     ...countryDetail,
                     presidentRating,
                     playerDiamonds,
-                    playerXp: typeof window !== 'undefined' ? Number(localStorage.getItem('neosantara_player_xp') || 0) : 0,
+                    playerXp: typeof window !== 'undefined' ? Number(gameStateStorage.getItem('neosantara_player_xp') || 0) : 0,
                     notifications,
+                    newsList,
                     organizationMemberships: getUserJoinedOrgSnapshot(selectedCountry.country),
-                    missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
-                    activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
-                    claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,
-                    achievementsState: typeof window !== 'undefined' ? localStorage.getItem('neosantara_achievements_state') : null,
-                    __neosantara_game_session: sessionState,
+                    missionCompletions: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_mission_completions') : null,
+                    activeMissionId: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_active_mission') : null,
+                    claimableMissions: typeof window !== 'undefined' ? gameStateStorage.getItem('presiden_simulator_claimable_missions') : null,
+                    achievementsState: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_achievements_state') : null,
+                    __neosantara_game_session: {
+                        ...sessionState,
+                        saveVersion: (currentSaveVersion || 1) + 1,
+                        gameState: captureGameSaveStorage(),
+                    },
                 },
             });
+            purgeMigratedLocalStorage();
             setIsSaveModalOpen(false);
             setIsCreatingNewSaveSlot(false);
         } catch (error: any) {

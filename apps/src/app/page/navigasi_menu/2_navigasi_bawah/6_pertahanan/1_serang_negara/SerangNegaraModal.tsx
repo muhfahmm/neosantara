@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import RootTable from "@/app/page/root_modals_design_menu/RootTable";
 import React, { useId, useMemo, useRef, useState } from "react";
 import { Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
@@ -352,7 +353,7 @@ export default function SerangNegaraModal({
     let committedDeploymentConfig = deploymentConfig;
     if (!committedDeploymentConfig && typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("deployed_units_config");
+        const saved = gameStateStorage.getItem("deployed_units_config");
         const parsed: unknown = saved ? JSON.parse(saved) : null;
         if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
           committedDeploymentConfig = Object.fromEntries(

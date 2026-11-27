@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
@@ -54,11 +55,11 @@ const renderCountryFlag = (iso: string, name: string) => {
   );
 };
 
-/** localStorage adalah sumber kebenaran (dipakai tick jadwal, veto, dan pencopotan). */
+/** gameStateStorage adalah sumber kebenaran (dipakai tick jadwal, veto, dan pencopotan). */
 function readStoredElection(): unknown | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    const raw = gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (readError) {
     console.error("Gagal membaca state pemilu Dewan Keamanan:", readError);
@@ -181,8 +182,8 @@ export default function SecurityCouncilElectionPanel({
 
   useEffect(() => {
     try {
-      if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== serializedElection) {
-        localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serializedElection);
+      if (gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) !== serializedElection) {
+        gameStateStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serializedElection);
       }
       onMembersChangeRef.current?.(election.members);
       setCountryDetailRef.current?.(previous => {

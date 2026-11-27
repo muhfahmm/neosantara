@@ -1,4 +1,5 @@
 "use client"
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import React, { useState, useEffect, useRef } from "react";
 import { CreditCard, ArrowRight, AlertCircle, Info } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
@@ -259,8 +260,8 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
       };
 
       try {
-        const storedSources = window.localStorage.getItem(LOAN_STORAGE_KEY);
-        const storedRefresh = window.localStorage.getItem(LOAN_STORAGE_REFRESH_KEY);
+        const storedSources = gameStateStorage.getItem(LOAN_STORAGE_KEY);
+        const storedRefresh = gameStateStorage.getItem(LOAN_STORAGE_REFRESH_KEY);
         const now = currentDate instanceof Date ? currentDate : new Date();
 
         if (storedSources && storedRefresh) {
@@ -275,21 +276,21 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               const enrichedSources = parsedSources.map(enrichItemIso);
               if (enrichedSources.every(isLoanSourceValid)) {
                 setLoanSources(enrichedSources);
-                window.localStorage.setItem(LOAN_STORAGE_KEY, JSON.stringify(enrichedSources));
+                gameStateStorage.setItem(LOAN_STORAGE_KEY, JSON.stringify(enrichedSources));
                 return;
               }
             }
           }
         }
       } catch (err) {
-        console.warn("Gagal memuat sumber pinjaman dari localStorage:", err);
+        console.warn("Gagal memuat sumber pinjaman dari gameStateStorage:", err);
       }
 
       const generatedSources = generateLoanSources();
       setLoanSources(generatedSources);
       if (typeof window !== "undefined") {
-        window.localStorage.setItem(LOAN_STORAGE_KEY, JSON.stringify(generatedSources));
-        window.localStorage.setItem(LOAN_STORAGE_REFRESH_KEY, (currentDate instanceof Date ? currentDate : new Date()).toISOString());
+        gameStateStorage.setItem(LOAN_STORAGE_KEY, JSON.stringify(generatedSources));
+        gameStateStorage.setItem(LOAN_STORAGE_REFRESH_KEY, (currentDate instanceof Date ? currentDate : new Date()).toISOString());
       }
     };
 

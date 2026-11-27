@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { SimulationTimeManager } from './timeManager';
 import { clearActiveResolutionsForSession } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
@@ -40,37 +41,37 @@ export function handleGameRestart(options: RestartOptions): void {
 
     // Clear active PBB resolutions, election, missions, debt, research & annexed countries state on restart
     if (typeof window !== 'undefined') {
-        localStorage.removeItem('dailyRewardData');
-        localStorage.removeItem('player_diamonds');
-        localStorage.removeItem('deployed_units_config');
-        localStorage.removeItem('user_country');
-        localStorage.removeItem('hutangModalLoanSources');
-        localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-        localStorage.removeItem('presiden_simulator_active_mission');
-        localStorage.removeItem('presiden_simulator_claimable_missions');
-        localStorage.removeItem('presiden_simulator_mission_completions');
-        localStorage.removeItem('presiden_simulator_mission_building_progress');
-        localStorage.removeItem('presiden_simulator_mission_pool');
-        localStorage.removeItem('neosantara_pbb_security_council_election');
-        localStorage.removeItem('pbb_active_resolutions_v4');
-        localStorage.removeItem('pbb_active_keamanan_v4');
-        localStorage.removeItem('pbb_reported_war_ban_violations_v1');
-        localStorage.removeItem('neosantara_expelled_organization_countries');
-        localStorage.removeItem('neosantara_org_applications');
-        localStorage.removeItem('neosantara_achievements_state');
-        localStorage.removeItem('neosantara_player_xp');
+        gameStateStorage.removeItem('dailyRewardData');
+        gameStateStorage.removeItem('player_diamonds');
+        gameStateStorage.removeItem('deployed_units_config');
+        gameStateStorage.removeItem('user_country');
+        gameStateStorage.removeItem('hutangModalLoanSources');
+        gameStateStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+        gameStateStorage.removeItem('presiden_simulator_active_mission');
+        gameStateStorage.removeItem('presiden_simulator_claimable_missions');
+        gameStateStorage.removeItem('presiden_simulator_mission_completions');
+        gameStateStorage.removeItem('presiden_simulator_mission_building_progress');
+        gameStateStorage.removeItem('presiden_simulator_mission_pool');
+        gameStateStorage.removeItem('neosantara_pbb_security_council_election');
+        gameStateStorage.removeItem('pbb_active_resolutions_v4');
+        gameStateStorage.removeItem('pbb_active_keamanan_v4');
+        gameStateStorage.removeItem('pbb_reported_war_ban_violations_v1');
+        gameStateStorage.removeItem('neosantara_expelled_organization_countries');
+        gameStateStorage.removeItem('neosantara_org_applications');
+        gameStateStorage.removeItem('neosantara_achievements_state');
+        gameStateStorage.removeItem('neosantara_player_xp');
 
         // Hapus semua storage keanggotaan organisasi per negara, penelitian, covert op, dsb
         try {
-            for (let i = localStorage.length - 1; i >= 0; i--) {
-                const key = localStorage.key(i);
+            for (let i = gameStateStorage.length - 1; i >= 0; i--) {
+                const key = gameStateStorage.key(i);
                 if (key && (
                     key.startsWith('neosantara_joined_orgs_') ||
                     key.startsWith('research_') ||
                     key.startsWith('covert_op_') ||
                     key.startsWith('neosantara_country_religion_')
                 )) {
-                    localStorage.removeItem(key);
+                    gameStateStorage.removeItem(key);
                 }
             }
         } catch (e) { }
@@ -84,9 +85,9 @@ export function handleGameRestart(options: RestartOptions): void {
             sessionStorage.removeItem('program_nuklir_modal_open');
             sessionStorage.removeItem('icbm_detail_open');
             sessionStorage.removeItem('perang_nuklir_detail_open');
-            localStorage.removeItem('programNuklirActive');
-            localStorage.removeItem('icbmBuildTask');
-            localStorage.removeItem('neosantara_covert_personnel');
+            gameStateStorage.removeItem('programNuklirActive');
+            gameStateStorage.removeItem('icbmBuildTask');
+            gameStateStorage.removeItem('neosantara_covert_personnel');
             window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
         } catch (e) { }
 

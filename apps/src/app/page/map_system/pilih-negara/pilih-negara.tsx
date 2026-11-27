@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import { Layers } from "lucide-react";
 import { clearPendingGameSave } from '@/app/logic/pendingGameSave';
@@ -163,8 +164,8 @@ export default function PilihNegaraPage() {
     clearActiveNpcCountrySimulationState();
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem('programNuklirActive');
-        localStorage.removeItem('icbmBuildTask');
+        gameStateStorage.removeItem('programNuklirActive');
+        gameStateStorage.removeItem('icbmBuildTask');
         sessionStorage.removeItem('programNuklirActive');
         sessionStorage.removeItem('program_nuklir_modal_open');
         sessionStorage.removeItem('icbm_detail_open');
@@ -499,20 +500,20 @@ export default function PilihNegaraPage() {
                     return;
                   }
                   if (typeof window !== 'undefined') {
-                    window.localStorage.removeItem('dailyRewardData');
-                    window.localStorage.removeItem('presiden_simulator_mission_completions');
-                    window.localStorage.removeItem('presiden_simulator_active_mission');
-                    window.localStorage.removeItem('presiden_simulator_claimable_missions');
-                    window.localStorage.removeItem('hutangModalLoanSources');
-                    window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-                    window.localStorage.removeItem('pbb_active_resolutions_v4');
-                    window.localStorage.removeItem('pbb_active_keamanan_v4');
-                    window.localStorage.removeItem('pbb_reported_war_ban_violations_v1');
-                    window.localStorage.removeItem('programNuklirActive');
-                    window.localStorage.removeItem('icbmBuildTask');
-                    window.localStorage.removeItem('neosantara_covert_personnel');
-                    window.localStorage.removeItem('neosantara_achievements_state');
-                    window.localStorage.removeItem('neosantara_player_xp');
+                    gameStateStorage.removeItem('dailyRewardData');
+                    gameStateStorage.removeItem('presiden_simulator_mission_completions');
+                    gameStateStorage.removeItem('presiden_simulator_active_mission');
+                    gameStateStorage.removeItem('presiden_simulator_claimable_missions');
+                    gameStateStorage.removeItem('hutangModalLoanSources');
+                    gameStateStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                    gameStateStorage.removeItem('pbb_active_resolutions_v4');
+                    gameStateStorage.removeItem('pbb_active_keamanan_v4');
+                    gameStateStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                    gameStateStorage.removeItem('programNuklirActive');
+                    gameStateStorage.removeItem('icbmBuildTask');
+                    gameStateStorage.removeItem('neosantara_covert_personnel');
+                    gameStateStorage.removeItem('neosantara_achievements_state');
+                    gameStateStorage.removeItem('neosantara_player_xp');
                     window.sessionStorage.removeItem('programNuklirActive');
                     window.sessionStorage.removeItem('program_nuklir_modal_open');
                     window.sessionStorage.removeItem('icbm_detail_open');
@@ -520,8 +521,8 @@ export default function PilihNegaraPage() {
                     void clearPendingGameSave().catch(error => {
                       console.error('Gagal membersihkan save sementara:', error);
                     });
-                    window.localStorage.setItem('player_diamonds', '500');
-                    window.localStorage.setItem('presiden_simulator_new_game', '1');
+                    gameStateStorage.setItem('player_diamonds', '500');
+                    gameStateStorage.setItem('presiden_simulator_new_game', '1');
                   }
                 }}
                 className="flex flex-col"
@@ -766,20 +767,20 @@ export default function PilihNegaraPage() {
               if (!hasInteracted || !currentCountry) return;
 
               if (typeof window !== 'undefined') {
-                window.localStorage.removeItem('dailyRewardData');
-                window.localStorage.removeItem('presiden_simulator_mission_completions');
-                window.localStorage.removeItem('presiden_simulator_active_mission');
-                window.localStorage.removeItem('presiden_simulator_claimable_missions');
-                window.localStorage.removeItem('hutangModalLoanSources');
-                window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-                window.localStorage.removeItem('pbb_active_resolutions_v4');
-                window.localStorage.removeItem('pbb_active_keamanan_v4');
-                window.localStorage.removeItem('pbb_reported_war_ban_violations_v1');
-                window.localStorage.removeItem('programNuklirActive');
-                window.localStorage.removeItem('icbmBuildTask');
-                window.localStorage.removeItem('neosantara_covert_personnel');
-                window.localStorage.removeItem('neosantara_achievements_state');
-                window.localStorage.removeItem('neosantara_player_xp');
+                gameStateStorage.removeItem('dailyRewardData');
+                gameStateStorage.removeItem('presiden_simulator_mission_completions');
+                gameStateStorage.removeItem('presiden_simulator_active_mission');
+                gameStateStorage.removeItem('presiden_simulator_claimable_missions');
+                gameStateStorage.removeItem('hutangModalLoanSources');
+                gameStateStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                gameStateStorage.removeItem('pbb_active_resolutions_v4');
+                gameStateStorage.removeItem('pbb_active_keamanan_v4');
+                gameStateStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                gameStateStorage.removeItem('programNuklirActive');
+                gameStateStorage.removeItem('icbmBuildTask');
+                gameStateStorage.removeItem('neosantara_covert_personnel');
+                gameStateStorage.removeItem('neosantara_achievements_state');
+                gameStateStorage.removeItem('neosantara_player_xp');
                 window.sessionStorage.removeItem('programNuklirActive');
                 window.sessionStorage.removeItem('program_nuklir_modal_open');
                 window.sessionStorage.removeItem('icbm_detail_open');
@@ -787,8 +788,8 @@ export default function PilihNegaraPage() {
                 void clearPendingGameSave().catch(error => {
                   console.error('Gagal membersihkan save sementara:', error);
                 });
-                window.localStorage.setItem('player_diamonds', '500');
-                window.localStorage.setItem('presiden_simulator_new_game', '1');
+                gameStateStorage.setItem('player_diamonds', '500');
+                gameStateStorage.setItem('presiden_simulator_new_game', '1');
               }
 
               router.push(`/page/map_system?country=${encodeURIComponent(currentCountry.country)}`);

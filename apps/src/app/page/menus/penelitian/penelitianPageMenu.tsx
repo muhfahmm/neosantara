@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import RootInfoModalHeader from '@/app/page/root_modals_design_menu/RootInfoModalHeader';
 import React, { useState, useEffect } from 'react';
@@ -468,7 +469,7 @@ export default function PenelitianPageModal({
       return `${y}-${m}-${d}`;
     }
     if (countryDetail?.game_date) return countryDetail.game_date;
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('simulation_date') : null;
+    const stored = typeof window !== 'undefined' ? gameStateStorage.getItem('simulation_date') : null;
     if (stored) return stored;
     const now = new Date();
     const y = now.getFullYear();

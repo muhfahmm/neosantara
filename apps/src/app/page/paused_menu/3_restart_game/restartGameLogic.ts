@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { handleGameRestart } from '@/app/page/time_controllers';
 import type { SimulationTimeManager } from '@/app/page/time_controllers/timeManager';
@@ -49,10 +50,10 @@ export function restartGame(options: RestartGameOptions): void {
             neosantara_country_color_overrides?: Record<string, string>;
             neosantara_annexed_countries?: Record<string, unknown>;
         };
-        window.localStorage.removeItem('hutangModalLoanSources');
-        window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+        gameStateStorage.removeItem('hutangModalLoanSources');
+        gameStateStorage.removeItem('hutangModalLoanSourcesLastRefresh');
         options.clearMissionProgress();
-        window.localStorage.setItem('player_diamonds', '500');
+        gameStateStorage.setItem('player_diamonds', '500');
         options.setPlayerDiamonds(500);
         clearActiveNpcCountrySimulationState();
         gameWindow.neosantara_country_color_overrides = {};

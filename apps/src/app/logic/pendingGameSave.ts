@@ -1,7 +1,10 @@
+import { gameStateStorage, type GameStateSnapshot } from '@/app/logic/gameStateStorage';
+
 const SESSION_KEY = 'presiden_simulator_load_save';
 const DATABASE_NAME = 'presiden_simulator_pending_saves';
 const DATABASE_VERSION = 1;
 const STORE_NAME = 'saves';
+export type GameSaveStorageSnapshot = GameStateSnapshot;
 
 interface SaveSummary {
     id: number;
@@ -17,6 +20,32 @@ interface PendingSaveMetadata extends SaveSummary {
 interface PendingSaveRecord<T> {
     id: string;
     save: T;
+}
+
+export function captureGameSaveStorage(): GameSaveStorageSnapshot {
+    return gameStateStorage.snapshot();
+}
+
+export function restoreGameSaveStorage(snapshot: GameSaveStorageSnapshot): void {
+    gameStateStorage.restore(snapshot);
+}
+
+function getSaveStorageSnapshot(save: unknown): GameSaveStorageSnapshot | null {
+    if (typeof save !== 'object' || save === null || !('countryDetail' in save)) return null;
+    const countryDetail = save.countryDetail;
+    if (typeof countryDetail !== 'object' || countryDetail === null || !('__neosantara_game_session' in countryDetail)) {
+        return null;
+    }
+    const gameSession = countryDetail.__neosantara_game_session;
+    if (typeof gameSession !== 'object' || gameSession === null) {
+        return null;
+    }
+    const snapshot = 'gameState' in gameSession ? gameSession.gameState :
+        'localStorage' in gameSession ? gameSession.localStorage : null;
+    if (typeof snapshot !== 'object' || snapshot === null || Array.isArray(snapshot)) return null;
+    return Object.fromEntries(
+        Object.entries(snapshot).filter((entry): entry is [string, string] => typeof entry[1] === 'string')
+    );
 }
 
 function openDatabase(): Promise<IDBDatabase> {
@@ -53,6 +82,8 @@ function parsePendingMetadata(): PendingSaveMetadata | null {
 export async function stagePendingGameSave<T extends SaveSummary>(save: T): Promise<void> {
     const pendingSaveId = `${save.id}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const database = await openDatabase();
+    const previousPendingSave = window.sessionStorage.getItem(SESSION_KEY);
+    let pendingMetadataWritten = false;
 
     try {
         await new Promise<void>((resolve, reject) => {
@@ -71,7 +102,26 @@ export async function stagePendingGameSave<T extends SaveSummary>(save: T): Prom
             pendingSaveId,
         };
         window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(metadata));
+        pendingMetadataWritten = true;
+
+        const storageSnapshot = getSaveStorageSnapshot(save);
+        if (storageSnapshot && Object.keys(storageSnapshot).length > 0) {
+            restoreGameSaveStorage(storageSnapshot);
+        } else {
+            // Save lama tidak memiliki snapshot -> reset ke baseline agar state sebelumnya tidak bocor
+            gameStateStorage.resetToBaseline();
+        }
     } catch (error) {
+        if (pendingMetadataWritten) {
+            try {
+                window.sessionStorage.removeItem(SESSION_KEY);
+                if (previousPendingSave !== null) {
+                    window.sessionStorage.setItem(SESSION_KEY, previousPendingSave);
+                }
+            } catch (restoreMetadataError) {
+                console.error('Gagal memulihkan penanda save sebelumnya:', restoreMetadataError);
+            }
+        }
         await new Promise<void>((resolve, reject) => {
             const transaction = database.transaction(STORE_NAME, 'readwrite');
             transaction.objectStore(STORE_NAME).delete(pendingSaveId);

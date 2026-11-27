@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 import {
   addActiveOrganizationMembership,
@@ -29,11 +30,11 @@ export function clearAllOrganizationMembershipData(): void {
   if (typeof window === "undefined") return;
   try {
     clearActiveOrganizationMemberships();
-    localStorage.removeItem(APPLICATIONS_KEY);
-    localStorage.removeItem("neosantara_expelled_organization_countries");
-    Object.keys(localStorage).forEach((key) => {
+    gameStateStorage.removeItem(APPLICATIONS_KEY);
+    gameStateStorage.removeItem("neosantara_expelled_organization_countries");
+    gameStateStorage.keys().forEach((key) => {
       if (key.startsWith(JOINED_ORGS_KEY) || key.startsWith("neosantara_user_joined_orgs") || key.includes("expelled_organization")) {
-        localStorage.removeItem(key);
+        gameStateStorage.removeItem(key);
       }
     });
     clearExpelledOrganizationCountries();
@@ -61,10 +62,10 @@ export function clearUnpersistedOrganizationMembershipState(): void {
   if (removedAcceptedApplication) saveOrgApplications(remainingApps);
 
   try {
-    for (let index = localStorage.length - 1; index >= 0; index--) {
-      const key = localStorage.key(index);
+    for (let index = gameStateStorage.length - 1; index >= 0; index--) {
+      const key = gameStateStorage.key(index);
       if (key?.startsWith(JOINED_ORGS_KEY) || key?.startsWith("neosantara_user_joined_orgs")) {
-        localStorage.removeItem(key);
+        gameStateStorage.removeItem(key);
       }
     }
   } catch (error) {
@@ -100,7 +101,7 @@ export function getOrgApplicationType(application: OrgApplication): Organization
 export function getOrgApplications(): Record<string, OrgApplication> {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(APPLICATIONS_KEY);
+    const raw = gameStateStorage.getItem(APPLICATIONS_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch (e) {
     console.error("Failed to read org applications:", e);
@@ -111,7 +112,7 @@ export function getOrgApplications(): Record<string, OrgApplication> {
 export function saveOrgApplications(apps: Record<string, OrgApplication>): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(APPLICATIONS_KEY, JSON.stringify(apps));
+    gameStateStorage.setItem(APPLICATIONS_KEY, JSON.stringify(apps));
     window.dispatchEvent(new CustomEvent(ORG_APPLICATION_UPDATED_EVENT));
   } catch (e) {
     console.error("Failed to save org applications:", e);

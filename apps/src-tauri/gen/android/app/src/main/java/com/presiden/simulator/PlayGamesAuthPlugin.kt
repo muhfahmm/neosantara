@@ -66,6 +66,33 @@ class PlayGamesAuthPlugin(private val activity: Activity) : Plugin(activity) {
     }
 
     @Command
+    fun idToken(invoke: Invoke) {
+        val args = parseArgs(invoke) ?: return
+        val auth = firebaseAuth(args, invoke) ?: return
+        val user = auth.currentUser
+        if (user == null) {
+            invoke.reject("Sign in with Google before accessing game saves.")
+            return
+        }
+
+        user.getIdToken(false).addOnCompleteListener(activity) { task ->
+            if (task.isSuccessful) {
+                val token = task.result?.token
+                if (token.isNullOrBlank()) {
+                    invoke.reject("Firebase did not return an ID token.")
+                } else {
+                    invoke.resolve(JSObject().apply {
+                        put("uid", user.uid)
+                        put("idToken", token)
+                    })
+                }
+            } else {
+                invoke.reject(task.exception?.message ?: "Could not retrieve Firebase ID token.")
+            }
+        }
+    }
+
+    @Command
     fun signOut(invoke: Invoke) {
         val args = parseArgs(invoke) ?: return
         val auth = firebaseAuth(args, invoke) ?: return

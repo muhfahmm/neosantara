@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { getRelationValue } from "../../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
@@ -110,7 +111,7 @@ export const ELECTION_MONTH = 5;
 const createSessionId = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
-// Dibuat ulang setiap halaman dimuat (refresh) sehingga data lama di localStorage otomatis basi.
+// Dibuat ulang setiap halaman dimuat (refresh) sehingga data lama di gameStateStorage otomatis basi.
 let currentSessionId = createSessionId();
 // Seed acak untuk kandidat NPC & suara. Berubah setiap refresh / game baru, tetap selama satu sesi.
 let currentSeed = createSessionId();
@@ -128,7 +129,7 @@ export function resetSecurityCouncilElectionSession(): void {
   currentSeed = createSessionId();
   if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    gameStateStorage.removeItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
   } catch (error) {
     console.error("Gagal mereset state pemilu Dewan Keamanan:", error);
@@ -678,7 +679,7 @@ export function normalizeElectionState(
 /* ------------------------------------------------------------------ */
 
 function saveElectionState(state: SecurityCouncilElectionState) {
-  localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(state));
+  gameStateStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(state));
   window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
 }
 
@@ -687,7 +688,7 @@ export function getStoredCouncilMembers(): SecurityCouncilMember[] {
   const fallbackMembers = () => createInitialElectionState(gameDate).members;
   if (typeof window === "undefined") return fallbackMembers();
   try {
-    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    const raw = gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     if (!raw) return fallbackMembers();
     return normalizeElectionState(JSON.parse(raw), gameDate).members;
   } catch (error) {
@@ -722,7 +723,7 @@ export function isLimitedVetoAvailable(countryIso: string, resolutionId?: string
 export function markLimitedVetoUsed(countryIso: string, resolutionId: string): SecurityCouncilElectionState | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    const raw = gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     if (!raw) return null;
     const state = normalizeElectionState(JSON.parse(raw), getCurrentGameDate());
     const members = state.members.map(member =>
@@ -749,7 +750,7 @@ export function expelCountryFromSecurityCouncil(countryNameOrIso: string): Secur
     normalizeName(name) === searchKey || toIso(iso) === searchIso;
 
   try {
-    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    const raw = gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     const state = normalizeElectionState(raw ? JSON.parse(raw) : null, gameDate);
     const nominees = state.nominees.filter(candidate => !matches(candidate.name, candidate.iso));
     const memberIndex = state.members.findIndex(member => matches(member.name, member.iso));
@@ -1120,11 +1121,11 @@ function createElectionScheduleNotification(
   };
 }
 
-/** Baca state dari localStorage (satu-satunya sumber kebenaran). Null jika kosong / dari sesi lain. */
+/** Baca state dari gameStateStorage (satu-satunya sumber kebenaran). Null jika kosong / dari sesi lain. */
 export function readStoredElectionState(): SecurityCouncilElectionState | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    const raw = gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return isElectionStateFromCurrentSession(parsed)
@@ -1136,13 +1137,13 @@ export function readStoredElectionState(): SecurityCouncilElectionState | null {
   }
 }
 
-/** Tulis state ke localStorage lalu beri tahu panel / komponen lain. */
+/** Tulis state ke gameStateStorage lalu beri tahu panel / komponen lain. */
 export function persistElectionState(state: SecurityCouncilElectionState): void {
   if (typeof window === "undefined") return;
   try {
     const serialized = JSON.stringify(state);
-    if (localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) === serialized) return;
-    localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serialized);
+    if (gameStateStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY) === serialized) return;
+    gameStateStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, serialized);
     window.dispatchEvent(new CustomEvent("pbb_security_council_election_updated"));
   } catch (error) {
     console.error("Gagal menyimpan state pemilu Dewan Keamanan:", error);
@@ -1151,7 +1152,7 @@ export function persistElectionState(state: SecurityCouncilElectionState): void 
 
 /**
  * Inisialisasi state pemilu untuk tanggal `reference`.
- * Prioritas: localStorage sesi ini -> data tersimpan (`saved`, mis. dari countryDetail) -> default.
+ * Prioritas: gameStateStorage sesi ini -> data tersimpan (`saved`, mis. dari countryDetail) -> default.
  */
 export function loadSecurityCouncilElectionState(
   reference: ElectionReferenceDate,

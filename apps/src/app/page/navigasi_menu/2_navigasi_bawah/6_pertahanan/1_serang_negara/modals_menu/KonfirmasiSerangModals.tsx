@@ -1,4 +1,5 @@
 "use client"
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
@@ -207,7 +208,7 @@ export default function SerangModals({
         deploymentUnitKeys.map((key) => [key, 0])
       );
       setDeploymentPct(initialDeployment);
-      localStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
+      gameStateStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
     } catch (error) {
       console.error("Gagal menginisialisasi konfigurasi pengerahan unit.", error);
     }
@@ -262,7 +263,7 @@ export default function SerangModals({
     setDeploymentPct(next);
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("deployed_units_config", JSON.stringify(next));
+        gameStateStorage.setItem("deployed_units_config", JSON.stringify(next));
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
           console.warn('[KonfirmasiSerang] Gagal menyimpan deployed_units_config:', e);
@@ -299,7 +300,7 @@ export default function SerangModals({
     setDeploymentPct(next);
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("deployed_units_config", JSON.stringify(next));
+        gameStateStorage.setItem("deployed_units_config", JSON.stringify(next));
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
           console.warn('[KonfirmasiSerang] Gagal menyimpan deployed_units_config:', e);
@@ -316,7 +317,7 @@ export default function SerangModals({
     setDeploymentPct(next);
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("deployed_units_config", JSON.stringify(next));
+        gameStateStorage.setItem("deployed_units_config", JSON.stringify(next));
       } catch (e) {
         if (process.env.NODE_ENV !== 'production') {
           console.warn('[KonfirmasiSerang] Gagal menyimpan deployed_units_config:', e);

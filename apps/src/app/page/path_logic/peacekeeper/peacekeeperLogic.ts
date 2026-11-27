@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import { getCapitalCoord } from "../path-war";
 import { getWarUnitComposition } from "../../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition";
@@ -172,7 +173,7 @@ export function saveStationedPeacekeepers(list: StationedPeacekeeper[]): void {
   if (typeof window !== "undefined") {
     // Bersihkan storage lama jika sebelumnya tersimpan
     try {
-      localStorage.removeItem("neosantara_stationed_peacekeepers");
+      gameStateStorage.removeItem("neosantara_stationed_peacekeepers");
     } catch {}
     window.dispatchEvent(new CustomEvent(PEACEKEEPER_UPDATED_EVENT, { detail: list }));
   }

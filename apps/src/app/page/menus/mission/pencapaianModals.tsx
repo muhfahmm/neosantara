@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
@@ -78,8 +79,8 @@ export const LOCAL_STORAGE_ACHIEVEMENTS_KEY = 'neosantara_achievements_state';
 export function clearAchievementProgressData(): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
-    localStorage.removeItem('neosantara_player_xp');
+    gameStateStorage.removeItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
+    gameStateStorage.removeItem('neosantara_player_xp');
     window.dispatchEvent(new CustomEvent('achievements_state_updated', {
       detail: { claimed: {}, milestones: {}, baselines: {} }
     }));
@@ -1824,13 +1825,13 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Load state from localStorage or countryDetail
+  // Load state from gameStateStorage or countryDetail
   const [achievementState, setAchievementState] = useState<AchievementState>(() => {
     if (typeof window === 'undefined') {
       return { claimed: {}, milestones: {}, baselines: {} };
     }
     try {
-      const stored = localStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
+      const stored = gameStateStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         return {
@@ -1858,7 +1859,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
         });
       } else {
         try {
-          const stored = localStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
+          const stored = gameStateStorage.getItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY);
           if (stored) {
             const parsed = JSON.parse(stored);
             setAchievementState({
@@ -1883,7 +1884,7 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
   const saveAchievementState = (nextState: AchievementState) => {
     setAchievementState(nextState);
     try {
-      localStorage.setItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY, JSON.stringify(nextState));
+      gameStateStorage.setItem(LOCAL_STORAGE_ACHIEVEMENTS_KEY, JSON.stringify(nextState));
     } catch {}
     if (setCountryDetail) {
       setCountryDetail((prev: any) => ({
@@ -2062,12 +2063,12 @@ export function PencapaianContent({ countryDetail, setCountryDetail, currentDate
       });
     }
 
-    // Persist XP to localStorage & dispatch event
+    // Persist XP to gameStateStorage & dispatch event
     if (item.reward.xp) {
       try {
-        const currentExp = Number(localStorage.getItem('neosantara_player_xp') || 0);
+        const currentExp = Number(gameStateStorage.getItem('neosantara_player_xp') || 0);
         const nextExp = currentExp + item.reward.xp;
-        localStorage.setItem('neosantara_player_xp', String(nextExp));
+        gameStateStorage.setItem('neosantara_player_xp', String(nextExp));
         window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: nextExp, added: item.reward.xp } }));
       } catch {}
     }

@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 export interface CovertPersonnelState {
   mataMata: number;
   penyabot: number;
@@ -12,7 +13,7 @@ export function getCovertPersonnel(): CovertPersonnelState {
     return { mataMata: 0, penyabot: 0 };
   }
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = gameStateStorage.getItem(STORAGE_KEY);
     if (!raw) return { mataMata: 0, penyabot: 0 };
     const parsed = JSON.parse(raw);
     return {
@@ -33,7 +34,7 @@ export function recruitPersonnel(type: 'mataMata' | 'penyabot', count: number): 
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      gameStateStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       window.dispatchEvent(new CustomEvent(COVERT_PERSONNEL_UPDATED_EVENT, { detail: next }));
     } catch (e) {
       console.error('Failed to save covert personnel:', e);
@@ -53,7 +54,7 @@ export function consumePersonnel(type: 'mataMata' | 'penyabot', count: number = 
 
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      gameStateStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       window.dispatchEvent(new CustomEvent(COVERT_PERSONNEL_UPDATED_EVENT, { detail: next }));
     } catch (e) {
       console.error('Failed to update covert personnel:', e);
@@ -66,7 +67,7 @@ export function consumePersonnel(type: 'mataMata' | 'penyabot', count: number = 
 export function clearCovertPersonnel(): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    gameStateStorage.removeItem(STORAGE_KEY);
     sessionStorage.removeItem(STORAGE_KEY);
     const emptyState: CovertPersonnelState = { mataMata: 0, penyabot: 0 };
     window.dispatchEvent(new CustomEvent(COVERT_PERSONNEL_UPDATED_EVENT, { detail: emptyState }));

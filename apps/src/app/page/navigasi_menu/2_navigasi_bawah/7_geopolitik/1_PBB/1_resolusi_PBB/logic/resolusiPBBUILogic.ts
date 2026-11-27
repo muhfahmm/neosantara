@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { generateAIResolusiPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { getCurrentGameDateString } from '@/app/logic/gameSessionState';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
@@ -146,7 +147,7 @@ function initializeSessionResolutions(): void {
   if (typeof window === 'undefined' || initializedSessionResolutions) return;
 
   try {
-    localStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI);
+    gameStateStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI);
     initializedSessionResolutions = true;
   } catch (error) {
     console.error('Failed to clear persisted PBB General Assembly resolutions:', error);
@@ -365,7 +366,7 @@ export function clearActiveResolutionsForSession(): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI);
+    gameStateStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI);
   } catch (error) {
     console.error('Failed to clear PBB General Assembly resolutions:', error);
   }

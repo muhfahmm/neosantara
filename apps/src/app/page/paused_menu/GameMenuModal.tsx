@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage, setGameStateActiveUser } from '@/app/logic/gameStateStorage';
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -100,6 +101,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         return observeFirebaseAuth(
             (user) => {
                 setFirebaseUser(user);
+                setGameStateActiveUser(user?.uid ?? null);
                 setIsFirebaseAuthReady(true);
             },
             (error) => {
@@ -120,6 +122,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             .then((state) => {
                 if (!isActive) return;
                 setPlayGamesUser(toPlayGamesUser(state));
+                setGameStateActiveUser(state.isSignedIn ? state.uid ?? null : null);
                 setIsPlayGamesAuthReady(true);
             })
             .catch((error: unknown) => {
@@ -200,6 +203,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                 config: getNativePlayGamesAuthConfig(),
             });
             setPlayGamesUser(toPlayGamesUser(state));
+            setGameStateActiveUser(state.isSignedIn ? state.uid ?? null : null);
             setIsPlayGamesAuthReady(true);
         } catch (error) {
             console.error('Play Games Firebase sign-in action failed:', error);
@@ -230,7 +234,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
 
     const executeMainMenu = () => {
         try {
-            localStorage.removeItem('dailyRewardData');
+            gameStateStorage.removeItem('dailyRewardData');
             sessionStorage.removeItem('programNuklirActive');
             sessionStorage.removeItem('program_nuklir_modal_open');
             sessionStorage.removeItem('icbm_detail_open');
@@ -238,9 +242,9 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             void clearPendingGameSave().catch(error => {
                 console.error('Gagal membersihkan save sementara:', error);
             });
-            localStorage.removeItem('programNuklirActive');
-            localStorage.removeItem('icbmBuildTask');
-            localStorage.removeItem('neosantara_covert_personnel');
+            gameStateStorage.removeItem('programNuklirActive');
+            gameStateStorage.removeItem('icbmBuildTask');
+            gameStateStorage.removeItem('neosantara_covert_personnel');
             window.dispatchEvent(new CustomEvent('neosantara_covert_personnel_updated', { detail: { mataMata: 0, penyabot: 0 } }));
         } catch (e) {}
         router.replace('/page');

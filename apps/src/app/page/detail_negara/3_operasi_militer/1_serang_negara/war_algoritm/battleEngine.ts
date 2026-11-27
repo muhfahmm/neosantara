@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 /**
  * DeepSeek AI Battle Engine - TypeScript Module
  * Folder: app/page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/
@@ -401,7 +402,7 @@ function sampleBinomialLoss(deployedQty: number, lossRatio: number): number {
 
 /**
  * Mengambil sampel jumlah unit yang hilang dengan peluang kerugian sesuai lossRatio.
- * Pengurangan ini hanya memutasi state/localStorage user aktif tanpa mengubah template default database.
+ * Pengurangan ini hanya memutasi state/gameStateStorage user aktif tanpa mengubah template default database.
  */
 const ALL_UNIT_KEYS = [
   'barak', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
@@ -523,11 +524,11 @@ export function applyWarLossesToUserArmada(
   let savedConfig = deploymentConfigOverride ?? {};
   if (!deploymentConfigOverride) {
     try {
-      const raw = localStorage.getItem("deployed_units_config");
+      const raw = gameStateStorage.getItem("deployed_units_config");
       if (raw) savedConfig = JSON.parse(raw);
     } catch (e) {
       if (process.env.NODE_ENV !== 'production') {
-        console.warn("[battleEngine] Gagal mem-parse deployed_units_config dari localStorage:", e);
+        console.warn("[battleEngine] Gagal mem-parse deployed_units_config dari gameStateStorage:", e);
       }
     }
   }

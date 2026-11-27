@@ -36,8 +36,18 @@ network firewall and retry.
 
 The `NEXT_PUBLIC_` Firebase Web configuration is bundled into the browser and is not
 a private key. Never put a Firebase service-account key in these variables or in
-client code. This authenticates the player in the browser; it does not yet associate
-game-save records with that account or sync saves with Google Play Games.
+client code. To let the server verify signed-in players and keep save files private
+per account, set `FIREBASE_SERVICE_ACCOUNT_JSON` to the full service-account JSON for
+the same Firebase project in `apps/.env.local` or your deployment's secret manager.
+This server-only value must never be committed or exposed through a `NEXT_PUBLIC_`
+variable. Save, load, list, and delete requests now require a verified Firebase ID
+token and are restricted to that Firebase user's saves.
+
+Game progress is held in memory while playing and written to PostgreSQL when the
+player saves. Legacy game values found in browser localStorage are moved into memory
+and removed; they become durable after the player signs in and saves the game.
+Existing database saves without an owner UID are intentionally hidden because they
+cannot be safely assigned to an account automatically.
 
 ## Firebase Play Games Sign-In (Android Tauri)
 
@@ -72,8 +82,9 @@ It is not available in a regular browser.
 The Firebase Android App ID, Firebase project number, OAuth client ID, and Play
 Games project ID are client configuration values; the OAuth client secret is not.
 Signing out here signs out of Firebase on this device; Play Games platform account
-selection is managed by Android. This login still does not automatically sync game
-saves—save records must separately be associated with the Firebase user.
+selection is managed by Android. The Android app also requests a Firebase ID token
+from the native plugin so its save requests receive the same server-side account
+verification as web requests.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -330,7 +331,7 @@ function isValidMissionRewardBase(value: unknown): value is MissionRewardBase {
 function getMissionRewardBasesMap(): Record<string, MissionRewardBase> {
   if (typeof window === 'undefined') return {};
   try {
-    const raw = localStorage.getItem(MISSION_REWARD_BASE_STORAGE_KEY);
+    const raw = gameStateStorage.getItem(MISSION_REWARD_BASE_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -381,7 +382,7 @@ function prepareMissionRewardBases(poolIds: string[], preservedIds: string[] = [
     }
   }
 
-  localStorage.setItem(MISSION_REWARD_BASE_STORAGE_KEY, JSON.stringify(bases));
+  gameStateStorage.setItem(MISSION_REWARD_BASE_STORAGE_KEY, JSON.stringify(bases));
 }
 
 function isBuildingMission(card: Pick<MissionCard, 'categoryLabel' | 'id'>): boolean {
@@ -392,7 +393,7 @@ function isBuildingMission(card: Pick<MissionCard, 'categoryLabel' | 'id'>): boo
 function getMissionBuildingTargetsMap(): Record<string, number> {
   if (typeof window === 'undefined') return {};
   try {
-    const raw = localStorage.getItem(MISSION_BUILDING_TARGET_STORAGE_KEY);
+    const raw = gameStateStorage.getItem(MISSION_BUILDING_TARGET_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -423,7 +424,7 @@ function prepareMissionBuildingTargets(poolIds: string[], preservedIds: string[]
     }
   }
 
-  localStorage.setItem(MISSION_BUILDING_TARGET_STORAGE_KEY, JSON.stringify(targets));
+  gameStateStorage.setItem(MISSION_BUILDING_TARGET_STORAGE_KEY, JSON.stringify(targets));
 }
 
 /**
@@ -445,7 +446,7 @@ export function getMissionRequiredTarget(card: Pick<MissionCard, 'categoryLabel'
 export function getMissionBuildingProgressMap(): Record<string, number> {
   if (typeof window === 'undefined') return {};
   try {
-    const raw = localStorage.getItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
+    const raw = gameStateStorage.getItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -495,7 +496,7 @@ export function recordBuildingProgress(buildingKey: string, quantity = 1): void 
       }
     }
 
-    localStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(map));
+    gameStateStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(map));
 
     for (const cardId of completedCardIds) {
       markMissionAsClaimable(cardId);
@@ -550,7 +551,7 @@ export function getActiveMissionPoolIds(): string[] {
     return MISSION_CARDS.slice(0, MISSION_POOL_SIZE).map(c => c.id);
   }
   try {
-    const raw = localStorage.getItem(MISSION_RANDOM_POOL_STORAGE_KEY);
+    const raw = gameStateStorage.getItem(MISSION_RANDOM_POOL_STORAGE_KEY);
     if (raw) {
       const parsed: string[] = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -564,7 +565,7 @@ export function getActiveMissionPoolIds(): string[] {
       }
     }
     const fresh = generateRandomMissionIds(MISSION_POOL_SIZE);
-    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(fresh));
+    gameStateStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(fresh));
     prepareMissionBuildingTargets(fresh, getClaimableMissionsList());
     prepareMissionRewardBases(fresh, getClaimableMissionsList());
     return fresh;
@@ -580,7 +581,7 @@ export function rerollMissionPoolIds(): string[] {
   if (typeof window === 'undefined') return [];
   try {
     const fresh = generateRandomMissionIds(MISSION_POOL_SIZE);
-    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(fresh));
+    gameStateStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(fresh));
     prepareMissionBuildingTargets(fresh, getClaimableMissionsList());
     prepareMissionRewardBases(fresh, getClaimableMissionsList());
     window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: fresh } }));
@@ -601,7 +602,7 @@ export function refreshMissionPoolForNewYear(date: Date): boolean {
 
   const year = date.getFullYear();
   try {
-    if (localStorage.getItem(MISSION_POOL_LAST_REFRESH_YEAR_STORAGE_KEY) === String(year)) {
+    if (gameStateStorage.getItem(MISSION_POOL_LAST_REFRESH_YEAR_STORAGE_KEY) === String(year)) {
       return false;
     }
 
@@ -614,12 +615,12 @@ export function refreshMissionPoolForNewYear(date: Date): boolean {
       }
       return progress;
     }, {});
-    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
+    gameStateStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
     prepareMissionBuildingTargets(freshPool, claimableList);
     prepareMissionRewardBases(freshPool, claimableList);
-    localStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
-    localStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(retainedProgress));
-    localStorage.setItem(MISSION_POOL_LAST_REFRESH_YEAR_STORAGE_KEY, String(year));
+    gameStateStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
+    gameStateStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(retainedProgress));
+    gameStateStorage.setItem(MISSION_POOL_LAST_REFRESH_YEAR_STORAGE_KEY, String(year));
 
     window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: freshPool } }));
     window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
@@ -647,7 +648,7 @@ export function replaceCompletedMissionInPool(completedId: string): string[] {
       ? available[Math.floor(Math.random() * available.length)]
       : completedId;
     const nextPool = current.map(id => id === completedId ? replacement : id);
-    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(nextPool));
+    gameStateStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(nextPool));
     prepareMissionBuildingTargets(nextPool, Array.from(pendingClaims));
     prepareMissionRewardBases(nextPool, Array.from(pendingClaims));
     window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: nextPool } }));
@@ -660,7 +661,7 @@ export function replaceCompletedMissionInPool(completedId: string): string[] {
 export function getActiveMissionId(): string | null {
   if (typeof window === 'undefined') return null;
   try {
-    return localStorage.getItem(MISSION_ACTIVE_STORAGE_KEY) || null;
+    return gameStateStorage.getItem(MISSION_ACTIVE_STORAGE_KEY) || null;
   } catch {
     return null;
   }
@@ -669,7 +670,7 @@ export function getActiveMissionId(): string | null {
 export function setActiveMission(cardId: string): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(MISSION_ACTIVE_STORAGE_KEY, cardId);
+    gameStateStorage.setItem(MISSION_ACTIVE_STORAGE_KEY, cardId);
     window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId } }));
   } catch {}
 }
@@ -677,7 +678,7 @@ export function setActiveMission(cardId: string): void {
 export function getClaimableMissionsList(): string[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(MISSION_CLAIMABLE_STORAGE_KEY);
+    const raw = gameStateStorage.getItem(MISSION_CLAIMABLE_STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -699,7 +700,7 @@ export function reconcileClaimableMissionsForActivePool(): string[] {
     });
 
     if (validList.length !== currentList.length) {
-      localStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(validList));
+      gameStateStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(validList));
       window.dispatchEvent(new CustomEvent('mission_claimable_updated', {
         detail: { claimableList: validList },
       }));
@@ -727,7 +728,7 @@ export function markMissionAsClaimable(cardId: string): void {
     const list = getClaimableMissionsList();
     if (!list.includes(cardId)) {
       list.push(cardId);
-      localStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
+      gameStateStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
       window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId, claimableList: list } }));
     }
   } catch {}
@@ -745,7 +746,7 @@ export function getMissionXpReward(cardId?: string): number {
 export function getPlayerTotalExp(): number {
   if (typeof window === 'undefined') return 0;
   try {
-    return Number(localStorage.getItem('neosantara_player_xp') || 0);
+    return Number(gameStateStorage.getItem('neosantara_player_xp') || 0);
   } catch {
     return 0;
   }
@@ -754,7 +755,7 @@ export function getPlayerTotalExp(): number {
 export function clearPlayerExpData(): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem('neosantara_player_xp');
+    gameStateStorage.removeItem('neosantara_player_xp');
     window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: 0, added: 0 } }));
   } catch {}
 }
@@ -793,11 +794,11 @@ export function claimMissionReward(
     // 1. Tambah Gems pemain
     addPlayerDiamonds(diamond);
 
-    // Tambah XP pemain ke localStorage & dispatch event
+    // Tambah XP pemain ke gameStateStorage & dispatch event
     try {
-      const curXp = Number(localStorage.getItem('neosantara_player_xp') || 0);
+      const curXp = Number(gameStateStorage.getItem('neosantara_player_xp') || 0);
       const nextXp = curXp + grantedXp;
-      localStorage.setItem('neosantara_player_xp', String(nextXp));
+      gameStateStorage.setItem('neosantara_player_xp', String(nextXp));
       window.dispatchEvent(new CustomEvent('player_xp_updated', { detail: { xp: nextXp, added: grantedXp } }));
     } catch {}
 
@@ -827,23 +828,23 @@ export function claimMissionReward(
 
     // 3. Hapus dari status aktif jika ini misi yang aktif
     if (getActiveMissionId() === cardId) {
-      localStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
+      gameStateStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
       window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
     }
 
     // 4. Hapus dari antrean klaim & reset building progress misi ini
     const list = getClaimableMissionsList().filter(id => id !== cardId);
-    localStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
+    gameStateStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
     try {
       const bMap = getMissionBuildingProgressMap();
       delete bMap[cardId];
-      localStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(bMap));
+      gameStateStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(bMap));
       const targetMap = getMissionBuildingTargetsMap();
       delete targetMap[cardId];
-      localStorage.setItem(MISSION_BUILDING_TARGET_STORAGE_KEY, JSON.stringify(targetMap));
+      gameStateStorage.setItem(MISSION_BUILDING_TARGET_STORAGE_KEY, JSON.stringify(targetMap));
       const rewardBases = getMissionRewardBasesMap();
       delete rewardBases[cardId];
-      localStorage.setItem(MISSION_REWARD_BASE_STORAGE_KEY, JSON.stringify(rewardBases));
+      gameStateStorage.setItem(MISSION_REWARD_BASE_STORAGE_KEY, JSON.stringify(rewardBases));
       window.dispatchEvent(new CustomEvent('mission_building_progress_updated', { detail: { cardId, progress: 0 } }));
     } catch {}
     window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId, claimableList: list } }));
@@ -886,7 +887,7 @@ export function getProgressiveDiamondReward(completionCount = 0, cardId?: string
 export function getMissionCompletionsMap(): Record<string, number> {
   if (typeof window === 'undefined') return {};
   try {
-    const raw = localStorage.getItem(MISSION_COMPLETION_STORAGE_KEY);
+    const raw = gameStateStorage.getItem(MISSION_COMPLETION_STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -901,16 +902,16 @@ export function getMissionCompletionCount(cardId: string): number {
 export function clearMissionProgressData(): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem(MISSION_COMPLETION_STORAGE_KEY);
-    localStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
-    localStorage.removeItem(MISSION_CLAIMABLE_STORAGE_KEY);
-    localStorage.removeItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
-    localStorage.removeItem(MISSION_BUILDING_TARGET_STORAGE_KEY);
-    localStorage.removeItem(MISSION_REWARD_BASE_STORAGE_KEY);
-    localStorage.removeItem('neosantara_player_xp');
+    gameStateStorage.removeItem(MISSION_COMPLETION_STORAGE_KEY);
+    gameStateStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
+    gameStateStorage.removeItem(MISSION_CLAIMABLE_STORAGE_KEY);
+    gameStateStorage.removeItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
+    gameStateStorage.removeItem(MISSION_BUILDING_TARGET_STORAGE_KEY);
+    gameStateStorage.removeItem(MISSION_REWARD_BASE_STORAGE_KEY);
+    gameStateStorage.removeItem('neosantara_player_xp');
     // Acak ulang 5 kartu misi baru saat reset / refresh
     const freshPool = generateRandomMissionIds(MISSION_POOL_SIZE);
-    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
+    gameStateStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
     prepareMissionBuildingTargets(freshPool);
     prepareMissionRewardBases(freshPool);
     window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: freshPool } }));
@@ -928,7 +929,7 @@ export function recordMissionCompletion(cardId: string): number {
     const map = getMissionCompletionsMap();
     const nextCount = (Number(map[cardId]) || 0) + 1;
     map[cardId] = nextCount;
-    localStorage.setItem(MISSION_COMPLETION_STORAGE_KEY, JSON.stringify(map));
+    gameStateStorage.setItem(MISSION_COMPLETION_STORAGE_KEY, JSON.stringify(map));
     window.dispatchEvent(new CustomEvent('mission_completions_updated', { detail: { cardId, count: nextCount } }));
     return nextCount;
   } catch {
@@ -1743,7 +1744,7 @@ export default function MissionModals({
   const [liveXp, setLiveXp] = useState<number>(0);
   useEffect(() => {
     const readXp = () => {
-      const stored = Number(localStorage.getItem('neosantara_player_xp') || 0);
+      const stored = Number(gameStateStorage.getItem('neosantara_player_xp') || 0);
       const cdXp = Number(countryDetail?.xp || 0);
       setLiveXp(Math.max(stored, cdXp));
     };

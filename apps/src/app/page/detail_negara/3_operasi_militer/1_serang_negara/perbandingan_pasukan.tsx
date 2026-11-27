@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import React from 'react';
 import { createPortal } from 'react-dom';
@@ -282,7 +283,7 @@ export default function PerbandinganPasukan({
   const deploymentConfig = (() => {
     if (typeof window === 'undefined') return {};
     try {
-      const savedConfig = window.localStorage.getItem('deployed_units_config');
+      const savedConfig = gameStateStorage.getItem('deployed_units_config');
       if (!savedConfig) return {};
       const parsed: unknown = JSON.parse(savedConfig);
       return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)

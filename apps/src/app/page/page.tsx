@@ -16,6 +16,7 @@ import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobileP
 import { isMobileDevice } from './map_system/rust_map_mobile';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { stagePendingGameSave } from '@/app/logic/pendingGameSave';
+import { fetchWithFirebaseAuth } from '@/lib/firebaseClient';
 
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
@@ -568,15 +569,14 @@ export default function PlayMenuPage() {
     const fetchSaveFiles = async () => {
         setIsLoadingSaves(true);
         try {
-            const response = await fetch('/api/game-save');
-            if (response.ok) {
-                const data = await response.json();
-                setSaveFiles(data);
-            } else {
-                console.error("Gagal memuat save file");
-            }
+            const response = await fetchWithFirebaseAuth('/api/game-save');
+            if (!response.ok) throw new Error('Gagal memuat save file.');
+            const data = await response.json();
+            if (!Array.isArray(data)) throw new Error('Respons daftar save tidak valid.');
+            setSaveFiles(data);
         } catch (error) {
             console.error("Error fetching save files:", error);
+            alert(error instanceof Error ? error.message : 'Gagal memuat save file.');
         } finally {
             setIsLoadingSaves(false);
         }
@@ -591,7 +591,7 @@ export default function PlayMenuPage() {
         e.stopPropagation();
         if (!window.confirm(t('menu_utama.confirm_delete_save'))) return;
         try {
-            const response = await fetch(`/api/game-save?id=${id}`, { method: 'DELETE' });
+            const response = await fetchWithFirebaseAuth(`/api/game-save?id=${id}`, { method: 'DELETE' });
             if (response.ok) {
                 setSaveFiles(prev => prev.filter(save => save.id !== id));
             } else {
@@ -605,11 +605,13 @@ export default function PlayMenuPage() {
 
     const handleLoadSave = async (save: MainMenuSave) => {
         try {
-            await stagePendingGameSave(save);
+            const response = await fetchWithFirebaseAuth(`/api/game-save?id=${save.id}`);
+            if (!response.ok) throw new Error('Gagal memuat detail save game.');
+            await stagePendingGameSave(await response.json());
             window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
         } catch (error) {
             console.error('Gagal menyiapkan save untuk dimuat:', error);
-            alert('Gagal membuka save. Pastikan penyimpanan browser tersedia, lalu coba lagi.');
+            alert(error instanceof Error ? error.message : 'Gagal membuka save game.');
         }
     };
 

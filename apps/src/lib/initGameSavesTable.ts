@@ -20,8 +20,26 @@ export async function ensureGameSavesTable(): Promise<void> {
             religion VARCHAR(100),
             un_vote INT DEFAULT 0,
             country_detail TEXT,
+            owner_uid TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+    `);
+    await pool.query(`
+        ALTER TABLE game_saves
+        ADD COLUMN IF NOT EXISTS owner_uid TEXT,
+        ADD COLUMN IF NOT EXISTS schema_version VARCHAR(20) DEFAULT 'v1',
+        ADD COLUMN IF NOT EXISTS version INT DEFAULT 1,
+        ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        ADD COLUMN IF NOT EXISTS idempotency_key VARCHAR(128);
+    `);
+    await pool.query(`
+        CREATE INDEX IF NOT EXISTS game_saves_owner_uid_updated_idx
+        ON game_saves (owner_uid, updated_at DESC, id DESC);
+    `);
+    await pool.query(`
+        CREATE INDEX IF NOT EXISTS game_saves_owner_idempotency_idx
+        ON game_saves (owner_uid, idempotency_key)
+        WHERE idempotency_key IS NOT NULL;
     `);
     await pool.query(`
         ALTER TABLE game_saves

@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import SharedModalCloseButton from '@/app/page/root_modals_design_menu/ModalCloseButton';
 import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
@@ -37,7 +38,7 @@ export default function NaikkanKesejahteraanTab({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const currentActive = localStorage.getItem("presiden_simulator_active_mission");
+      const currentActive = gameStateStorage.getItem("presiden_simulator_active_mission");
       setActiveMissionId(currentActive);
 
       // Cari init.id yang cocok dengan active mission saat tab dimuat
@@ -53,7 +54,7 @@ export default function NaikkanKesejahteraanTab({
       }
 
       const handleActiveUpdate = (e: any) => {
-        const newActive = e.detail?.cardId ?? localStorage.getItem("presiden_simulator_active_mission");
+        const newActive = e.detail?.cardId ?? gameStateStorage.getItem("presiden_simulator_active_mission");
         setActiveMissionId(newActive);
         if (newActive) {
           const found = Object.entries(MISSION_ID_BY_INITIATIVE).find(([, missionId]) => missionId === newActive);

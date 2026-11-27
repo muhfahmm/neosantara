@@ -1,4 +1,5 @@
 'use client';
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import React, {
   useCallback,
@@ -705,7 +706,7 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     typeof window !== 'undefined'
   ) {
     try {
-      const saved = localStorage.getItem('deployed_units_config');
+      const saved = gameStateStorage.getItem('deployed_units_config');
       if (saved) {
         const parsed = JSON.parse(saved);
         const vals = Object.values(parsed).filter((v): v is number => typeof v === 'number');
@@ -947,7 +948,7 @@ export default function WarMap({
     if (typeof isUserDefenderProp === 'boolean') return isUserDefenderProp;
     if (typeof window === 'undefined') return false;
     try {
-      const saved = localStorage.getItem('user_country');
+      const saved = gameStateStorage.getItem('user_country');
       if (saved) {
         const parsed = JSON.parse(saved);
         const userCountryName = String(parsed?.country || parsed?.nama_negara || '').toLowerCase().trim();
@@ -1086,7 +1087,7 @@ export default function WarMap({
     if (committedDeploymentConfig) return committedDeploymentConfig;
     if (typeof window === 'undefined') return {};
     try {
-      const saved = window.localStorage.getItem('deployed_units_config');
+      const saved = gameStateStorage.getItem('deployed_units_config');
       if (!saved) return {};
       const parsed: unknown = JSON.parse(saved);
       return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)

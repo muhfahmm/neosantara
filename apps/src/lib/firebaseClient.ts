@@ -13,6 +13,8 @@ import {
     type Unsubscribe,
     type User,
 } from 'firebase/auth';
+import { invoke, isTauri } from '@tauri-apps/api/core';
+import { setGameStateActiveUser } from '@/app/logic/gameStateStorage';
 
 const firebaseConfig: FirebaseOptions = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -110,4 +112,44 @@ export async function signInWithGoogle(): Promise<void> {
 
 export async function signOutFromFirebase(): Promise<void> {
     await signOut(getFirebaseAuth());
+    setGameStateActiveUser(null);
+}
+
+export async function getFirebaseAccessToken(): Promise<{ uid: string; token: string }> {
+    if (isTauri() && typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent)) {
+        const state = await invoke<{ uid?: string; idToken?: string }>('play_games_id_token', {
+            config: getNativePlayGamesAuthConfig(),
+        });
+        if (!state.uid || !state.idToken) {
+            throw new Error('Silakan login dengan Google sebelum mengakses save game.');
+        }
+        setGameStateActiveUser(state.uid);
+        return { uid: state.uid, token: state.idToken };
+    }
+
+    const auth = getFirebaseAuth();
+    const user = auth.currentUser ?? await new Promise<User | null>((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            unsubscribe();
+            resolve(currentUser);
+        }, (error) => {
+            unsubscribe();
+            reject(error);
+        });
+    });
+    if (!user) {
+        throw new Error('Silakan login dengan Google sebelum mengakses save game.');
+    }
+    setGameStateActiveUser(user.uid);
+    return { uid: user.uid, token: await user.getIdToken() };
+}
+
+export async function fetchWithFirebaseAuth(
+    input: RequestInfo | URL,
+    init: RequestInit = {},
+): Promise<Response> {
+    const { token } = await getFirebaseAccessToken();
+    const headers = new Headers(init.headers);
+    headers.set('Authorization', `Bearer ${token}`);
+    return fetch(input, { ...init, headers });
 }

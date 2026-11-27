@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -70,7 +71,7 @@ export default function NaikkanKepuasanModal({
 
   useEffect(() => {
     if (typeof window !== "undefined" && isOpen) {
-      const currentActive = localStorage.getItem(
+      const currentActive = gameStateStorage.getItem(
         "presiden_simulator_active_mission"
       );
       setActiveMissionId(currentActive);
@@ -88,7 +89,7 @@ export default function NaikkanKepuasanModal({
       const handleActiveUpdate = (e: any) => {
         const newActive =
           e.detail?.cardId ??
-          localStorage.getItem("presiden_simulator_active_mission");
+          gameStateStorage.getItem("presiden_simulator_active_mission");
         setActiveMissionId(newActive);
         if (newActive && newActive.startsWith("event_")) {
           setHighlightedEventId(newActive.replace("event_", ""));

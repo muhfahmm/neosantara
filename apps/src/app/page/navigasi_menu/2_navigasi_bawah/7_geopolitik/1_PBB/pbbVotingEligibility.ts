@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 export interface PbbVotingCountry {
   name: string;
   iso?: string;
@@ -105,11 +106,11 @@ export function clearAnnexedCountryVotes(countryName: string, countryIso?: strin
 
   for (const storageKey of [resolutionKey]) {
     try {
-      const serialized = window.localStorage.getItem(storageKey);
+      const serialized = gameStateStorage.getItem(storageKey);
       if (!serialized) continue;
       const parsed: unknown = JSON.parse(serialized);
       if (Array.isArray(parsed)) {
-        window.localStorage.setItem(storageKey, JSON.stringify(clearVotes(parsed)));
+        gameStateStorage.setItem(storageKey, JSON.stringify(clearVotes(parsed)));
       }
     } catch (error) {
       console.error(`Failed to clear annexed-country vote from ${storageKey}:`, error);

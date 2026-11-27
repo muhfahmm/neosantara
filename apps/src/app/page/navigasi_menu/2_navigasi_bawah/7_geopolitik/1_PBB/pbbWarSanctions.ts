@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import {
   loadActiveResolutions,
   spawnAIResolutionFromTrigger
@@ -91,7 +92,7 @@ function ensureHistoryLoaded(): void {
   if (typeof window === 'undefined' || historyInitialized) return;
   historyInitialized = true;
   try {
-    const stored = localStorage.getItem(WAR_SANCTION_HISTORY_KEY);
+    const stored = gameStateStorage.getItem(WAR_SANCTION_HISTORY_KEY);
     if (!stored) return;
     const parsed: unknown = JSON.parse(stored);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
@@ -123,7 +124,7 @@ function ensureHistoryLoaded(): void {
 function persistHistory(): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(WAR_SANCTION_HISTORY_KEY, JSON.stringify(violationHistory));
+    gameStateStorage.setItem(WAR_SANCTION_HISTORY_KEY, JSON.stringify(violationHistory));
   } catch (error) {
     console.error('Failed to persist PBB war-sanction history:', error);
   }
@@ -133,7 +134,7 @@ export function createWarAttackId(gameDate: string): string {
   const counterKey = `${ATTACK_COUNTER_KEY_PREFIX}${gameDate}`;
   if (typeof window !== 'undefined') {
     try {
-      const savedCounter = Number(localStorage.getItem(counterKey)) || 0;
+      const savedCounter = Number(gameStateStorage.getItem(counterKey)) || 0;
       attackIdCounter = Math.max(attackIdCounter, savedCounter);
     } catch (error) {
       console.error('Failed to load PBB war attack counter:', error);
@@ -142,7 +143,7 @@ export function createWarAttackId(gameDate: string): string {
   attackIdCounter += 1;
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(counterKey, String(attackIdCounter));
+      gameStateStorage.setItem(counterKey, String(attackIdCounter));
     } catch (error) {
       console.error('Failed to persist PBB war attack counter:', error);
     }
@@ -257,11 +258,11 @@ export function clearReportedInvasionViolations(): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.removeItem(WAR_SANCTION_HISTORY_KEY);
-    localStorage.removeItem(LEGACY_REPORTED_VIOLATIONS_KEY);
-    for (let index = localStorage.length - 1; index >= 0; index--) {
-      const key = localStorage.key(index);
-      if (key?.startsWith(ATTACK_COUNTER_KEY_PREFIX)) localStorage.removeItem(key);
+    gameStateStorage.removeItem(WAR_SANCTION_HISTORY_KEY);
+    gameStateStorage.removeItem(LEGACY_REPORTED_VIOLATIONS_KEY);
+    for (let index = gameStateStorage.length - 1; index >= 0; index--) {
+      const key = gameStateStorage.key(index);
+      if (key?.startsWith(ATTACK_COUNTER_KEY_PREFIX)) gameStateStorage.removeItem(key);
     }
   } catch (error) {
     console.error('Failed to clear PBB violation records:', error);

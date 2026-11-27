@@ -1,4 +1,5 @@
 "use client";
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 
 import RootConstructionConfirmationModal from "@/app/page/root_modals_design_menu/RootConstructionConfirmationModal";
 import { HANGAR_TANK_CAPACITY } from "../logic/2_hangar_tank_logic";
@@ -213,7 +214,7 @@ export default function KonfirmasiInfrastrukturModal({
         <button
           type="button"
           onClick={() => {
-            localStorage.clear();
+            gameStateStorage.clear();
             sessionStorage.clear();
             window.location.href = window.location.href;
           }}

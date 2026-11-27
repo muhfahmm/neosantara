@@ -1,3 +1,4 @@
+import { gameStateStorage } from '@/app/logic/gameStateStorage';
 export type TutorialStatus = 'not_started' | 'in_progress' | 'completed' | 'skipped';
 
 export interface TutorialProgress {
@@ -30,7 +31,7 @@ export function getTutorialProgressSnapshot(): TutorialProgress {
   if (typeof window === 'undefined') return INITIAL_PROGRESS;
 
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = gameStateStorage.getItem(STORAGE_KEY);
     if (stored === cachedRaw) return cachedProgress;
     cachedRaw = stored;
     if (!stored) {
@@ -68,7 +69,7 @@ export function setTutorialProgress(progress: TutorialProgress): void {
 
   try {
     const serialized = JSON.stringify(progress);
-    window.localStorage.setItem(STORAGE_KEY, serialized);
+    gameStateStorage.setItem(STORAGE_KEY, serialized);
     cachedRaw = serialized;
     cachedProgress = progress;
     notifyProgressChanged(progress);
