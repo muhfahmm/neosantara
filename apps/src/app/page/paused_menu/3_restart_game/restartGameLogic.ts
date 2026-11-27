@@ -2,11 +2,13 @@ import { gameStateStorage } from '@/app/logic/gameStateStorage';
 import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { handleGameRestart } from '@/app/page/time_controllers';
 import type { SimulationTimeManager } from '@/app/page/time_controllers/timeManager';
+import { clearAchievementProgressData } from '@/app/page/menus/mission/pencapaianModals';
 
 export interface RestartGameOptions {
     selectedCountry: { country: string; capital: string } | null;
     timeManager: SimulationTimeManager | null;
     clearMissionProgress: () => void;
+    clearAchievementProgress?: () => void;
     loadCountryStats: (country: string, capital: string) => Promise<void>;
     setActivePlayerAttack: () => void;
     setIsPaused: (paused: boolean) => void;
@@ -53,6 +55,11 @@ export function restartGame(options: RestartGameOptions): void {
         gameStateStorage.removeItem('hutangModalLoanSources');
         gameStateStorage.removeItem('hutangModalLoanSourcesLastRefresh');
         options.clearMissionProgress();
+        if (options.clearAchievementProgress) {
+            options.clearAchievementProgress();
+        } else {
+            clearAchievementProgressData();
+        }
         gameStateStorage.setItem('player_diamonds', '500');
         options.setPlayerDiamonds(500);
         clearActiveNpcCountrySimulationState();

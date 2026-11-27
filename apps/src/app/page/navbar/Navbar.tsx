@@ -16,7 +16,6 @@ import {
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 import { FpsMonitoring, type FpsMonitorWasmModule } from '../paused_menu/4_settings/fpsMonitoring';
-import { AttackDebugButton } from '@/app/debug/AttackDebugButton';
 import { useViewportMode } from '@/app/hooks/useViewportMode';
 import { useLanguage } from '../paused_menu/terjemahan_paused_menu/languageLogic';
 import { getLocalizedCountryName } from '@/app/logic/countryNameLogic';
@@ -346,7 +345,6 @@ export function Navbar({
                     </div>
 
                     <div className="flex shrink-0 items-center gap-1">
-                        <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                         <ZoomIndicator mapZoom={mapZoom} zoomLabel={t('navbar.actions.zoom')} compact />
                         <button
                             onClick={onOpenSaveModal}
@@ -412,7 +410,6 @@ export function Navbar({
                     </div>
 
                     <div className="map-status-navbar-panel flex items-center justify-center gap-1.5 pointer-events-auto bg-root-surface/95 border border-root-accent/30 rounded-xl px-2 py-1 shadow-lg">
-                        <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                         <ZoomIndicator mapZoom={mapZoom} zoomLabel={t('navbar.actions.zoom')} compact />
                     </div>
 
@@ -647,7 +644,6 @@ export function Navbar({
 
                     {/* 3. Right Side: Save & Restart Buttons */}
                     <div className="flex items-center gap-1.5 2xl:gap-1.5 shrink-0 relative z-20 pointer-events-auto bg-root-surface border border-root-accent/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
-                        <AttackDebugButton selectedCountry={selectedCountry} countryDetail={countryDetail} />
                         <ZoomIndicator mapZoom={mapZoom} zoomLabel={t('navbar.actions.zoom')} />
                         <button
                             onClick={onOpenSaveModal}
