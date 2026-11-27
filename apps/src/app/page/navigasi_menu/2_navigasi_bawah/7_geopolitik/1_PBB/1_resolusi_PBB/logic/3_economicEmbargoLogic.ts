@@ -56,6 +56,14 @@ function normalizeSanctionCountry(countryName: string): string {
   return normalizePbbCountryName(countryName);
 }
 
+export function getEconomicSanctionCounts(): Record<string, number> {
+  const result: Record<string, number> = {};
+  economicSanctionCounts.forEach((count, key) => {
+    if (count > 0) result[key] = count;
+  });
+  return result;
+}
+
 export function setEconomicSanctionCounts(counts: Record<string, unknown>): void {
   economicSanctionCounts.clear();
   Object.entries(counts).forEach(([countryName, count]) => {

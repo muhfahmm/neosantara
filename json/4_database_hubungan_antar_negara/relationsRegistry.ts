@@ -398,3 +398,50 @@ export function clearAllRelationModifiers(): void {
 }
 
 export default getRelationValue;
+
+export interface RelationModifiersSnapshot {
+  relationModifiers: [string, number][];
+  relationSourceModifiers: [string, [string, number][]][];
+  relationSanctionModifiers: [string, number][];
+  nonAggressionPacts: NonAggressionPactPeriod[];
+}
+
+export function exportRelationModifiersSnapshot(): RelationModifiersSnapshot {
+  return {
+    relationModifiers: Array.from(relationModifiersMap.entries()),
+    relationSourceModifiers: Array.from(relationSourceModifiersMap.entries()).map(([k, v]) => [k, Array.from(v.entries())]),
+    relationSanctionModifiers: Array.from(relationSanctionModifiersMap.entries()),
+    nonAggressionPacts: [...nonAggressionPactHistory],
+  };
+}
+
+export function restoreRelationModifiersSnapshot(snapshot: Partial<RelationModifiersSnapshot> | null | undefined): void {
+  if (!snapshot) return;
+  if (Array.isArray(snapshot.relationModifiers)) {
+    relationModifiersMap.clear();
+    for (const [k, v] of snapshot.relationModifiers) {
+      if (typeof k === 'string' && Number.isFinite(v)) relationModifiersMap.set(k, v);
+    }
+  }
+  if (Array.isArray(snapshot.relationSourceModifiers)) {
+    relationSourceModifiersMap.clear();
+    for (const [k, list] of snapshot.relationSourceModifiers) {
+      if (typeof k === 'string' && Array.isArray(list)) {
+        const innerMap = new Map<string, number>();
+        for (const [srcKey, val] of list) {
+          if (typeof srcKey === 'string' && Number.isFinite(val)) innerMap.set(srcKey, val);
+        }
+        relationSourceModifiersMap.set(k, innerMap);
+      }
+    }
+  }
+  if (Array.isArray(snapshot.relationSanctionModifiers)) {
+    relationSanctionModifiersMap.clear();
+    for (const [k, v] of snapshot.relationSanctionModifiers) {
+      if (typeof k === 'string' && Number.isFinite(v)) relationSanctionModifiersMap.set(k, v);
+    }
+  }
+  if (Array.isArray(snapshot.nonAggressionPacts)) {
+    nonAggressionPactHistory = [...snapshot.nonAggressionPacts];
+  }
+}

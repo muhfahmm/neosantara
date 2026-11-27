@@ -140,6 +140,17 @@ export function getArmyWithStationedPeacekeepers(
   );
 }
 
+export function loadRawPeacekeepersInTransit(): Array<{ id: string; allyCountry: string; deployedUnitQuantities: Record<string, number> }> {
+  return [...inTransitPeacekeepers];
+}
+
+export function saveRawPeacekeepersInTransit(list: Array<{ id: string; allyCountry: string; deployedUnitQuantities: Record<string, number> }>): void {
+  inTransitPeacekeepers = Array.isArray(list) ? [...list] : [];
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(PEACEKEEPER_UPDATED_EVENT));
+  }
+}
+
 export function loadPeacekeeperDeploymentsInTransit(): PeacekeeperUnitCommitment[] {
   return inTransitPeacekeepers.map(({ deployedUnitQuantities }) => ({ deployedUnitQuantities }));
 }

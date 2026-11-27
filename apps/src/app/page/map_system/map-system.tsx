@@ -84,6 +84,8 @@ import {
     restoreStationedPeacekeeperUnits,
     loadStationedPeacekeepers,
     saveStationedPeacekeepers,
+    loadRawPeacekeepersInTransit,
+    saveRawPeacekeepersInTransit,
 } from '../path_logic/peacekeeper/peacekeeperLogic';
 const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint, getCapitalCoord } from '../path_logic/path-war';
@@ -188,7 +190,7 @@ import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_ke
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/6_database_kedutaan_besar/embassyRegistry';
-import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceModifier, setRelationSourceValue, setSimulationDate } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceModifier, setRelationSourceValue, setSimulationDate, exportRelationModifiersSnapshot, restoreRelationModifiersSnapshot } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import type { NonAggressionPactPeriod } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
@@ -339,7 +341,7 @@ import { hasActiveGlobalWarBan } from '../navigasi_menu/2_navigasi_bawah/7_geopo
 import {
     hasActiveApprovedInvasionResolution
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/4_resolusiInvasiLogic';
-import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier, isCountryUnderEconomicEmbargo } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier, isCountryUnderEconomicEmbargo, getEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
     clearReportedInvasionViolations,
     createWarAttackId,
@@ -8943,6 +8945,43 @@ export default function MapPage() {
                                     : {}),
                             },
                             religion: databaseReligion || cachedReligion || savedDetail.religion || savedState.religion || '-',
+                            subsidy_states: savedCountryDetail.subsidy_states || {},
+                            sistem_ekonomi_val: savedCountryDetail.sistem_ekonomi_val !== undefined ? Number(savedCountryDetail.sistem_ekonomi_val) : 50,
+                            policy_price_control: savedCountryDetail.policy_price_control || 'A',
+                            policy_strategic_ownership: savedCountryDetail.policy_strategic_ownership || 'A',
+                            policy_trade_policy: savedCountryDetail.policy_trade_policy || 'A',
+                            policy_labor_regulation: savedCountryDetail.policy_labor_regulation || 'A',
+                            policy_land_property_rights: savedCountryDetail.policy_land_property_rights || 'A',
+                            policy_labor_unions_rights: savedCountryDetail.policy_labor_unions_rights || 'A',
+                            policy_monetary_banking: savedCountryDetail.policy_monetary_banking || 'A',
+                            opennessIndex: savedCountryDetail.opennessIndex !== undefined ? Number(savedCountryDetail.opennessIndex) : 73,
+                            speechScore: savedCountryDetail.speechScore !== undefined ? Number(savedCountryDetail.speechScore) : 50,
+                            religionScore: savedCountryDetail.religionScore !== undefined ? Number(savedCountryDetail.religionScore) : 60,
+                            demoScore: savedCountryDetail.demoScore !== undefined ? Number(savedCountryDetail.demoScore) : 45,
+                            transparencyScore: savedCountryDetail.transparencyScore !== undefined ? Number(savedCountryDetail.transparencyScore) : 55,
+                            mediaScore: savedCountryDetail.mediaScore !== undefined ? Number(savedCountryDetail.mediaScore) : 50,
+                            internetScore: savedCountryDetail.internetScore !== undefined ? Number(savedCountryDetail.internetScore) : 60,
+                            borderScore: savedCountryDetail.borderScore !== undefined ? Number(savedCountryDetail.borderScore) : 40,
+                            tradeScore: savedCountryDetail.tradeScore !== undefined ? Number(savedCountryDetail.tradeScore) : 60,
+                            diplomacyScore: savedCountryDetail.diplomacyScore !== undefined ? Number(savedCountryDetail.diplomacyScore) : 80,
+                            research_levels: savedCountryDetail.research_levels || {},
+                            completed_research: Array.isArray(savedCountryDetail.completed_research) ? savedCountryDetail.completed_research : [],
+                            active_research_by_category: savedCountryDetail.active_research_by_category || null,
+                            active_research: savedCountryDetail.active_research || null,
+                            active_research_end_date: savedCountryDetail.active_research_end_date || null,
+                            researchContracts: Array.isArray(savedCountryDetail.researchContracts) ? savedCountryDetail.researchContracts : [],
+                            nonAggressionPacts: Array.isArray(savedCountryDetail.nonAggressionPacts) ? savedCountryDetail.nonAggressionPacts : [],
+                            nonAggressionPactHistory: Array.isArray(savedCountryDetail.nonAggressionPactHistory) ? savedCountryDetail.nonAggressionPactHistory : [],
+                            defenseAlliances: Array.isArray(savedCountryDetail.defenseAlliances) ? savedCountryDetail.defenseAlliances : [],
+                            ongoingDiplomacyRatifications: Array.isArray(savedCountryDetail.ongoingDiplomacyRatifications) ? savedCountryDetail.ongoingDiplomacyRatifications : [],
+                            economicSanctions: savedCountryDetail.economicSanctions || sessionState.economicSanctionCounts || {},
+                            taxedProvinces: Array.isArray(savedCountryDetail.taxedProvinces) ? savedCountryDetail.taxedProvinces : [],
+                            provinceTensions: savedCountryDetail.provinceTensions && typeof savedCountryDetail.provinceTensions === 'object' && !Array.isArray(savedCountryDetail.provinceTensions) ? savedCountryDetail.provinceTensions : {},
+                            provinceReferendums: savedCountryDetail.provinceReferendums && typeof savedCountryDetail.provinceReferendums === 'object' && !Array.isArray(savedCountryDetail.provinceReferendums) ? savedCountryDetail.provinceReferendums : {},
+                            provinceCasualties: savedCountryDetail.provinceCasualties && typeof savedCountryDetail.provinceCasualties === 'object' && !Array.isArray(savedCountryDetail.provinceCasualties) ? savedCountryDetail.provinceCasualties : {},
+                            ...Object.fromEntries(
+                                Object.entries(savedCountryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('keamanan_') || k.startsWith('layanan_'))
+                            ),
                         };
 
                         await syncNationalizationDiplomacyRelations(
@@ -8950,6 +8989,15 @@ export default function MapPage() {
                             restoredDetail.sector_nationalization,
                             restoredDetail.nationalization_diplomacy_month_counter
                         );
+                        if (typeof window !== 'undefined') {
+                            if (savedCountryDetail.deployed_units_config) {
+                                gameStateStorage.setItem('deployed_units_config', typeof savedCountryDetail.deployed_units_config === 'string'
+                                    ? savedCountryDetail.deployed_units_config
+                                    : JSON.stringify(savedCountryDetail.deployed_units_config));
+                            } else {
+                                gameStateStorage.removeItem('deployed_units_config');
+                            }
+                        }
                         setCountryDetail(restoredDetail);
                         setNewsListRaw(Array.isArray(savedDetail.newsList) ? savedDetail.newsList : []);
                         if (restoredDetail.presidentRating !== undefined) {
@@ -9028,6 +9076,12 @@ export default function MapPage() {
                         if (Array.isArray(sessionState.stationedPeacekeepers)) {
                             saveStationedPeacekeepers(sessionState.stationedPeacekeepers);
                         }
+                        if (Array.isArray(sessionState.peacekeepersInTransit)) {
+                            saveRawPeacekeepersInTransit(sessionState.peacekeepersInTransit);
+                        }
+                        if (sessionState.economicSanctionCounts && typeof sessionState.economicSanctionCounts === 'object') {
+                            setEconomicSanctionCounts(sessionState.economicSanctionCounts as Record<string, unknown>);
+                        }
 
                         // Pulihkan Personel Intelijen (Covert Personnel)
                         if (sessionState.covertPersonnel) {
@@ -9052,6 +9106,11 @@ export default function MapPage() {
                         }
                         if (sessionState.pendingOrgApplications) {
                             gameStateStorage.setItem('org_membership_pending_applications_v1', sessionState.pendingOrgApplications);
+                        }
+
+                        // Pulihkan Dinamika Relasi Bilateral Antar-Negara (Hubungan Diplomatik)
+                        if (sessionState.relationModifiersSnapshot) {
+                            restoreRelationModifiersSnapshot(sessionState.relationModifiersSnapshot);
                         }
 
                         await clearPendingGameSave();
@@ -10456,11 +10515,53 @@ export default function MapPage() {
                 provinceIdeologyOverrides: (window as any).neosantara_province_ideology_overrides || {},
                 playerAttack: (window as any).neosantara_player_attack || null,
                 stationedPeacekeepers: loadStationedPeacekeepers(),
+                peacekeepersInTransit: loadRawPeacekeepersInTransit(),
+                economicSanctionCounts: getEconomicSanctionCounts(),
                 covertPersonnel: typeof window !== 'undefined' ? gameStateStorage.getItem('neosantara_covert_personnel') : null,
                 requestedInvasions: typeof window !== 'undefined' ? gameStateStorage.getItem('requested_attack_requests_v1') : null,
                 pbbSecurityCouncilState: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_security_council_election_state_v1') : null,
                 pbbWarSanctions: typeof window !== 'undefined' ? gameStateStorage.getItem('pbb_war_sanction_history_v1') : null,
                 pendingOrgApplications: typeof window !== 'undefined' ? gameStateStorage.getItem('org_membership_pending_applications_v1') : null,
+                relationModifiersSnapshot: exportRelationModifiersSnapshot(),
+                tradeVolumeLedger: countryDetail?.tradeVolumeLedger || null,
+                    deployed_units_config: typeof window !== 'undefined' ? gameStateStorage.getItem('deployed_units_config') : null,
+                    subsidy_states: (countryDetail as any)?.subsidy_states || {},
+                    sistem_ekonomi_val: (countryDetail as any)?.sistem_ekonomi_val !== undefined ? Number((countryDetail as any).sistem_ekonomi_val) : 50,
+                    policy_price_control: (countryDetail as any)?.policy_price_control || 'A',
+                    policy_strategic_ownership: (countryDetail as any)?.policy_strategic_ownership || 'A',
+                    policy_trade_policy: (countryDetail as any)?.policy_trade_policy || 'A',
+                    policy_labor_regulation: (countryDetail as any)?.policy_labor_regulation || 'A',
+                    policy_land_property_rights: (countryDetail as any)?.policy_land_property_rights || 'A',
+                    policy_labor_unions_rights: (countryDetail as any)?.policy_labor_unions_rights || 'A',
+                    policy_monetary_banking: (countryDetail as any)?.policy_monetary_banking || 'A',
+                    opennessIndex: (countryDetail as any)?.opennessIndex !== undefined ? Number((countryDetail as any).opennessIndex) : 73,
+                    speechScore: (countryDetail as any)?.speechScore !== undefined ? Number((countryDetail as any).speechScore) : 50,
+                    religionScore: (countryDetail as any)?.religionScore !== undefined ? Number((countryDetail as any).religionScore) : 60,
+                    demoScore: (countryDetail as any)?.demoScore !== undefined ? Number((countryDetail as any).demoScore) : 45,
+                    transparencyScore: (countryDetail as any)?.transparencyScore !== undefined ? Number((countryDetail as any).transparencyScore) : 55,
+                    mediaScore: (countryDetail as any)?.mediaScore !== undefined ? Number((countryDetail as any).mediaScore) : 50,
+                    internetScore: (countryDetail as any)?.internetScore !== undefined ? Number((countryDetail as any).internetScore) : 60,
+                    borderScore: (countryDetail as any)?.borderScore !== undefined ? Number((countryDetail as any).borderScore) : 40,
+                    tradeScore: (countryDetail as any)?.tradeScore !== undefined ? Number((countryDetail as any).tradeScore) : 60,
+                    diplomacyScore: (countryDetail as any)?.diplomacyScore !== undefined ? Number((countryDetail as any).diplomacyScore) : 80,
+                    research_levels: (countryDetail as any)?.research_levels || {},
+                    completed_research: Array.isArray((countryDetail as any)?.completed_research) ? (countryDetail as any).completed_research : [],
+                    active_research_by_category: (countryDetail as any)?.active_research_by_category || null,
+                    active_research: (countryDetail as any)?.active_research || null,
+                    active_research_end_date: (countryDetail as any)?.active_research_end_date || null,
+                    researchContracts: Array.isArray((countryDetail as any)?.researchContracts) ? (countryDetail as any).researchContracts : [],
+                    nonAggressionPacts: Array.isArray((countryDetail as any)?.nonAggressionPacts) ? (countryDetail as any).nonAggressionPacts : [],
+                    nonAggressionPactHistory: Array.isArray((countryDetail as any)?.nonAggressionPactHistory) ? (countryDetail as any).nonAggressionPactHistory : [],
+                    defenseAlliances: Array.isArray((countryDetail as any)?.defenseAlliances) ? (countryDetail as any).defenseAlliances : [],
+                    ongoingDiplomacyRatifications: Array.isArray((countryDetail as any)?.ongoingDiplomacyRatifications) ? (countryDetail as any).ongoingDiplomacyRatifications : [],
+                    economicSanctions: getEconomicSanctionCounts(),
+                    taxedProvinces: Array.isArray((countryDetail as any)?.taxedProvinces) ? (countryDetail as any).taxedProvinces : [],
+                    provinceTensions: (countryDetail as any)?.provinceTensions && typeof (countryDetail as any).provinceTensions === 'object' && !Array.isArray((countryDetail as any).provinceTensions) ? (countryDetail as any).provinceTensions : {},
+                    provinceReferendums: (countryDetail as any)?.provinceReferendums && typeof (countryDetail as any).provinceReferendums === 'object' && !Array.isArray((countryDetail as any).provinceReferendums) ? (countryDetail as any).provinceReferendums : {},
+                    provinceCasualties: (countryDetail as any)?.provinceCasualties && typeof (countryDetail as any).provinceCasualties === 'object' && !Array.isArray((countryDetail as any).provinceCasualties) ? (countryDetail as any).provinceCasualties : {},
+                    ...Object.fromEntries(
+                        Object.entries(countryDetail || {}).filter(([k]) => k.startsWith('menteri_') || k.startsWith('keamanan_') || k.startsWith('layanan_'))
+                    ),
             };
             const existingSave = targetSaveId ? existingSaveFiles.find(s => s.id === targetSaveId) : null;
             const currentSaveVersion = existingSave?.version ?? (countryDetail?.__neosantara_game_session?.saveVersion ?? 1);
@@ -10501,6 +10602,13 @@ export default function MapPage() {
                     icbm_status: Boolean(countryDetail?.icbm_status ?? (Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0) > 0)),
                     icbm_consumed: Number(countryDetail?.icbm_consumed || 0),
                     icbmBuildTask: countryDetail?.icbmBuildTask || null,
+                    embassies: Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [],
+                    removedEmbassies: Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [],
+                    tradeAgreements: Array.isArray(countryDetail?.tradeAgreements) ? countryDetail.tradeAgreements : [],
+                    removedTradePartners: Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [],
+                    addedTradePartners: Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [],
+                    ongoingEmbassyConstructions: Array.isArray(countryDetail?.ongoingEmbassyConstructions) ? countryDetail.ongoingEmbassyConstructions : [],
+                    tradeVolumeLedger: countryDetail?.tradeVolumeLedger || null,
                     __neosantara_game_session: {
                         ...sessionState,
                         saveVersion: (currentSaveVersion || 1) + 1,
