@@ -1,3 +1,9 @@
+import {
+    getScopedKey,
+    setActiveUserScope,
+    purgeUserRuntimeState,
+} from './scopedStorage';
+
 export type GameStateSnapshot = Record<string, string>;
 
 const NON_GAME_STORAGE_KEYS = new Set([
@@ -108,8 +114,10 @@ export const gameStateStorage = {
 };
 
 export function setGameStateActiveUser(userId: string | null): void {
-    if (activeUserId && activeUserId !== userId) {
+    if (activeUserId !== userId) {
         gameStateStorage.clear();
+        purgeUserRuntimeState();
+        setActiveUserScope(userId);
     }
     activeUserId = userId;
 }

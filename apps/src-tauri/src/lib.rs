@@ -125,15 +125,51 @@ async fn play_games_sign_out(
   }
 }
 
+#[cfg(not(target_os = "android"))]
+pub mod desktop_auth;
+
+#[tauri::command]
+async fn desktop_google_sign_in(
+  app: tauri::AppHandle<tauri::Wry>,
+  client_id: String,
+) -> Result<serde_json::Value, String> {
+  #[cfg(not(target_os = "android"))]
+  {
+    let auth_result = desktop_auth::execute_desktop_google_sign_in(&app, &client_id).await?;
+    serde_json::to_value(auth_result).map_err(|e| e.to_string())
+  }
+  #[cfg(target_os = "android")]
+  {
+    let _ = (app, client_id);
+    Err("desktop_google_sign_in is only available on desktop platforms.".into())
+  }
+}
+
+#[tauri::command]
+async fn desktop_google_sign_out() -> Result<(), String> {
+  #[cfg(not(target_os = "android"))]
+  {
+    desktop_auth::delete_stored_refresh_token();
+    Ok(())
+  }
+  #[cfg(target_os = "android")]
+  {
+    Ok(())
+  }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
+    .plugin(tauri_plugin_opener::init())
     .plugin(play_games_auth_plugin())
     .invoke_handler(tauri::generate_handler![
       play_games_sign_in,
       play_games_current_user,
       play_games_id_token,
-      play_games_sign_out
+      play_games_sign_out,
+      desktop_google_sign_in,
+      desktop_google_sign_out
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {

@@ -27,14 +27,24 @@ export async function ensureGameSavesTable(): Promise<void> {
     await pool.query(`
         ALTER TABLE game_saves
         ADD COLUMN IF NOT EXISTS owner_uid TEXT,
+        ADD COLUMN IF NOT EXISTS save_uuid VARCHAR(64),
         ADD COLUMN IF NOT EXISTS schema_version VARCHAR(20) DEFAULT 'v1',
         ADD COLUMN IF NOT EXISTS version INT DEFAULT 1,
         ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         ADD COLUMN IF NOT EXISTS idempotency_key VARCHAR(128);
     `);
     await pool.query(`
+        CREATE INDEX IF NOT EXISTS game_saves_owner_uid_id_idx
+        ON game_saves (owner_uid, id);
+    `);
+    await pool.query(`
         CREATE INDEX IF NOT EXISTS game_saves_owner_uid_updated_idx
         ON game_saves (owner_uid, updated_at DESC, id DESC);
+    `);
+    await pool.query(`
+        CREATE INDEX IF NOT EXISTS game_saves_owner_uuid_idx
+        ON game_saves (owner_uid, save_uuid)
+        WHERE save_uuid IS NOT NULL;
     `);
     await pool.query(`
         CREATE INDEX IF NOT EXISTS game_saves_owner_idempotency_idx

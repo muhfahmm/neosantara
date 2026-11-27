@@ -21,7 +21,8 @@ import {
     checkIsUserAuthenticated,
     fetchWithFirebaseAuth,
     observeFirebaseAuth,
-    signOutFromFirebase
+    signOutFromFirebase,
+    isAuthRequiredError
 } from '@/lib/firebaseClient';
 import { SaveAuthRequiredModal } from './paused_menu/1_savegame/SaveAuthRequiredModal';
 
@@ -597,6 +598,10 @@ export default function PlayMenuPage() {
             const response = await fetchWithFirebaseAuth('/api/game-save');
             if (!response.ok) {
                 const errorData = await response.json().catch(() => null);
+                if (response.status === 401) {
+                    setIsAuthModalOpen(true);
+                    return;
+                }
                 throw new Error(errorData?.error || 'Gagal memuat save file.');
             }
             const data = await response.json();
@@ -604,7 +609,11 @@ export default function PlayMenuPage() {
             setSaveFiles(data);
         } catch (error) {
             console.error("Error fetching save files:", error);
-            alert(error instanceof Error ? error.message : 'Gagal memuat save file.');
+            if (isAuthRequiredError(error)) {
+                setIsAuthModalOpen(true);
+            } else {
+                alert(error instanceof Error ? error.message : 'Gagal memuat save file.');
+            }
         } finally {
             setIsLoadingSaves(false);
         }

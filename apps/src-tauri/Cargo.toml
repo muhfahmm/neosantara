@@ -23,3 +23,11 @@ serde = { version = "1.0", features = ["derive"] }
 log = "0.4"
 tauri = { version = "2.12.5", features = [] }
 tauri-plugin-log = "2"
+tauri-plugin-opener = "2"
+tokio = { version = "1", features = ["sync", "rt"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+sha2 = "0.10"
+base64 = "0.22"
+rand = "0.8"
+url = "2.5"
+keyring = { version = "3", features = ["windows-native"] }

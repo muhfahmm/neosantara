@@ -1,12 +1,21 @@
 import { gameStateStorage, type GameStateSnapshot } from '@/app/logic/gameStateStorage';
+import { getScopedKey, getCurrentActiveUid } from '@/app/logic/scopedStorage';
 
 const SESSION_KEY = 'presiden_simulator_load_save';
 const DATABASE_NAME = 'presiden_simulator_pending_saves';
-const DATABASE_VERSION = 2;
 const STORE_NAME = 'saves';
 const ACTIVE_SESSION_STORE = 'active_session';
 const ACTIVE_SESSION_KEY = 'current_active_session';
 export type GameSaveStorageSnapshot = GameStateSnapshot;
+
+function getScopedActiveSessionKey(): string {
+    const uid = getCurrentActiveUid();
+    return uid ? `active_session_${uid}` : ACTIVE_SESSION_KEY;
+}
+
+function getScopedActiveSessionSyncKey(): string {
+    return getScopedKey('neosantara_active_session_sync');
+}
 
 interface SaveSummary {
     id: number;
@@ -56,32 +65,53 @@ function openDatabase(): Promise<IDBDatabase> {
     }
 
     return new Promise((resolve, reject) => {
-        // Coba buka dengan versi target DATABASE_VERSION
-        const request = window.indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
-        request.onupgradeneeded = () => {
-            const database = request.result;
-            if (!database.objectStoreNames.contains(STORE_NAME)) {
-                database.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        // Gunakan open() tanpa nomor versi spesifik terlebih dahulu
+        // agar browser membuka versi tertinggi yang sudah tersimpan tanpa memicu VersionError
+        const initialReq = window.indexedDB.open(DATABASE_NAME);
+
+        initialReq.onupgradeneeded = () => {
+            const db = initialReq.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id' });
             }
-            if (!database.objectStoreNames.contains(ACTIVE_SESSION_STORE)) {
-                database.createObjectStore(ACTIVE_SESSION_STORE, { keyPath: 'id' });
+            if (!db.objectStoreNames.contains(ACTIVE_SESSION_STORE)) {
+                db.createObjectStore(ACTIVE_SESSION_STORE, { keyPath: 'id' });
             }
         };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => {
-            const err = request.error;
-            // Jika ada VersionError (misal browser pemain sudah pernah merekam versi lebih tinggi dari percobaan sebelumnya)
-            if (err && err.name === 'VersionError') {
-                // Buka tanpa menentukan nomor versi agar otomatis memakai versi tertinggi yang sudah ada di browser
-                const fallbackReq = window.indexedDB.open(DATABASE_NAME);
-                fallbackReq.onsuccess = () => resolve(fallbackReq.result);
-                fallbackReq.onerror = () => reject(fallbackReq.error ?? new Error('Gagal membuka penyimpanan save game.'));
-                fallbackReq.onblocked = () => reject(new Error('Penyimpanan save game sedang digunakan tab lain.'));
+
+        initialReq.onsuccess = () => {
+            const db = initialReq.result;
+            // Periksa apakah kedua object store yang diperlukan sudah ada
+            const hasStores = db.objectStoreNames.contains(STORE_NAME) &&
+                              db.objectStoreNames.contains(ACTIVE_SESSION_STORE);
+            if (hasStores) {
+                resolve(db);
                 return;
             }
-            reject(err ?? new Error('Gagal membuka penyimpanan save game.'));
+
+            // Jika ada store yang belum dibuat, upgrade ke versi saat ini + 1
+            const nextVersion = (db.version || 1) + 1;
+            db.close();
+
+            const upgradeReq = window.indexedDB.open(DATABASE_NAME, nextVersion);
+            upgradeReq.onupgradeneeded = () => {
+                const upgradedDb = upgradeReq.result;
+                if (!upgradedDb.objectStoreNames.contains(STORE_NAME)) {
+                    upgradedDb.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                }
+                if (!upgradedDb.objectStoreNames.contains(ACTIVE_SESSION_STORE)) {
+                    upgradedDb.createObjectStore(ACTIVE_SESSION_STORE, { keyPath: 'id' });
+                }
+            };
+            upgradeReq.onsuccess = () => resolve(upgradeReq.result);
+            upgradeReq.onerror = () => reject(upgradeReq.error ?? new Error('Gagal mengupgrade penyimpanan save game.'));
+            upgradeReq.onblocked = () => reject(new Error('Penyimpanan save game sedang digunakan tab lain.'));
         };
-        request.onblocked = () => reject(new Error('Penyimpanan save game sedang digunakan tab lain.'));
+
+        initialReq.onerror = () => {
+            reject(initialReq.error ?? new Error('Gagal membuka penyimpanan save game.'));
+        };
+        initialReq.onblocked = () => reject(new Error('Penyimpanan save game sedang digunakan tab lain.'));
     });
 }
 
@@ -201,19 +231,19 @@ export async function clearPendingGameSave(): Promise<void> {
     }
 }
 
-const ACTIVE_SESSION_SYNC_KEY = 'neosantara_active_session_sync';
-
 export async function saveActiveGameSessionSnapshot<T>(snapshot: T): Promise<void> {
     if (typeof window === 'undefined') return;
     try {
+        const syncKey = getScopedActiveSessionSyncKey();
+        const storeKey = getScopedActiveSessionKey();
         try {
-            window.sessionStorage.setItem(ACTIVE_SESSION_SYNC_KEY, JSON.stringify(snapshot));
+            window.sessionStorage.setItem(syncKey, JSON.stringify(snapshot));
         } catch {}
 
         const database = await openDatabase();
         await new Promise<void>((resolve, reject) => {
             const transaction = database.transaction(ACTIVE_SESSION_STORE, 'readwrite');
-            transaction.objectStore(ACTIVE_SESSION_STORE).put({ id: ACTIVE_SESSION_KEY, save: snapshot });
+            transaction.objectStore(ACTIVE_SESSION_STORE).put({ id: storeKey, save: snapshot });
             transaction.oncomplete = () => resolve();
             transaction.onerror = () => reject(transaction.error);
         });
@@ -226,7 +256,8 @@ export async function saveActiveGameSessionSnapshot<T>(snapshot: T): Promise<voi
 export function readSyncActiveGameSessionSnapshot<T>(): T | null {
     if (typeof window === 'undefined') return null;
     try {
-        const raw = window.sessionStorage.getItem(ACTIVE_SESSION_SYNC_KEY);
+        const syncKey = getScopedActiveSessionSyncKey();
+        const raw = window.sessionStorage.getItem(syncKey);
         return raw ? JSON.parse(raw) as T : null;
     } catch {
         return null;
@@ -240,9 +271,10 @@ export async function readActiveGameSessionSnapshot<T>(): Promise<T | null> {
 
     try {
         const database = await openDatabase();
+        const storeKey = getScopedActiveSessionKey();
         const result = await new Promise<T | null>((resolve, reject) => {
             const transaction = database.transaction(ACTIVE_SESSION_STORE, 'readonly');
-            const request = transaction.objectStore(ACTIVE_SESSION_STORE).get(ACTIVE_SESSION_KEY);
+            const request = transaction.objectStore(ACTIVE_SESSION_STORE).get(storeKey);
             request.onsuccess = () => {
                 const record = request.result as { id: string; save: T } | undefined;
                 resolve(record ? record.save : null);
@@ -259,14 +291,16 @@ export async function readActiveGameSessionSnapshot<T>(): Promise<T | null> {
 export async function clearActiveGameSessionSnapshot(): Promise<void> {
     if (typeof window === 'undefined') return;
     try {
-        window.sessionStorage.removeItem(ACTIVE_SESSION_SYNC_KEY);
+        const syncKey = getScopedActiveSessionSyncKey();
+        window.sessionStorage.removeItem(syncKey);
     } catch {}
 
     try {
         const database = await openDatabase();
+        const storeKey = getScopedActiveSessionKey();
         await new Promise<void>((resolve, reject) => {
             const transaction = database.transaction(ACTIVE_SESSION_STORE, 'readwrite');
-            transaction.objectStore(ACTIVE_SESSION_STORE).delete(ACTIVE_SESSION_KEY);
+            transaction.objectStore(ACTIVE_SESSION_STORE).delete(storeKey);
             transaction.oncomplete = () => resolve();
             transaction.onerror = () => reject(transaction.error);
         });

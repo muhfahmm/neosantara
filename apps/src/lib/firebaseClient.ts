@@ -7,6 +7,7 @@ import {
     GoogleAuthProvider,
     onAuthStateChanged,
     setPersistence,
+    signInWithCredential,
     signInWithPopup,
     signOut,
     type Auth,
@@ -15,6 +16,9 @@ import {
 } from 'firebase/auth';
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { setGameStateActiveUser } from '@/app/logic/gameStateStorage';
+
+const desktopGoogleClientId = process.env.NEXT_PUBLIC_GOOGLE_DESKTOP_CLIENT_ID?.trim() ||
+    process.env.NEXT_PUBLIC_FIREBASE_PLAY_GAMES_WEB_CLIENT_ID?.trim() || '';
 
 const firebaseConfig: FirebaseOptions = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -105,12 +109,51 @@ export async function signInWithGoogle(): Promise<void> {
     const auth = getFirebaseAuth();
     await setPersistence(auth, browserLocalPersistence);
 
+    // 1. Cabang Tauri Desktop (Windows .exe / macOS / Linux)
+    if (isTauri() && typeof navigator !== 'undefined' && !/android/i.test(navigator.userAgent)) {
+        if (!desktopGoogleClientId) {
+            throw new Error('Konfigurasi Google Desktop Client ID belum diatur. Harap set NEXT_PUBLIC_GOOGLE_DESKTOP_CLIENT_ID.');
+        }
+
+        try {
+            const result = await invoke<{ idToken: string; accessToken?: string }>('desktop_google_sign_in', {
+                clientId: desktopGoogleClientId,
+            });
+
+            if (!result || !result.idToken) {
+                throw new Error('Gagal menerima token identitas dari autentikasi Google.');
+            }
+
+            const credential = GoogleAuthProvider.credential(result.idToken, result.accessToken);
+            await signInWithCredential(auth, credential);
+            return;
+        } catch (error) {
+            console.error('Desktop Google Sign-In error:', error);
+            const msg = error instanceof Error ? error.message : String(error || '');
+            if (msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('habis')) {
+                throw new Error('Waktu login telah habis (timeout 120 detik). Silakan coba lagi.');
+            }
+            if (msg.toLowerCase().includes('cancel') || msg.toLowerCase().includes('dibatalkan')) {
+                throw new Error('Proses login dibatalkan oleh pengguna.');
+            }
+            throw new Error(`Login Google Desktop gagal: ${msg}`);
+        }
+    }
+
+    // 2. Cabang Web Browser biasa (signInWithPopup standar)
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     await signInWithPopup(auth, provider);
 }
 
 export async function signOutFromFirebase(): Promise<void> {
+    if (isTauri() && typeof navigator !== 'undefined' && !/android/i.test(navigator.userAgent)) {
+        try {
+            await invoke('desktop_google_sign_out');
+        } catch (e) {
+            console.warn('Failed to clean stored desktop token:', e);
+        }
+    }
     await signOut(getFirebaseAuth());
     setGameStateActiveUser(null);
 }
