@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     Play, Settings, Save, LogOut, Globe, Shield,
-    Signal, Crosshair, ScrollText
+    Signal, Crosshair, ScrollText, User as UserIcon, LogIn, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import type { User } from 'firebase/auth';
 import { ExitConfirmModal } from './paused_menu/ExitConfirmModal';
 import { CreditsMenu } from './credits_menu/CreditsMenu';
 import { MainMenuContinueScreen, type MainMenuSave } from './main_menu/MainMenuContinueScreen';
@@ -16,7 +17,12 @@ import { MOBILE_PREBAKED_CONTINENTS } from './map_system/rust_map_mobile/mobileP
 import { isMobileDevice } from './map_system/rust_map_mobile';
 import { useLanguage } from '@/app/page/paused_menu/terjemahan_paused_menu/languageLogic';
 import { stagePendingGameSave } from '@/app/logic/pendingGameSave';
-import { checkIsUserAuthenticated, fetchWithFirebaseAuth } from '@/lib/firebaseClient';
+import {
+    checkIsUserAuthenticated,
+    fetchWithFirebaseAuth,
+    observeFirebaseAuth,
+    signOutFromFirebase
+} from '@/lib/firebaseClient';
 import { SaveAuthRequiredModal } from './paused_menu/1_savegame/SaveAuthRequiredModal';
 
 /* ============================================================
@@ -555,6 +561,9 @@ export default function PlayMenuPage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
+
     const [mainMenuScreen, setMainMenuScreen] = useState<'menu' | 'continue' | 'settings' | 'credits'>('menu');
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -566,6 +575,20 @@ export default function PlayMenuPage() {
         if (soundManager) {
             soundManager.playMusic();
         }
+
+        const unsubscribe = observeFirebaseAuth(
+            (user) => {
+                setCurrentUser(user);
+                setIsAuthLoading(false);
+            },
+            () => {
+                setIsAuthLoading(false);
+            }
+        );
+
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const fetchSaveFiles = async () => {
@@ -714,6 +737,98 @@ export default function PlayMenuPage() {
                         className="absolute bottom-1/4 right-1/4 w-36 sm:w-48 lg:w-60 h-36 sm:h-48 lg:h-60 bg-blue-500/10 rounded-full "
                     />
                 </div>
+
+                {/* ============================================
+                    TOP STATUS NAVBAR (User Auth & System Status)
+                    ============================================ */}
+                <header className="fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between pointer-events-auto backdrop-blur-md bg-slate-950/70 border-b border-emerald-500/20 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                    {/* Brand Identifier */}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="relative flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+                            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[11px] sm:text-xs font-black tracking-[0.2em] text-white">NEO<span className="text-emerald-400">SANTARA</span></span>
+                                <span className="hidden md:inline-block text-[8px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono font-semibold border border-emerald-500/30">
+                                    SYS.READY
+                                </span>
+                            </div>
+                            <span className="hidden sm:inline-block text-[8px] text-slate-400 tracking-wider font-mono">
+                                GEOPOLITICAL COMMAND CONSOLE
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* User Auth Status Bar */}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        {isAuthLoading ? (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-400 text-[10px] sm:text-xs font-mono animate-pulse">
+                                <div className="w-2 h-2 rounded-full bg-slate-500 animate-ping" />
+                                <span>MEMERIKSA SESI...</span>
+                            </div>
+                        ) : currentUser ? (
+                            <div className="flex items-center gap-2 sm:gap-3">
+                                {/* User Info Card */}
+                                <div className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                                    {currentUser.photoURL ? (
+                                        <img
+                                            src={currentUser.photoURL}
+                                            alt={currentUser.displayName || 'Akun'}
+                                            className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-emerald-400/50 object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center">
+                                            <UserIcon className="w-3 h-3 text-emerald-400" />
+                                        </div>
+                                    )}
+                                    <div className="flex flex-col text-left max-w-[120px] sm:max-w-[180px]">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-[10px] sm:text-xs font-bold text-slate-100 truncate">
+                                                {currentUser.displayName || currentUser.email?.split('@')[0] || 'Komandan'}
+                                            </span>
+                                            <span className="hidden sm:inline-flex w-1.5 h-1.5 rounded-full bg-emerald-400" title="Terhubung" />
+                                        </div>
+                                        <span className="text-[8px] text-emerald-400/90 font-mono tracking-wider flex items-center gap-1 truncate">
+                                            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                            TERHUBUNG (GOOGLE)
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Logout Quick Action */}
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        if (window.confirm("Keluar dari akun Google ini?")) {
+                                            await signOutFromFirebase();
+                                        }
+                                    }}
+                                    title="Keluar Akun"
+                                    className="p-1.5 sm:p-2 rounded-lg bg-white/5 hover:bg-rose-500/20 active:bg-rose-500/30 border border-white/10 hover:border-rose-500/40 text-slate-400 hover:text-rose-300 transition-all duration-200 cursor-pointer flex items-center justify-center"
+                                >
+                                    <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[9px] font-mono">
+                                    <AlertCircle className="w-3 h-3 text-amber-400" />
+                                    <span>BELUM LOGIN (FITUR CLOUD SAVE TERKUNCI)</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="group relative flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 active:bg-emerald-500/35 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 hover:text-emerald-100 font-bold text-[10px] sm:text-xs tracking-wider transition-all duration-200 shadow-[0_0_15px_rgba(16,185,129,0.15)] cursor-pointer"
+                                >
+                                    <LogIn className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                                    <span>LOGIN GOOGLE</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </header>
 
                 {/* ============================================
                     FX Layers
