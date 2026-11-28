@@ -224,7 +224,7 @@ pub fn wait_for_authorization_code(
 
     loop {
         if start_time.elapsed() > timeout {
-            return Err("Waktu proses login habis (timeout 120 detik). Silakan coba lagi.".to_string());
+            return Err("Waktu proses login di browser telah habis (timeout 3 menit). Silakan coba lagi.".to_string());
         }
 
         match listener.accept() {
@@ -255,6 +255,7 @@ pub fn wait_for_authorization_code(
 /// Pertukaran authorization code dengan token ke oauth2.googleapis.com
 pub async fn exchange_code_for_tokens(
     client_id: &str,
+    client_secret: Option<&str>,
     code: &str,
     code_verifier: &str,
     redirect_uri: &str,
@@ -265,13 +266,19 @@ pub async fn exchange_code_for_tokens(
         .build()
         .map_err(|e| format!("Failed to create HTTP client: {}", e))?;
 
-    let params = [
+    let mut params = vec![
         ("code", code),
         ("client_id", client_id),
         ("code_verifier", code_verifier),
         ("redirect_uri", redirect_uri),
         ("grant_type", "authorization_code"),
     ];
+
+    if let Some(secret) = client_secret {
+        if !secret.trim().is_empty() {
+            params.push(("client_secret", secret));
+        }
+    }
 
     let res = client
         .post("https://oauth2.googleapis.com/token")
@@ -310,10 +317,73 @@ pub async fn exchange_code_for_tokens(
     })
 }
 
+/// Menukar refresh_token yang tersimpan di keychain menjadi id_token baru
+pub async fn refresh_stored_token(
+    client_id: &str,
+    client_secret: Option<&str>,
+) -> Result<DesktopAuthResult, String> {
+    let refresh_token = get_stored_refresh_token()
+        .ok_or("No stored refresh token found in OS keychain")?;
+
+    let client = reqwest::Client::builder()
+        .timeout(Duration::from_secs(15))
+        .build()
+        .map_err(|e| format!("Failed to create HTTP client: {}", e))?;
+
+    let mut params = vec![
+        ("client_id", client_id),
+        ("refresh_token", refresh_token.as_str()),
+        ("grant_type", "refresh_token"),
+    ];
+
+    if let Some(secret) = client_secret {
+        if !secret.trim().is_empty() {
+            params.push(("client_secret", secret));
+        }
+    }
+
+    let res = client
+        .post("https://oauth2.googleapis.com/token")
+        .form(&params)
+        .send()
+        .await
+        .map_err(|e| format!("Network request to Google refresh endpoint failed: {}", e))?;
+
+    let status = res.status();
+    let token_resp: TokenResponse = res
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse Google refresh response: {}", e))?;
+
+    if !status.is_success() {
+        // Jika token tidak valid / revoked, hapus dari keychain
+        delete_stored_refresh_token();
+        let err_msg = token_resp
+            .error_description
+            .or(token_resp.error)
+            .unwrap_or_else(|| format!("HTTP status {}", status));
+        return Err(format!("Google token refresh failed: {}", err_msg));
+    }
+
+    let id_token = token_resp
+        .id_token
+        .ok_or("No ID token returned during refresh by Google")?;
+
+    if let Some(ref new_refresh) = token_resp.refresh_token {
+        save_refresh_token(new_refresh);
+    }
+
+    Ok(DesktopAuthResult {
+        id_token,
+        access_token: token_resp.access_token,
+    })
+}
+
 /// Perintah utama login Google Desktop via Browser Luar + PKCE Loopback
 pub async fn execute_desktop_google_sign_in<R: tauri::Runtime>(
     app: &tauri::AppHandle<R>,
     client_id: &str,
+    client_secret: Option<&str>,
 ) -> Result<DesktopAuthResult, String> {
     if client_id.trim().is_empty() {
         return Err("Google Desktop Client ID belum dikonfigurasi.".to_string());
@@ -359,10 +429,10 @@ pub async fn execute_desktop_google_sign_in<R: tauri::Runtime>(
         .open_url(&auth_url_string, None::<&str>)
         .map_err(|e| format!("Gagal membuka browser sistem: {}", e))?;
 
-    // 5. Tunggu callback kode otorisasi di loopback listener (timeout 120 dtk)
+    // 5. Tunggu callback kode otorisasi di loopback listener (timeout 3 menit / 180 detik)
     let state_clone = state.clone();
     let auth_code = tokio::task::spawn_blocking(move || {
-        wait_for_authorization_code(listener, &state_clone, 120)
+        wait_for_authorization_code(listener, &state_clone, 180)
     })
     .await
     .map_err(|e| format!("Task execution error: {}", e))??;
@@ -370,6 +440,7 @@ pub async fn execute_desktop_google_sign_in<R: tauri::Runtime>(
     // 6. Tukar code dengan token di Rust melalui HTTPS ke oauth2.googleapis.com
     let result = exchange_code_for_tokens(
         client_id,
+        client_secret,
         &auth_code,
         &code_verifier,
         &redirect_uri,

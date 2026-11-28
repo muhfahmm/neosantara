@@ -112,7 +112,7 @@ export function SaveAuthRequiredModal({
                             {isLoggingIn ? (
                                 <>
                                     <Loader2 className="h-5 w-5 animate-spin text-slate-600" />
-                                    <span>Menghubungkan Akun Google...</span>
+                                    <span>Menunggu login di browser...</span>
                                 </>
                             ) : (
                                 <>

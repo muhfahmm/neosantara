@@ -12,7 +12,7 @@ const cspHeader = `
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' data: https://fonts.gstatic.com;
-  img-src 'self' data: blob: https://flagcdn.com https://lh3.googleusercontent.com https://*.googleusercontent.com;
+  img-src 'self' data: blob: https://flagcdn.com https://lh3.googleusercontent.com https://*.googleusercontent.com https://www.transparenttextures.com;
   connect-src 'self' http://localhost:* https://neosantara.com https://*.neosantara.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseio.com https://*.googleapis.com http://127.0.0.1:8000;
   frame-src 'self' https://accounts.google.com https://*.firebaseapp.com;
   frame-ancestors 'none';

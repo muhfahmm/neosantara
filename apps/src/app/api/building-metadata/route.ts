@@ -42,7 +42,15 @@ async function loadCategoryMetadata(baseDir: string): Promise<Record<string, unk
   const metadataByFile = new Map<string, Record<string, unknown>>();
   databaseRows.forEach(row => {
     const fileMetadata = metadataByFile.get(row.source_file) ?? {};
-    fileMetadata[row.entry_key] = row.metadata;
+    let parsed = row.metadata;
+    if (typeof parsed === 'string') {
+      try {
+        parsed = JSON.parse(parsed);
+      } catch {
+        parsed = {};
+      }
+    }
+    fileMetadata[row.entry_key] = parsed;
     metadataByFile.set(row.source_file, fileMetadata);
   });
   

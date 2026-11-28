@@ -62,7 +62,15 @@ export async function GET(request: Request) {
 
     const buildingMetadata: Record<string, unknown> = {};
     for (const row of buildingRows) {
-      buildingMetadata[row.entry_key] = row.metadata;
+      let parsed = row.metadata;
+      if (typeof parsed === 'string') {
+        try {
+          parsed = JSON.parse(parsed);
+        } catch {
+          parsed = {};
+        }
+      }
+      buildingMetadata[row.entry_key] = parsed;
     }
 
     const bundle = {

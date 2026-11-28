@@ -143,12 +143,38 @@ function createMainWindow(startUrl) {
     backgroundColor: "#0b1320",
     autoHideMenuBar: true,
     webPreferences: {
-      contextIsolation: true,
+      contextIsolation: false,
       nodeIntegration: false,
-      sandbox: true,
+      sandbox: false,
       zoomFactor: 1.0,
+      nativeWindowOpen: true,
     },
-    userAgent: "NeosantaraClient-Desktop/1.0 (Windows; Electron)",
+    // User-agent Chrome standar agar Google Login tidak mendeteksi webview embedded yang dibatasi
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+  });
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // Tangani popup Google OAuth dan Firebase Auth secara khusus
+    if (
+      url.startsWith("https://accounts.google.com") ||
+      url.startsWith("https://neosantara-auth.firebaseapp.com") ||
+      url.startsWith("https://neosantara-auth.web.app")
+    ) {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          width: 520,
+          height: 680,
+          autoHideMenuBar: true,
+          webPreferences: {
+            contextIsolation: false,
+            nodeIntegration: false,
+            sandbox: false,
+          },
+        },
+      };
+    }
+    return { action: "allow" };
   });
 
   mainWindow.webContents.on("console-message", (e, level, message, line, sourceId) => {

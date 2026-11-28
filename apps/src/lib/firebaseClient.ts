@@ -18,7 +18,11 @@ import { invoke, isTauri } from '@tauri-apps/api/core';
 import { setGameStateActiveUser } from '@/app/logic/gameStateStorage';
 
 const desktopGoogleClientId = process.env.NEXT_PUBLIC_GOOGLE_DESKTOP_CLIENT_ID?.trim() ||
+    process.env.GOOGLE_DESKTOP_CLIENT_ID?.trim() ||
     process.env.NEXT_PUBLIC_FIREBASE_PLAY_GAMES_WEB_CLIENT_ID?.trim() || '';
+
+const desktopGoogleClientSecret = process.env.NEXT_PUBLIC_GOOGLE_DESKTOP_CLIENT_SECRET?.trim() ||
+    process.env.GOOGLE_DESKTOP_CLIENT_SECRET?.trim() || '';
 
 const firebaseConfig: FirebaseOptions = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -112,12 +116,13 @@ export async function signInWithGoogle(): Promise<void> {
     // 1. Cabang Tauri Desktop (Windows .exe / macOS / Linux)
     if (isTauri() && typeof navigator !== 'undefined' && !/android/i.test(navigator.userAgent)) {
         if (!desktopGoogleClientId) {
-            throw new Error('Konfigurasi Google Desktop Client ID belum diatur. Harap set NEXT_PUBLIC_GOOGLE_DESKTOP_CLIENT_ID.');
+            throw new Error('Konfigurasi Google Desktop Client ID belum diatur. Harap set NEXT_PUBLIC_GOOGLE_DESKTOP_CLIENT_ID atau GOOGLE_DESKTOP_CLIENT_ID.');
         }
 
         try {
-            const result = await invoke<{ idToken: string; accessToken?: string }>('desktop_google_sign_in', {
+            const result = await invoke<{ idToken: string; accessToken?: string }>('google_oauth_login', {
                 clientId: desktopGoogleClientId,
+                clientSecret: desktopGoogleClientSecret || undefined,
             });
 
             if (!result || !result.idToken) {
@@ -131,7 +136,7 @@ export async function signInWithGoogle(): Promise<void> {
             console.error('Desktop Google Sign-In error:', error);
             const msg = error instanceof Error ? error.message : String(error || '');
             if (msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('habis')) {
-                throw new Error('Waktu login telah habis (timeout 120 detik). Silakan coba lagi.');
+                throw new Error('Waktu login di browser telah habis (timeout 3 menit). Silakan coba lagi.');
             }
             if (msg.toLowerCase().includes('cancel') || msg.toLowerCase().includes('dibatalkan')) {
                 throw new Error('Proses login dibatalkan oleh pengguna.');
@@ -149,7 +154,7 @@ export async function signInWithGoogle(): Promise<void> {
 export async function signOutFromFirebase(): Promise<void> {
     if (isTauri() && typeof navigator !== 'undefined' && !/android/i.test(navigator.userAgent)) {
         try {
-            await invoke('desktop_google_sign_out');
+            await invoke('google_oauth_logout');
         } catch (e) {
             console.warn('Failed to clean stored desktop token:', e);
         }
@@ -187,6 +192,27 @@ export async function checkIsUserAuthenticated(): Promise<boolean> {
     try {
         const auth = getFirebaseAuth();
         if (auth.currentUser) return true;
+
+        // Coba pulihkan sesi Desktop Tauri jika ada token di OS Keychain
+        if (isTauri() && typeof navigator !== 'undefined' && !/android/i.test(navigator.userAgent) && desktopGoogleClientId) {
+            try {
+                const refreshed = await invoke<{ idToken: string; accessToken?: string }>('google_oauth_refresh', {
+                    clientId: desktopGoogleClientId,
+                    clientSecret: desktopGoogleClientSecret || undefined,
+                });
+                if (refreshed && refreshed.idToken) {
+                    const credential = GoogleAuthProvider.credential(refreshed.idToken, refreshed.accessToken);
+                    const userCredential = await signInWithCredential(auth, credential);
+                    if (userCredential?.user) {
+                        setGameStateActiveUser(userCredential.user.uid);
+                        return true;
+                    }
+                }
+            } catch (e) {
+                // Refresh token tidak ada atau kadaluarsa, lanjutkan ke onAuthStateChanged biasa
+            }
+        }
+
         const user = await new Promise<User | null>((resolve) => {
             const timeout = setTimeout(() => resolve(null), 1500);
             const unsubscribe = onAuthStateChanged(auth, (currentUser) => {

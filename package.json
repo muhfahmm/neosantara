@@ -51,6 +51,7 @@
         "to": "app-icon.ico"
       }
     ],
+    "afterPack": "scripts/after-pack.js",
     "asar": true
   },
   "devDependencies": {

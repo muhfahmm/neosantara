@@ -129,24 +129,25 @@ async fn play_games_sign_out(
 pub mod desktop_auth;
 
 #[tauri::command]
-async fn desktop_google_sign_in(
+async fn google_oauth_login(
   app: tauri::AppHandle<tauri::Wry>,
   client_id: String,
+  client_secret: Option<String>,
 ) -> Result<serde_json::Value, String> {
   #[cfg(not(target_os = "android"))]
   {
-    let auth_result = desktop_auth::execute_desktop_google_sign_in(&app, &client_id).await?;
+    let auth_result = desktop_auth::execute_desktop_google_sign_in(&app, &client_id, client_secret.as_deref()).await?;
     serde_json::to_value(auth_result).map_err(|e| e.to_string())
   }
   #[cfg(target_os = "android")]
   {
-    let _ = (app, client_id);
-    Err("desktop_google_sign_in is only available on desktop platforms.".into())
+    let _ = (app, client_id, client_secret);
+    Err("google_oauth_login is only available on desktop platforms.".into())
   }
 }
 
 #[tauri::command]
-async fn desktop_google_sign_out() -> Result<(), String> {
+async fn google_oauth_logout() -> Result<(), String> {
   #[cfg(not(target_os = "android"))]
   {
     desktop_auth::delete_stored_refresh_token();
@@ -156,6 +157,37 @@ async fn desktop_google_sign_out() -> Result<(), String> {
   {
     Ok(())
   }
+}
+
+#[tauri::command]
+async fn google_oauth_refresh(
+  client_id: String,
+  client_secret: Option<String>,
+) -> Result<serde_json::Value, String> {
+  #[cfg(not(target_os = "android"))]
+  {
+    let auth_result = desktop_auth::refresh_stored_token(&client_id, client_secret.as_deref()).await?;
+    serde_json::to_value(auth_result).map_err(|e| e.to_string())
+  }
+  #[cfg(target_os = "android")]
+  {
+    let _ = (client_id, client_secret);
+    Err("google_oauth_refresh is only available on desktop platforms.".into())
+  }
+}
+
+// Alias untuk kompatibilitas mundur
+#[tauri::command]
+async fn desktop_google_sign_in(
+  app: tauri::AppHandle<tauri::Wry>,
+  client_id: String,
+) -> Result<serde_json::Value, String> {
+  google_oauth_login(app, client_id, None).await
+}
+
+#[tauri::command]
+async fn desktop_google_sign_out() -> Result<(), String> {
+  google_oauth_logout().await
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -168,6 +200,9 @@ pub fn run() {
       play_games_current_user,
       play_games_id_token,
       play_games_sign_out,
+      google_oauth_login,
+      google_oauth_logout,
+      google_oauth_refresh,
       desktop_google_sign_in,
       desktop_google_sign_out
     ])
