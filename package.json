@@ -14,6 +14,7 @@
     "tauri": "npm run tauri:dev -w frontend",
     "tauri:dev": "npm run tauri:dev -w frontend",
     "tauri:build": "npm run tauri:build -w frontend",
+    "tauri:build-frontend": "npm run tauri:build-frontend -w frontend",
     "tauri:android:prepare": "npm run tauri:android:prepare -w frontend --",
     "tauri:android:dev": "npm run tauri:android:dev -w frontend --",
     "tauri:android:build": "npm run tauri:android:build -w frontend",

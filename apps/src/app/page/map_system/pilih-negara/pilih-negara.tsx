@@ -675,13 +675,11 @@ export default function PilihNegaraPage() {
             <ChevronLeft className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
           </button>
 
-          <div className="flex items-end gap-2 lg:gap-2.5 xl:gap-3 overflow-visible h-24 lg:h-28 xl:h-32 px-8 lg:px-10 xl:px-12">
-            <AnimatePresence mode="popLayout">
+          <div className="flex items-end justify-center gap-2 lg:gap-2.5 xl:gap-3 overflow-visible h-24 lg:h-28 xl:h-32 px-8 lg:px-10 xl:px-12 w-full">
+            <AnimatePresence initial={false}>
               {getVisibleItems().map((item) => (
                 <motion.div
-                  key={`${item.country}-${item.offset}`}
-                  layout
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  key={item.offset}
                   onClick={() => {
                     setCurrentIndex(
                       (prev) => (prev + item.offset + filteredCountries.length) % filteredCountries.length
@@ -694,7 +692,6 @@ export default function PilihNegaraPage() {
                     y: item.offset === 0 && hasInteracted ? -15 : 0,
                     zIndex: 10 - Math.abs(item.offset),
                   }}
-                  exit={{ opacity: 0, scale: 0.5 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   className={`
                     relative w-24 lg:w-28 xl:w-36 h-20 lg:h-24 xl:h-28 rounded-xl xl:rounded-2xl p-2 lg:p-3 xl:p-4 flex flex-col items-center justify-center text-center cursor-pointer
