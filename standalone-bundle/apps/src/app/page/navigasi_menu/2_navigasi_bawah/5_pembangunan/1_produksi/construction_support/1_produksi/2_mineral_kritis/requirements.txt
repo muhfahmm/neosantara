@@ -1,0 +1,54 @@
+=> mineral kritis
+1. emas
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+2. uranium
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+3. batu_bara
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+4. minyak_bumi
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+5. gas_alam
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+6. garam
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+7. litium
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+8. logam_tanah_jarang
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+9. bijih_besi
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)

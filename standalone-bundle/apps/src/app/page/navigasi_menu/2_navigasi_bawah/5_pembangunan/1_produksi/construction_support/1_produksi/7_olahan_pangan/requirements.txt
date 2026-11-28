@@ -1,0 +1,35 @@
+=> sektor olahan pangan
+1. air_mineral
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+2. gula
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+3. roti
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+4. pengolahan_daging
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+5. mie_instan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+6. minyak_goreng
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+
+7. susu
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)

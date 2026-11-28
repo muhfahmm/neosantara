@@ -1,0 +1,43 @@
+=> kelistrikan
+1. pembangkit_listrik_tenaga_gas
+ > pembangunan:
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+ > bahan bakar:
+ gas alam (dari gas_alam)
+ 
+2. pembangkit_listrik_tenaga_air
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+ ltj (dari logam_tanah_jarang)
+
+3. pembangkit_listrik_tenaga_nuklir
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+ > bahan bakar
+ uranium
+
+4. pembangkit_listrik_tenaga_surya
+ > pembangunan
+ baja (dari baja)
+
+5. pembangkit_listrik_tenaga_uap
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+ > bahan bakar
+ batu bara
+ minyak bumi
+
+6. pembangkit_listrik_tenaga_angin
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+ baja (dari baja)
+

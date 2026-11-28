@@ -1,0 +1,12 @@
+=> sektor perikanan
+1. udang
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+2. Mutiara
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+3. ikan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)

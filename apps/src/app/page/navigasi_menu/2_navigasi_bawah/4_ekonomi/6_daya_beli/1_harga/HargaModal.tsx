@@ -183,7 +183,14 @@ function HargaModalContent({
   // Kalkulasi berat (satisfaction & impacts) akan mengekor di belakang.
   const deferredPrices = useDeferredValue(prices);
 
-  const countryName = String(countryDetail?.country || "");
+  const countryName = String(
+    countryDetail?.country ||
+    countryDetail?.nama_negara ||
+    countryDetail?.name_id ||
+    countryDetail?.name_en ||
+    countryDetail?.country_slug ||
+    ""
+  );
 
   // ── Refs ──────────────────────────────────────────────────────────────
   const pricesInitializedRef = useRef<string>("");

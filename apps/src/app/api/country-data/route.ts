@@ -306,7 +306,11 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
         __fileOrder: order,
         __continent: getContinentForCountry(slug, prof.iso, order),
 
+        country: prof.country || prof.name_id || prof.name_en || slug,
         country_slug: slug,
+        country_name: prof.country || prof.name_id || prof.name_en || slug,
+        name: prof.name_id || prof.country || slug,
+        nama_negara: prof.name_id || prof.country || slug,
         iso: prof.iso || slug,
         name_id: prof.name_id || prof.country || slug,
         name_en: prof.name_en || prof.name_id || slug,

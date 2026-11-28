@@ -1,0 +1,25 @@
+=> manufaktur
+1. semikonduktor
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+2. pabrik_mesin
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+3. pabrik_besi
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+4. semen_beton
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+5. kayu
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)

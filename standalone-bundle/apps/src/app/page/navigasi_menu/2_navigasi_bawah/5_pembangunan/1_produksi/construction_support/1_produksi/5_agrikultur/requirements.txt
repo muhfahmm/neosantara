@@ -1,0 +1,60 @@
+=> sektor agrikultur
+1. padi
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+2. gandum
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+3. jagung
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+4. sayur
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+5. umbi
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+6. kedelai
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+7. kelapa_sawit
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+8. kopi
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+9. teh
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+10. kakao
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+11. tebu
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+12. karet
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)

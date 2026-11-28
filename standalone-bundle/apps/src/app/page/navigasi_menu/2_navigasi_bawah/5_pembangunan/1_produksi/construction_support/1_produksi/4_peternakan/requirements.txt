@@ -1,0 +1,20 @@
+=> sektor peternakan
+1. ayam_unggas
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+2. sapi_perah
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+3. sapi_potong
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)
+
+4. domba_kambing
+ > pembangunan
+ semen beton (dari semen_beton)
+ kayu (dari kayu)

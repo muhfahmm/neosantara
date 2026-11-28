@@ -1,0 +1,25 @@
+Regional city capture cells in city_province_cells.json
+
+The capture geometry for these countries is dissolved using the same Natural
+Earth Admin 1 region/region-code groupings used by aggregate_provinces.py:
+Azerbaijan, Burkina Faso, France, Hungary, Italy, Latvia, Malta, North
+Macedonia, Philippines, Slovenia, Uganda, United Kingdom, and Vietnam.
+
+Each dissolved region is associated with game city markers located inside it.
+If none fall inside, the region is assigned to its nearest game city using the
+region's area-weighted centroid. A nearby territory-specific marker is
+preferred for remote French regions. All exterior and interior rings are
+retained, including disconnected islands.
+
+Source: Natural Earth Admin 1,
+https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_1_states_provinces.geojson
+License: Public domain
+Attribution: Natural Earth (https://www.naturalearthdata.com/)
+
+Regenerate from the Natural Earth Admin 1 GeoJSON:
+python apps/scripts/generate_regional_city_cells.py path/to/ne_10m_admin_1.json
+
+The generator updates the regions and cityRegions sections of
+city_province_cells.json while preserving its cityCells section. City markers
+assigned to regional capture geometry are removed from cityCells so the same
+territory is not drawn twice.

@@ -1,0 +1,22 @@
+-- SECTION: json\\semua_fitur_negara\\1_pembangunan\\1_produksi\\5_sektor_agrikultur\\5_metadata_agrikultur.pg.sql
+CREATE TABLE IF NOT EXISTS database_building_metadata (
+source_file VARCHAR(500) NOT NULL,
+file_order INT NOT NULL,
+entry_key VARCHAR(200) NOT NULL,
+entry_order INT NOT NULL,
+metadata JSONB NOT NULL,
+PRIMARY KEY (source_file, entry_key)
+);
+INSERT INTO database_building_metadata (source_file, file_order, entry_key, entry_order, metadata) VALUES
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'padi', 1, '{"key":"1_sawah_padi","dataKey":"padi","label":"Pertanian Padi","deskripsi":"Pertanian Padi","produksi":200,"satuan":"KG","waktu_pembangunan":15,"biaya_pembangunan":1200,"konsumsi_listrik":0.0025}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'gandum', 2, '{"key":"2_ladang_gandum","dataKey":"gandum","label":"Pertanian Gandum","deskripsi":"Pertanian Gandum","produksi":150,"satuan":"KG","waktu_pembangunan":15,"biaya_pembangunan":1000,"item":"Gandum","konsumsi_listrik":0.0022}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'jagung', 3, '{"key":"3_ladang_jagung","dataKey":"jagung","label":"Pertanian Jagung","deskripsi":"Pertanian Jagung","produksi":80,"satuan":"KG","waktu_pembangunan":12,"biaya_pembangunan":850,"konsumsi_listrik":0.002}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'umbi', 4, '{"key":"4_ladang_umbi","dataKey":"umbi","label":"Pertanian Umbi-umbian","deskripsi":"Pertanian Umbi-umbian","produksi":50,"satuan":"KG","waktu_pembangunan":10,"biaya_pembangunan":650,"konsumsi_listrik":0.0015}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'kedelai', 5, '{"key":"5_ladang_kedelai","dataKey":"kedelai","label":"Pertanian Kedelai","deskripsi":"Pertanian Kedelai","produksi":25,"satuan":"KG","waktu_pembangunan":10,"biaya_pembangunan":750,"konsumsi_listrik":0.0018}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'kelapa_sawit', 6, '{"key":"6_perkebunan_sawit","dataKey":"kelapa_sawit","label":"Perkebunan Kelapa Sawit","deskripsi":"Perkebunan Kelapa Sawit","produksi":150,"satuan":"LITER","waktu_pembangunan":60,"biaya_pembangunan":6000,"konsumsi_listrik":0.0035}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'teh', 7, '{"key":"7_perkebunan_teh","dataKey":"teh","label":"Perkebunan Teh","deskripsi":"Perkebunan Teh","produksi":25,"satuan":"KG","waktu_pembangunan":20,"biaya_pembangunan":2500,"konsumsi_listrik":0.0025}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'kopi', 8, '{"key":"8_perkebunan_kopi","dataKey":"kopi","label":"Perkebunan Kopi","deskripsi":"Perkebunan Kopi","produksi":25,"satuan":"KG","waktu_pembangunan":30,"biaya_pembangunan":2800,"konsumsi_listrik":0.0025}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'kakao', 9, '{"key":"9_perkebunan_kakao","dataKey":"kakao","label":"Perkebunan Kakao","deskripsi":"Perkebunan Kakao","produksi":10,"satuan":"KG","waktu_pembangunan":35,"biaya_pembangunan":3500,"konsumsi_listrik":0.003}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'tebu', 10, '{"key":"10_perkebunan_tebu","dataKey":"tebu","label":"Perkebunan Tebu","deskripsi":"Perkebunan Tebu","produksi":85,"satuan":"KG","waktu_pembangunan":20,"biaya_pembangunan":1800,"konsumsi_listrik":0.0025}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'sayur', 11, '{"key":"11_kebun_sayur","dataKey":"sayur","label":"Pertanian Sayur Mayur","deskripsi":"Pertanian Sayur Mayur","produksi":65,"satuan":"KG","waktu_pembangunan":5,"biaya_pembangunan":500,"konsumsi_listrik":0.0012}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql', 5, 'karet', 12, '{"key":"12_perkebunan_karet","dataKey":"karet","label":"Perkebunan Karet","deskripsi":"Perkebunan Karet","produksi":35,"satuan":"KG","waktu_pembangunan":40,"biaya_pembangunan":3200,"konsumsi_listrik":0.003}'::jsonb);

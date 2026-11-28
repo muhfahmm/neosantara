@@ -1,0 +1,18 @@
+-- SECTION: json\\semua_fitur_negara\\1_pembangunan\\2_tempat_umum\\1_Layanan Publik\\1_infrastruktur\\metadata_infrastruktur.pg.sql
+CREATE TABLE IF NOT EXISTS database_building_metadata (
+source_file VARCHAR(500) NOT NULL,
+file_order INT NOT NULL,
+entry_key VARCHAR(200) NOT NULL,
+entry_order INT NOT NULL,
+metadata JSONB NOT NULL,
+PRIMARY KEY (source_file, entry_key)
+);
+INSERT INTO database_building_metadata (source_file, file_order, entry_key, entry_order, metadata) VALUES
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'jalur_sepeda', 1, '{"key":"1_jalur_sepeda","dataKey":"jalur_sepeda","label":"Jalur Sepeda","produksi":1,"satuan":"Unit","deskripsi":"Jalur Sepeda","waktu_pembangunan":5,"biaya_pembangunan":3750,"konsumsi_listrik":0.0012,"efek":"Meningkatkan kepuasan 0.1%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'jalan_raya', 2, '{"key":"2_jalan_tol","dataKey":"jalan_raya","label":"Jalan Raya","produksi":1,"satuan":"Unit","deskripsi":"Jalan Raya / Tol","waktu_pembangunan":20,"biaya_pembangunan":37500,"konsumsi_listrik":0.0015,"efek":"Meningkatkan kepuasan 0.3%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'terminal_bus', 3, '{"key":"3_terminal_bus","dataKey":"terminal_bus","label":"Terminal Bus","produksi":1,"satuan":"Unit","deskripsi":"Terminal Bus","waktu_pembangunan":15,"biaya_pembangunan":18750,"konsumsi_listrik":0.0025,"efek":"Meningkatkan kepuasan 0.5%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'stasiun_kereta_api', 4, '{"key":"4_jalur_kereta","dataKey":"stasiun_kereta_api","label":"Stasiun Kereta Api","produksi":1,"satuan":"Unit","deskripsi":"Jalur Kereta Api","waktu_pembangunan":30,"biaya_pembangunan":56250,"konsumsi_listrik":0.0045,"efek":"Meningkatkan kepuasan 0.5%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'kereta_bawah_tanah', 5, '{"key":"5_kereta_bawah_tanah","dataKey":"kereta_bawah_tanah","label":"Kereta Bawah Tanah","produksi":1,"satuan":"Unit","deskripsi":"Kereta Bawah Tanah (Subway)","waktu_pembangunan":40,"biaya_pembangunan":71250,"konsumsi_listrik":0.0065,"efek":"Meningkatkan kepuasan 0.1%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'pelabuhan', 6, '{"key":"6_pelabuhan_laut","dataKey":"pelabuhan","label":"Pelabuhan","produksi":1,"satuan":"Unit","deskripsi":"Pelabuhan Laut","waktu_pembangunan":50,"biaya_pembangunan":90000,"konsumsi_listrik":0.0085,"efek":"Mempercepat Estimasi Waktu Pengiriman ekspor-impor 0.5%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'bandara', 7, '{"key":"7_bandara","dataKey":"bandara","label":"Bandara","produksi":1,"satuan":"Unit","deskripsi":"Bandara Internasional","waktu_pembangunan":60,"biaya_pembangunan":112500,"konsumsi_listrik":0.012,"efek":"Mempercepat Estimasi Waktu Pengiriman ekspor-impor 0.3%"}'::jsonb),
+('json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql', 8, 'helipad', 8, '{"key":"8_helipad","dataKey":"helipad","label":"Helipad","produksi":1,"satuan":"Unit","deskripsi":"Helipad","waktu_pembangunan":7,"biaya_pembangunan":11250,"konsumsi_listrik":0.002,"efek":"Mempercepat Estimasi Waktu Pengiriman ekspor-impor 0.1%"}'::jsonb);

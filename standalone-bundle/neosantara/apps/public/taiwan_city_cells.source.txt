@@ -1,0 +1,24 @@
+Taiwan regional boundaries stored in city_province_cells.json under cityCells
+
+Taipei, Taichung, and Kaohsiung cells each represent an entire map region,
+not the individual municipality. Administrative polygons are merged using
+the two existing Taiwan regional divider lines in provinces_lines.geojson:
+
+- North (Taipei): Taipei City, New Taipei City, Keelung City, Taoyuan,
+  Hsinchu, Hsinchu City, and Yilan.
+- Central (Taichung): Miaoli, Taichung City, Changhua, Yunlin, Chiayi,
+  Chiayi City, Nantou, and Hualien.
+- South (Kaohsiung): Tainan City, Kaohsiung City, Pingtung, and Taitung.
+
+Source: Natural Earth Admin 1, ne_10m_admin_1_states_provinces.geojson
+Source URL: https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_admin_1_states_provinces.geojson
+License: Public domain
+Attribution: Natural Earth (https://www.naturalearthdata.com/)
+
+The Kinmen cell is sourced separately from geoBoundaries Taiwan ADM1,
+simplified GeoJSON:
+https://github.com/wmgeolab/geoBoundaries/tree/9469f09/releaseData/gbOpen/TWN/ADM1
+Boundary source: OpenStreetMap, Wambacher
+Attribution: © OpenStreetMap contributors (https://www.openstreetmap.org/copyright)
+License: Open Data Commons Open Database License (ODbL) 1.0
+https://opendatacommons.org/licenses/odbl/1-0/

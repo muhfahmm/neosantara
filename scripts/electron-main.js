@@ -24,7 +24,7 @@ function probeUrl(targetUrl) {
       res.resume();
       res.on("end", () => resolve(res.statusCode ?? 500));
     });
-    req.setTimeout(1500, () => req.destroy());
+    req.setTimeout(800, () => req.destroy());
     req.on("error", () => resolve(null));
   });
 }
@@ -36,41 +36,76 @@ async function waitForServer(targetUrl, timeoutMs = 60000) {
     if (code && code < 500) {
       return true;
     }
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((r) => setTimeout(r, 100));
   }
   return false;
 }
 
-function startNextProductionServer(port) {
+function resolveServerPaths() {
   const standaloneBase = app.isPackaged
     ? path.join(process.resourcesPath, "standalone")
-    : path.resolve(__dirname, "..", "apps", ".next", "standalone", "neosantara");
+    : path.resolve(__dirname, "..", "apps", ".next", "standalone");
 
-  const serverScript = path.join(standaloneBase, "apps", "server.js");
-  const appsDir = path.join(standaloneBase, "apps");
+  const candidates = [
+    { script: path.join(standaloneBase, "apps", "server.js"), cwd: path.join(standaloneBase, "apps") },
+    { script: path.join(standaloneBase, "neosantara", "apps", "server.js"), cwd: path.join(standaloneBase, "neosantara", "apps") },
+    { script: path.join(standaloneBase, "server.js"), cwd: standaloneBase }
+  ];
 
-  if (!fs.existsSync(serverScript)) {
-    console.error("server.js not found at:", serverScript);
+  for (const c of candidates) {
+    if (fs.existsSync(c.script)) {
+      return { ...c, base: standaloneBase };
+    }
+  }
+
+  return { script: candidates[0].script, cwd: candidates[0].cwd, base: standaloneBase };
+}
+
+function startNextProductionServer(port) {
+  const resolved = resolveServerPaths();
+  const dbPath = path.join(resolved.base, "data", "neosantara_master.db");
+  const logFile = path.join(writableAppData, "server.log");
+
+  fs.appendFileSync(logFile, `[${new Date().toISOString()}] Menjalankan server dari ${resolved.script}\n`);
+
+  if (!fs.existsSync(resolved.script)) {
+    fs.appendFileSync(logFile, `[ERROR] server.js tidak ditemukan di ${resolved.script}\n`);
     return;
   }
 
   const env = {
     ...process.env,
     PORT: String(port),
-    HOSTNAME: "127.0.0.1",
+    HOSTNAME: "0.0.0.0",
     NODE_ENV: "production",
+    SQLITE_DB_PATH: dbPath,
+    ELECTRON_RUN_AS_NODE: "1",
   };
 
-  delete env.ELECTRON_RUN_AS_NODE;
-
-  serverProcess = fork(serverScript, [], {
-    cwd: appsDir,
+  serverProcess = fork(resolved.script, [], {
+    cwd: resolved.cwd,
     env,
-    stdio: "ignore",
+    stdio: ["ignore", "pipe", "pipe", "ipc"],
   });
 
+  if (serverProcess.stdout) {
+    serverProcess.stdout.on("data", (chunk) => {
+      fs.appendFileSync(logFile, `[STDOUT] ${chunk.toString()}`);
+    });
+  }
+
+  if (serverProcess.stderr) {
+    serverProcess.stderr.on("data", (chunk) => {
+      fs.appendFileSync(logFile, `[STDERR] ${chunk.toString()}`);
+    });
+  }
+
   serverProcess.on("error", (err) => {
-    console.error("Next server error:", err);
+    fs.appendFileSync(logFile, `[ERROR] Next server error: ${err.stack || err}\n`);
+  });
+
+  serverProcess.on("exit", (code, signal) => {
+    fs.appendFileSync(logFile, `[EXIT] Next server berhenti dengan code ${code}, signal ${signal}\n`);
   });
 }
 
@@ -90,10 +125,12 @@ function applyScreenAdaptiveZoom(window) {
   window.webContents.setZoomFactor(zoom);
 }
 
-function createWindow(startUrl) {
+function createMainWindow(startUrl) {
   const iconPath = app.isPackaged
     ? path.join(process.resourcesPath, "app-icon.ico")
     : path.resolve(__dirname, "..", "app-icon.ico");
+
+  const logFile = path.join(writableAppData, "server.log");
 
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -103,6 +140,7 @@ function createWindow(startUrl) {
     title: "Presiden Simulator",
     icon: fs.existsSync(iconPath) ? iconPath : undefined,
     show: false,
+    backgroundColor: "#0b1320",
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
@@ -113,17 +151,15 @@ function createWindow(startUrl) {
     userAgent: "NeosantaraClient-Desktop/1.0 (Windows; Electron)",
   });
 
-  mainWindow.webContents.on("did-finish-load", () => {
-    applyScreenAdaptiveZoom(mainWindow);
+  mainWindow.webContents.on("console-message", (e, level, message, line, sourceId) => {
+    fs.appendFileSync(logFile, `[CLIENT CONSOLE lvl=${level}] ${message} (${sourceId}:${line})\n`);
+  });
+
+  mainWindow.webContents.on("did-fail-load", (e, errorCode, errorDescription, validatedURL) => {
+    fs.appendFileSync(logFile, `[CLIENT FAIL LOAD] code=${errorCode} ${errorDescription} URL=${validatedURL}\n`);
   });
 
   mainWindow.on("resize", () => {
-    applyScreenAdaptiveZoom(mainWindow);
-  });
-
-  mainWindow.once("ready-to-show", () => {
-    mainWindow.maximize();
-    mainWindow.show();
     applyScreenAdaptiveZoom(mainWindow);
   });
 
@@ -131,7 +167,29 @@ function createWindow(startUrl) {
     mainWindow = null;
   });
 
-  mainWindow.loadURL(startUrl);
+  // Begitu server siap, langsung buka jendela game pada menu utama
+  fs.appendFileSync(logFile, `[MAIN] Menunggu server siap pada ${startUrl}...\n`);
+  waitForServer(startUrl).then((ready) => {
+    fs.appendFileSync(logFile, `[MAIN] Server siap? ${ready}. MainWindow ada? ${Boolean(mainWindow)}\n`);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      fs.appendFileSync(logFile, `[MAIN] Memanggil mainWindow.loadURL(${startUrl})\n`);
+      mainWindow.loadURL(startUrl);
+      mainWindow.once("ready-to-show", () => {
+        fs.appendFileSync(logFile, `[MAIN] Event ready-to-show diterima\n`);
+        mainWindow.maximize();
+        mainWindow.show();
+        applyScreenAdaptiveZoom(mainWindow);
+      });
+      mainWindow.webContents.on("did-finish-load", () => {
+        fs.appendFileSync(logFile, `[MAIN] Event did-finish-load diterima\n`);
+        if (!mainWindow.isVisible()) {
+          mainWindow.maximize();
+          mainWindow.show();
+        }
+        applyScreenAdaptiveZoom(mainWindow);
+      });
+    }
+  });
 }
 
 app.whenReady().then(async () => {
@@ -139,16 +197,15 @@ app.whenReady().then(async () => {
 
   if (!startUrl) {
     const port = 3000;
-    startUrl = `http://127.0.0.1:${port}`;
+    startUrl = `http://localhost:${port}`;
     startNextProductionServer(port);
-    await waitForServer(startUrl);
   }
 
-  createWindow(startUrl);
+  createMainWindow(startUrl);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow(startUrl);
+      createMainWindow(startUrl);
     }
   });
 });
