@@ -11,21 +11,49 @@
     "dev:web": "npm run dev -w frontend",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "tauri": "npm run tauri:dev -w frontend",
-    "tauri:dev": "npm run tauri:dev -w frontend",
-    "tauri:build": "npm run tauri:build -w frontend",
-    "tauri:build-frontend": "npm run tauri:build-frontend -w frontend",
-    "tauri:android:prepare": "npm run tauri:android:prepare -w frontend --",
-    "tauri:android:dev": "npm run tauri:android:dev -w frontend --",
-    "tauri:android:build": "npm run tauri:android:build -w frontend",
-    "tauri:serve": "npm run tauri:serve -w frontend",
-    "tauri:serve-mobile": "npm run tauri:serve-mobile -w frontend",
     "electron:dev": "node scripts/electron-dev.mjs",
-    "electron:start": "npm run electron:dev"
+    "electron:start": "npm run electron:dev",
+    "electron:build": "npm run build -w frontend && node scripts/prepare-standalone.mjs && electron-builder --win",
+    "electron:pack": "npm run build -w frontend && node scripts/prepare-standalone.mjs && electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.neosantara.presidensimulator",
+    "productName": "Presiden Simulator",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "app-icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "files": [
+      "scripts/electron-main.js",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "apps/.next/standalone/neosantara",
+        "to": "standalone"
+      },
+      {
+        "from": "app-icon.ico",
+        "to": "app-icon.ico"
+      }
+    ],
+    "asar": true
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "electron": "^43.4.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^26.18.0",
     "esbuild": "^0.28.1",
     "nodemon": "^3.1.14",
     "ts-morph": "^28.0.0",

@@ -73,7 +73,7 @@ const serverOnlyConfig: Partial<NextConfig> = isTauriStaticExport
 
 const nextConfig: NextConfig = {
   ...serverOnlyConfig,
-  ...(isTauriStaticExport ? { output: "export" as const } : {}),
+  output: isTauriStaticExport ? ("export" as const) : ("standalone" as const),
   allowedDevOrigins,
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   env: {
