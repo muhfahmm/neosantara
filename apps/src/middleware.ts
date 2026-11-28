@@ -1,13 +1,33 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getCorsHeaders } from './lib/cors';
 
 /**
- * Middleware untuk membatasi akses antarmuka game (/page/*)
- * Hanya mengizinkan request dari Desktop App (Tauri / Electron) atau Mobile App.
- * Browser biasa akan diarahkan ke homepage/portal download.
+ * Adds API CORS handling and restricts game pages to desktop/mobile clients.
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith('/api/')) {
+    const corsHeaders = getCorsHeaders(request);
+    if (request.method.toUpperCase() === 'OPTIONS') {
+      return new NextResponse(null, {
+        status: 204,
+        headers: {
+          ...corsHeaders,
+          'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+          'Access-Control-Allow-Headers': 'Authorization, Content-Type, X-CSRF-Token, X-Requested-With, Accept, If-None-Match',
+          'Access-Control-Max-Age': '86400',
+        },
+      });
+    }
+
+    const response = NextResponse.next();
+    for (const [name, value] of Object.entries(corsHeaders)) {
+      response.headers.set(name, value);
+    }
+    return response;
+  }
 
   // Lewatkan jika endpoint API, aset statis, atau homepage
   if (
@@ -139,5 +159,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/page/:path*'],
+  matcher: ['/', '/page/:path*', '/api/:path*'],
 };

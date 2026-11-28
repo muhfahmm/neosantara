@@ -1,3 +1,5 @@
+import { handleLocalMasterDataRequest } from './localMasterData';
+
 /**
  * Resolves API paths to absolute URLs when running inside Tauri Mobile WebView,
  * or returns relative paths when running directly on Next.js web server.
@@ -12,6 +14,10 @@ export function resolveApiUrl(path: string): string {
   }
 
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '');
+  if (configuredApiUrl) {
+    return `${configuredApiUrl}${cleanPath}`;
+  }
 
   const origin = window.location.origin;
   const isTauriLocalhost = origin.includes('tauri.localhost') || window.location.protocol === 'tauri:';
@@ -51,17 +57,30 @@ export function patchGlobalFetch() {
   w.__API_FETCH_PATCHED__ = true;
 
   const originalFetch = window.fetch;
-  window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
+  window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
     let urlString = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+    const requestUrl = new URL(urlString, window.location.origin);
 
-    if (urlString.startsWith('/api/') || urlString.startsWith('/api?')) {
-      const resolved = resolveApiUrl(urlString);
-      if (typeof input === 'string') {
-        input = resolved;
-      } else if (input instanceof URL) {
-        input = new URL(resolved);
-      } else {
-        input = new Request(resolved, input);
+    if (requestUrl.pathname.startsWith('/api/')) {
+      if (process.env.NEXT_PUBLIC_LOCAL_MASTER_DATA === '1') {
+        const method = init?.method ?? (input instanceof Request ? input.method : 'GET');
+        const localResponse = await handleLocalMasterDataRequest(
+          `${requestUrl.pathname}${requestUrl.search}`,
+          originalFetch,
+          method,
+        );
+        if (localResponse) return localResponse;
+      }
+
+      if (urlString.startsWith('/api/') || urlString.startsWith('/api?')) {
+        const resolved = resolveApiUrl(urlString);
+        if (typeof input === 'string') {
+          input = resolved;
+        } else if (input instanceof URL) {
+          input = new URL(resolved);
+        } else {
+          input = new Request(resolved, input);
+        }
       }
     }
     return originalFetch.call(this, input, init);

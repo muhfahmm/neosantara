@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "identifier": "com.presiden.simulator",
   "build": {
-    "frontendDist": "../.next",
+    "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "npm --prefix .. run dev",
-    "beforeBuildCommand": "npm --prefix .. run build"
+    "beforeBuildCommand": "npm --prefix .. run tauri:build-frontend"
   },
   "app": {
     "windows": [
@@ -24,7 +24,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://flagcdn.com; connect-src 'self' http://localhost:* http://10.0.2.2:* https://*.firebaseio.com https://*.googleapis.com;"
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://flagcdn.com; connect-src 'self' http://localhost:* http://10.0.2.2:* https://neosantara.com https://*.neosantara.com https://*.firebaseio.com https://*.googleapis.com;"
     }
   },
   "bundle": {

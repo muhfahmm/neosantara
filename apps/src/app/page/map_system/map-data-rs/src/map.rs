@@ -13,6 +13,34 @@ const MAX_MAP_SCALE: f64 = 50.0;
 const NON_PHONE_NON_CAPITAL_FLAGS_MIN_SCALE: f64 = 3.0;
 const PHONE_NON_CAPITAL_FLAGS_MIN_SCALE: f64 = 4.0;
 
+#[derive(Clone, Copy)]
+struct MapViewport {
+    left: f64,
+    top: f64,
+    width: f64,
+    height: f64,
+}
+
+fn map_viewport(width: f64, height: f64) -> MapViewport {
+    let scale = (width / 360.0).max(height / 180.0);
+    let map_width = 360.0 * scale;
+    let map_height = 180.0 * scale;
+    MapViewport {
+        left: (width - map_width) * 0.5,
+        top: (height - map_height) * 0.5,
+        width: map_width,
+        height: map_height,
+    }
+}
+
+fn project_coordinate(width: f64, height: f64, longitude: f64, latitude: f64) -> (f64, f64) {
+    let viewport = map_viewport(width, height);
+    (
+        viewport.left + ((longitude + 180.0) / 360.0) * viewport.width,
+        viewport.top + ((90.0 - latitude) / 180.0) * viewport.height,
+    )
+}
+
 fn is_mobile_device() -> bool {
     let Some(window) = web_sys::window() else {
         return false;
@@ -606,9 +634,7 @@ impl MapEngine {
             return;
         };
         let (w, h) = (self.width, self.height);
-        let proj = |c: &[f64]| -> (f64, f64) {
-            (((c[0] + 180.0) / 360.0) * w, ((90.0 - c[1]) / 180.0) * h)
-        };
+        let proj = |c: &[f64]| -> (f64, f64) { project_coordinate(w, h, c[0], c[1]) };
         let mut lines: Vec<ProvLine> = Vec::new();
         let mut push_line = |raw: &[Vec<f64>]| {
             let pts: Vec<(f64, f64)> = raw
@@ -712,9 +738,7 @@ impl MapEngine {
             return;
         };
         let (w, h) = (self.width, self.height);
-        let proj = |c: &Vec<f64>| -> (f64, f64) {
-            (((c[0] + 180.0) / 360.0) * w, ((90.0 - c[1]) / 180.0) * h)
-        };
+        let proj = |c: &Vec<f64>| -> (f64, f64) { project_coordinate(w, h, c[0], c[1]) };
         let build_poly = |poly: &Vec<Vec<Vec<f64>>>, fbox: &mut [f64; 4]| -> Vec<Ring> {
             let mut rings = Vec::new();
             for ring in poly {
@@ -1098,10 +1122,10 @@ impl MapEngine {
             }
         }
 
-        let (w, h) = (self.width, self.height);
         self.capitals = parsed
             .into_iter()
             .map(|c| {
+                let (x, y) = project_coordinate(self.width, self.height, c.lng, c.lat);
                 let flag_iso = c.iso.rsplit('-').next().unwrap_or(&c.iso).to_string();
                 let flag_idx = self
                     .capital_flags
@@ -1121,8 +1145,8 @@ impl MapEngine {
                 CachedCapital {
                     name: c.capital,
                     city_id: c.city_id.unwrap_or_default(),
-                    x: ((c.lng + 180.0) / 360.0) * w,
-                    y: ((90.0 - c.lat) / 180.0) * h,
+                    x,
+                    y,
                     country_iso,
                     owner_country: c.owner_country,
                     flag_iso,
@@ -1173,6 +1197,7 @@ impl MapEngine {
             let latitude = city.lat.clamp(-90.0, 90.0);
             let longitude = city.lng.clamp(-180.0, 180.0);
             let longitude_scale = latitude.to_radians().cos().abs().max(0.25);
+            let projection = map_viewport(self.width, self.height);
             let source_cells = if city.cells.iter().any(|ring| ring.len() >= 3) {
                 city.cells
             } else if city.cell.len() >= 3 {
@@ -1186,20 +1211,21 @@ impl MapEngine {
                 .map(|ring| {
                     ring.iter()
                         .map(|p| {
-                            (
-                                ((p[0].clamp(-180.0, 180.0) + 180.0) / 360.0) * self.width,
-                                ((90.0 - p[1].clamp(-90.0, 90.0)) / 180.0) * self.height,
+                            project_coordinate(
+                                self.width,
+                                self.height,
+                                p[0].clamp(-180.0, 180.0),
+                                p[1].clamp(-90.0, 90.0),
                             )
                         })
                         .collect()
                 })
                 .collect();
-            let city_x = ((longitude + 180.0) / 360.0) * self.width;
-            let city_y = ((90.0 - latitude) / 180.0) * self.height;
+            let (city_x, city_y) = project_coordinate(self.width, self.height, longitude, latitude);
             let (extent_x, extent_y) = if cells.is_empty() {
                 (
-                    self.width * CITY_REGION_RADIUS_DEGREES / longitude_scale / 360.0,
-                    self.height * CITY_REGION_RADIUS_DEGREES / 180.0,
+                    projection.width * CITY_REGION_RADIUS_DEGREES / longitude_scale / 360.0,
+                    projection.height * CITY_REGION_RADIUS_DEGREES / 180.0,
                 )
             } else {
                 cells
@@ -1218,8 +1244,8 @@ impl MapEngine {
                 country_iso: city.country_iso.to_lowercase(),
                 city_name: city.city_name,
                 owner_country: city.owner_country,
-                x: ((longitude + 180.0) / 360.0) * self.width,
-                y: ((90.0 - latitude) / 180.0) * self.height,
+                x: city_x,
+                y: city_y,
                 radius_x: extent_x,
                 radius_y: extent_y,
                 color: JsValue::from_str(&city.owner_color),
@@ -1446,14 +1472,15 @@ impl MapEngine {
                     let new_scale = 4.0f64.max(self.scale);
                     self.target_scale = new_scale;
 
-                    let world_width = self.width * new_scale;
+                    let map_width = map_viewport(self.width, self.height).width;
+                    let world_width = map_width * new_scale;
                     let world_copy = if self.horizontal_wrap {
                         ((self.width / 2.0 - self.offset_x - px * new_scale) / world_width).round()
                     } else {
                         0.0
                     };
                     self.target_offset_x =
-                        (self.width / 2.0) - ((px + world_copy * self.width) * new_scale);
+                        (self.width / 2.0) - ((px + world_copy * map_width) * new_scale);
                     self.target_offset_y = (self.height / 2.0) - (py * new_scale);
                 }
             }
@@ -1494,6 +1521,7 @@ impl MapEngine {
     }
 
     fn apply_clamping(&mut self) {
+        let map = map_viewport(self.width, self.height);
         if self.scale <= 1.0 {
             if !self.horizontal_wrap {
                 self.offset_x = 0.0;
@@ -1501,11 +1529,13 @@ impl MapEngine {
             self.offset_y = 0.0;
         } else {
             if !self.horizontal_wrap {
-                let min_x = self.width * (1.0 - self.scale);
-                self.offset_x = self.offset_x.clamp(min_x, 0.0);
+                let min_x = self.width - (map.left + map.width) * self.scale;
+                let max_x = -map.left * self.scale;
+                self.offset_x = self.offset_x.clamp(min_x, max_x);
             }
-            let min_y = self.height * (1.0 - self.scale);
-            self.offset_y = self.offset_y.clamp(min_y, 0.0);
+            let min_y = self.height - (map.top + map.height) * self.scale;
+            let max_y = -map.top * self.scale;
+            self.offset_y = self.offset_y.clamp(min_y, max_y);
         }
     }
 
@@ -1598,14 +1628,15 @@ impl MapEngine {
         self.ctx.set_fill_style(&self.styles.bg);
         self.ctx.fill_rect(0.0, 0.0, self.width, self.height);
 
-        let world_w = self.width * self.scale;
+        let map = map_viewport(self.width, self.height);
+        let world_w = map.width * self.scale;
         let first_copy = if self.horizontal_wrap {
-            (-self.offset_x / world_w).floor() as i32
+            ((-self.offset_x - map.left * self.scale) / world_w).floor() as i32
         } else {
             0
         };
         let last_copy = if self.horizontal_wrap {
-            ((self.width - self.offset_x) / world_w).ceil() as i32 - 1
+            ((self.width - self.offset_x - map.left * self.scale) / world_w).ceil() as i32 - 1
         } else {
             0
         };
@@ -2168,9 +2199,7 @@ impl MapEngine {
     }
 
     fn project(&self, lng: f64, lat: f64) -> (f64, f64) {
-        let x_norm = (lng + 180.0) / 360.0;
-        let y_norm = (90.0 - lat) / 180.0;
-        (x_norm * self.width, y_norm * self.height)
+        project_coordinate(self.width, self.height, lng, lat)
     }
 
     fn country_for_iso(&self, iso: &str) -> Option<&CachedCountry> {
@@ -2310,10 +2339,11 @@ impl MapEngine {
                         &JsValue::from_bool(cap.is_capital),
                     );
                     if let Some(owner_country) = cap.owner_country.as_deref() {
-                        let latitude = 90.0 - (cap.y / self.height) * 180.0;
+                        let map = map_viewport(self.width, self.height);
+                        let latitude = 90.0 - ((cap.y - map.top) / map.height) * 180.0;
                         let longitude_scale = latitude.to_radians().cos().abs().max(0.25);
-                        let radius_x = self.width * 0.65 / longitude_scale / 360.0;
-                        let radius_y = self.height * 0.65 / 180.0;
+                        let radius_x = map.width * 0.65 / longitude_scale / 360.0;
+                        let radius_y = map.height * 0.65 / 180.0;
                         let normalized_distance = (cap.x - wx).powi(2) / radius_x.powi(2)
                             + (cap.y - wy).powi(2) / radius_y.powi(2);
                         if normalized_distance <= 1.0 && distance_sq.is_finite() {
@@ -2334,15 +2364,16 @@ impl MapEngine {
 
     pub fn get_country_at(&self, mouse_x: f64, mouse_y: f64) -> JsValue {
         // Titik klik dalam koordinat dunia (sama dengan koordinat cache)
+        let map = map_viewport(self.width, self.height);
         let mut wx = (mouse_x - self.offset_x) / self.scale;
         if self.horizontal_wrap {
-            wx = wx.rem_euclid(self.width);
+            wx = map.left + (wx - map.left).rem_euclid(map.width);
         }
         let wy = (mouse_y - self.offset_y) / self.scale;
 
         // City flag markers are drawn above the map; resolve them before the underlying country.
         let marker_hit_radius = 12.0;
-        let world_width = self.width * self.scale;
+        let world_width = map.width * self.scale;
         let mut nearest_marker: Option<(&CachedCapital, f64)> = None;
         for capital in &self.capitals {
             let screen_x = capital.x * self.scale + self.offset_x;
@@ -2400,7 +2431,7 @@ impl MapEngine {
         // 2. Small-island tolerance: inspect each polygon component rather than the country's
         // combined bounds, which can span a large archipelago.
         let micro_threshold = 22.0;
-        let world_width = self.width * self.scale;
+        let world_width = map.width * self.scale;
         let mut best_small_feature: Option<(&CachedCountry, f64)> = None;
         for feature in &self.features {
             let Some(country) = self
@@ -2447,7 +2478,7 @@ impl MapEngine {
                 let screen_x = x * self.scale + self.offset_x;
                 let screen_y = y * self.scale + self.offset_y;
                 let dx = if self.horizontal_wrap {
-                    let world_width = self.width * self.scale;
+                    let world_width = map.width * self.scale;
                     (mouse_x - screen_x + world_width / 2.0).rem_euclid(world_width)
                         - world_width / 2.0
                 } else {
@@ -2666,10 +2697,26 @@ pub fn start_map_engine(
 #[cfg(test)]
 mod tests {
     use super::{
-        is_small_feature, is_zoom_interaction_active, map_detail_level, normalize_feature_iso,
-        province_lines_use_coarse_detail, render_detail_level, screen_distance_to_bbox,
-        should_draw_province_lines, should_show_non_capital_flags, wheel_zoom_factor,
+        is_small_feature, is_zoom_interaction_active, map_detail_level, map_viewport,
+        normalize_feature_iso, project_coordinate, province_lines_use_coarse_detail,
+        render_detail_level, screen_distance_to_bbox, should_draw_province_lines,
+        should_show_non_capital_flags, wheel_zoom_factor,
     };
+
+    #[test]
+    fn preserves_map_aspect_ratio_in_wide_and_tall_viewports() {
+        for (width, height) in [(2000.0, 420.0), (420.0, 2000.0)] {
+            let top_left = project_coordinate(width, height, -180.0, 90.0);
+            let bottom_right = project_coordinate(width, height, 180.0, -90.0);
+            let map = map_viewport(width, height);
+
+            assert!((map.width / map.height - 2.0).abs() < 1e-10);
+            assert!((top_left.0 - map.left).abs() < 1e-10);
+            assert!((top_left.1 - map.top).abs() < 1e-10);
+            assert!((bottom_right.0 - (map.left + map.width)).abs() < 1e-10);
+            assert!((bottom_right.1 - (map.top + map.height)).abs() < 1e-10);
+        }
+    }
 
     #[test]
     fn shows_non_capital_flags_only_at_zoom_four_or_higher_on_mobile() {

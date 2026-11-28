@@ -1,5 +1,6 @@
 import { brotliCompress, constants as zlibConstants, gzip } from 'node:zlib';
 import { createHash } from 'node:crypto';
+import { getCorsHeaders } from './cors';
 
 export interface CachedPayload {
   rawBuffer: Buffer;
@@ -112,6 +113,7 @@ export function buildCachedApiResponse(
   payload: CachedPayload,
   cacheControl = 'public, max-age=60, stale-while-revalidate=120'
 ): Response {
+  const corsHeaders = getCorsHeaders(request);
   const ifNoneMatch = request.headers.get('if-none-match');
   if (ifNoneMatch && (ifNoneMatch === payload.etag || ifNoneMatch.includes(payload.etag))) {
     return new Response(null, {
@@ -119,8 +121,8 @@ export function buildCachedApiResponse(
       headers: {
         'ETag': payload.etag,
         'Cache-Control': cacheControl,
-        'Access-Control-Allow-Origin': '*',
         'Access-Control-Expose-Headers': 'ETag',
+        ...corsHeaders,
       },
     });
   }
@@ -131,9 +133,9 @@ export function buildCachedApiResponse(
     'Content-Type': payload.contentType,
     'ETag': payload.etag,
     'Cache-Control': cacheControl,
-    'Access-Control-Allow-Origin': '*',
     'Access-Control-Expose-Headers': 'ETag',
-    'Vary': 'Accept-Encoding',
+    ...corsHeaders,
+    'Vary': 'Accept-Encoding, Origin',
   });
 
   if (acceptEncoding.includes('br')) {

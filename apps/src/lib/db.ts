@@ -1,75 +1,133 @@
-import { Pool } from 'pg';
+import { DatabaseSync } from 'node:sqlite';
+import path from 'node:path';
+import fs from 'node:fs';
 
-let pool: Pool | null = null;
+let sqliteDbInstance: DatabaseSync | null = null;
 
-export const dbConfig = {
-    host: String(process.env.DB_HOST || process.env.PGHOST || '127.0.0.1'),
-    user: String(process.env.DB_USER || process.env.PGUSER || 'postgres'),
-    // Secret: never hardcode. Provide via DB_PASSWORD / PGPASSWORD (see apps/.env.example).
-    password: process.env.DB_PASSWORD ?? process.env.PGPASSWORD,
-    database: String(process.env.DB_NAME || process.env.PGDATABASE || 'db_presiden_simulator'),
-    port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432'),
-};
-
-/**
- * Initializes and returns a PostgreSQL connection pool.
- */
-export async function getDbPool(): Promise<Pool> {
-    if (pool) {
-        return pool;
+function resolveDatabasePath(): string {
+    const customPath = process.env.SQLITE_DB_PATH;
+    if (customPath && fs.existsSync(customPath)) {
+        return customPath;
     }
 
-    if (!dbConfig.password) {
-        throw new Error(
-            'Database password is not configured. Set DB_PASSWORD (or PGPASSWORD) in apps/.env.local; see apps/.env.example.'
+    const candidatePaths = [
+        path.resolve(process.cwd(), 'data', 'neosantara_master.db'),
+        path.resolve(process.cwd(), '..', 'data', 'neosantara_master.db'),
+        path.resolve(__dirname, '..', '..', '..', 'data', 'neosantara_master.db'),
+        path.resolve(__dirname, '..', '..', 'data', 'neosantara_master.db'),
+    ];
+
+    for (const p of candidatePaths) {
+        if (fs.existsSync(p)) {
+            return p;
+        }
+    }
+
+    // Default fallback
+    const fallbackPath = path.resolve(process.cwd(), 'data', 'neosantara_master.db');
+    const fallbackDir = path.dirname(fallbackPath);
+    if (!fs.existsSync(fallbackDir)) {
+        fs.mkdirSync(fallbackDir, { recursive: true });
+    }
+    return fallbackPath;
+}
+
+export function getSqliteDb(): DatabaseSync {
+    if (sqliteDbInstance) {
+        return sqliteDbInstance;
+    }
+
+    const dbPath = resolveDatabasePath();
+    const db = new DatabaseSync(dbPath);
+    db.exec('PRAGMA journal_mode = WAL;');
+    db.exec('PRAGMA synchronous = NORMAL;');
+    db.exec('PRAGMA foreign_keys = ON;');
+
+    // Pastikan tabel game_saves ada
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS game_saves (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            save_name TEXT NOT NULL,
+            country_name TEXT NOT NULL,
+            country_iso TEXT NOT NULL,
+            game_date TEXT NOT NULL,
+            capital TEXT,
+            jumlah_penduduk INTEGER DEFAULT 0,
+            anggaran REAL DEFAULT 0,
+            ideology TEXT,
+            religion TEXT,
+            un_vote INTEGER DEFAULT 0,
+            country_detail TEXT,
+            owner_uid TEXT,
+            save_uuid TEXT,
+            schema_version TEXT DEFAULT 'v2',
+            version INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT (datetime('now')),
+            updated_at TEXT DEFAULT (datetime('now')),
+            idempotency_key TEXT
         );
-    }
+        CREATE INDEX IF NOT EXISTS idx_game_saves_owner_id ON game_saves(owner_uid, id);
+        CREATE INDEX IF NOT EXISTS idx_game_saves_owner_uuid ON game_saves(owner_uid, save_uuid);
+        CREATE INDEX IF NOT EXISTS idx_game_saves_owner_updated ON game_saves(owner_uid, updated_at DESC);
+    `);
 
-    try {
-        pool = new Pool({
-            host: dbConfig.host,
-            user: dbConfig.user,
-            password: dbConfig.password,
-            database: dbConfig.database,
-            port: dbConfig.port,
-            max: 10,
-            idleTimeoutMillis: 30000,
-            connectionTimeoutMillis: 5000,
-        });
-
-        console.log(`Connected to PostgreSQL database '${dbConfig.database}' successfully!`);
-        return pool;
-    } catch (error: any) {
-        console.error("PostgreSQL connection failure:", error.message);
-        throw error;
-    }
-}
-
-// PERF-TEMP: Development-only query counter/timer (zero-op in production)
-let perfTrackerLogged = false;
-function trackDevQuery(sql: string, durationMs: number) {
-    if (process.env.NODE_ENV !== 'development') return;
-    if (!perfTrackerLogged) {
-        perfTrackerLogged = true;
-    }
-    const g = globalThis as unknown as { __PERF_TEMP_DB_COUNT__?: number; __PERF_TEMP_DB_MS__?: number };
-    g.__PERF_TEMP_DB_COUNT__ = (g.__PERF_TEMP_DB_COUNT__ ?? 0) + 1;
-    g.__PERF_TEMP_DB_MS__ = (g.__PERF_TEMP_DB_MS__ ?? 0) + durationMs;
-    if (durationMs > 50) {
-        console.log(`[PERF-TEMP:DB] ${durationMs.toFixed(1)}ms | ${sql.slice(0, 90).replace(/\s+/g, ' ')}`);
-    }
+    sqliteDbInstance = db;
+    return sqliteDbInstance;
 }
 
 /**
- * Helper to query PostgreSQL database.
- * Returns array of rows for SELECT queries.
+ * Konversi parameterized query PostgreSQL ($1, $2, ...) menjadi SQLite (?, ?, ...)
+ */
+function translatePgSqlToSqlite(sql: string): string {
+    return sql
+        .replace(/\$(\d+)/g, '?')
+        .replace(/\bCURRENT_TIMESTAMP\b/gi, "datetime('now')");
+}
+
+export interface SqlQueryResult<T = any> {
+    rows: T[];
+    rowCount: number;
+}
+
+/**
+ * Adapter kompatibilitas getDbPool() yang meniru antarmuka pg.Pool
+ * mengeksekusi langsung di atas SQLite berkecepatan tinggi tanpa network overhead.
+ */
+export async function getDbPool() {
+    const db = getSqliteDb();
+
+    return {
+        async query<T = any>(sql: string, params: any[] = []): Promise<SqlQueryResult<T>> {
+            const sqliteSql = translatePgSqlToSqlite(sql);
+            const trimmed = sqliteSql.trim();
+            const upper = trimmed.toUpperCase();
+
+            // Jika query memiliki klausa RETURNING atau SELECT, gunakan stmt.all()
+            if (upper.startsWith('SELECT') || upper.startsWith('PRAGMA') || upper.includes(' RETURNING ')) {
+                const stmt = db.prepare(sqliteSql);
+                const rows = stmt.all(...params) as T[];
+                return {
+                    rows,
+                    rowCount: rows.length,
+                };
+            }
+
+            // Operasi INSERT / UPDATE / DELETE tanpa RETURNING
+            const stmt = db.prepare(sqliteSql);
+            const info = stmt.run(...params);
+            return {
+                rows: [] as T[],
+                rowCount: Number(info.changes),
+            };
+        },
+    };
+}
+
+/**
+ * Helper queryDb universal untuk seluruh endpoint master data
  */
 export async function queryDb<T = any>(sql: string, params: any[] = []): Promise<T> {
-    const dbPool = await getDbPool();
-    const t0 = process.env.NODE_ENV === 'development' ? performance.now() : 0;
-    const res = await dbPool.query(sql, params);
-    if (process.env.NODE_ENV === 'development') {
-        trackDevQuery(sql, performance.now() - t0);
-    }
-    return res.rows as T;
+    const pool = await getDbPool();
+    const result = await pool.query<T>(sql, params);
+    return result.rows as unknown as T;
 }

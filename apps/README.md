@@ -86,6 +86,23 @@ selection is managed by Android. The Android app also requests a Firebase ID tok
 from the native plugin so its save requests receive the same server-side account
 verification as web requests.
 
+## Building the Tauri desktop app
+
+Run `npm run tauri:build` from the repository root. The Tauri-only frontend
+build exports static assets to `apps/out`; it temporarily excludes
+`apps/src/app/api` and `apps/src/middleware.ts` from Next.js route discovery,
+then restores both source paths even if the build fails. The API source remains
+available for the hosted Next.js backend and is not included in the desktop app.
+
+The Tauri export includes a read-only `local-master-data.json` snapshot of all
+`database_*` tables from `data/neosantara_master.db`. Country profiles, prices,
+natural resources, and game bootstrap data are served from this local snapshot.
+The client uses `NEXT_PUBLIC_API_URL` (default `https://neosantara.com`) for API
+routes that still require a backend, including authenticated player saves. The
+backend must allow the Tauri origins `http://tauri.localhost` and
+`tauri://localhost` through CORS. Normal web builds continue to include the API
+routes and middleware.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

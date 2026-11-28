@@ -79,8 +79,9 @@ export function renderInstantMobileCanvasPreview(canvasId: string): boolean {
     const continents = getContinentPath2Ds();
     if (continents.length > 0) {
       ctx.save();
-      // viewBox prebaked paths adalah 1000 x 500
-      ctx.scale(width / 1000, height / 500);
+      const scale = Math.max(width / 1000, height / 500);
+      ctx.translate((width - 1000 * scale) / 2, (height - 500 * scale) / 2);
+      ctx.scale(scale, scale);
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
 
